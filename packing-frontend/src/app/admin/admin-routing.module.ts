@@ -1,7 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminAppComponent } from './components/admin-app/admin-app.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+    { path: '', component: AdminAppComponent, pathMatch: 'full' }
+];
 
 @NgModule({
     imports: [RouterModule.forChild(routes)],
@@ -10,4 +13,6 @@ const routes: Routes = [];
 
 export class AdminRoutingModule { }
 
-export const RoutedComponent = [];
+export const RoutedComponent = [
+    AdminAppComponent
+];
