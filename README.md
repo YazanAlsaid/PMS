@@ -1,6 +1,14 @@
 # ParkingManagementSystem
 
 
+## ENV
+- Java 17
+- NodeJS 18.x.x
+- Angular 16.x.x
+- maven 
+- git
+- backend: IntelliJ IDEA
+- Frontend: VS Code
 
 ## Getting started
 
