@@ -1,11 +1,17 @@
-<main>
-  <aside>
-    <ul>
+<mat-drawer-container open="true" class="container" autosize>
+  <mat-drawer #drawer class="sidebar" mode="side">
+    <ul class="sidebar-nav">
       <li>Buildings</li>
       <li>Floors</li>
       <li>Slots</li>
       <li>Park</li>
     </ul>
-  </aside>
-  <div class="content"></div>
-</main>
+    <button class="collapse">Collapse sidebar</button>
+  </mat-drawer>
+
+  <mat-drawer-content class="content">
+    <button type="button" mat-button (click)="drawer.toggle()">
+      Toggle sidenav
+    </button>
+  </mat-drawer-content>
+</mat-drawer-container>
