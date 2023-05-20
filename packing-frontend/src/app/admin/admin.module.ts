@@ -8,4 +8,4 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   declarations: [RoutedComponent, DashboardComponent],
   imports: [CommonModule, AdminRoutingModule, MatSidenavModule],
 })
-export class AdminModule { }
+export class AdminModule {}
