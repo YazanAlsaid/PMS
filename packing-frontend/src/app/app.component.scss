@@ -13,7 +13,7 @@
       background-color: goldenrod;
     }
 
-    &-nav {
+    .nav {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -22,17 +22,22 @@
 
       > li {
         width: 100%;
-        padding: 10px;
         border-radius: 5px;
         margin-bottom: 10px;
         cursor: pointer;
         list-style-type: none;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
 
         &:hover {
           background-color: #f5f5f5;
+        }
+
+        a {
+          text-decoration: none;
+          color: inherit;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 10px;
         }
       }
     }

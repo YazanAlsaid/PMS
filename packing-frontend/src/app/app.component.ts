@@ -10,7 +10,6 @@ export class AppComponent {
 
   sideBarOpen = true;
   toogleSideBar() {
-    console.log({ this: this });
     this.sideBarOpen = !this.sideBarOpen;
   }
 }

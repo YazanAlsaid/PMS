@@ -1,22 +1,30 @@
 <app-nav [title]="title" (sideBarToogle)="toogleSideBar()"></app-nav>
 <mat-drawer-container class="container" autosize>
   <mat-drawer #drawer [opened]="sideBarOpen" class="sidebar" mode="side">
-    <ul class="sidebar-nav">
+    <ul class="nav">
       <li>
-        <mat-icon>location_city</mat-icon>
-        <span>Buildings</span>
+        <a [routerLink]="['/dashboard/building']">
+          <mat-icon>location_city</mat-icon>
+          <span>Buildings</span>
+        </a>
       </li>
       <li>
-        <mat-icon>backup_table</mat-icon>
-        <span>Floors</span>
+        <a [routerLink]="['/dashboard/floor']">
+          <mat-icon>backup_table</mat-icon>
+          <span>Floors</span>
+        </a>
       </li>
       <li>
-        <mat-icon>space_dashboard</mat-icon>
-        <span>Slots</span>
+        <a [routerLink]="['/dashboard/slot']">
+          <mat-icon>space_dashboard</mat-icon>
+          <span>Slots</span>
+        </a>
       </li>
       <li>
-        <mat-icon>local_parking</mat-icon>
-        <span>Park</span>
+        <a [routerLink]="['/dashboard/park']">
+          <mat-icon>local_parking</mat-icon>
+          <span>Park</span>
+        </a>
       </li>
     </ul>
   </mat-drawer>
