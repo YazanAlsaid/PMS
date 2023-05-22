@@ -7,8 +7,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 
-
-
 @NgModule({
   declarations: [
     NavComponent
@@ -17,7 +15,6 @@ import { MatListModule } from '@angular/material/list';
     CommonModule,
     MatToolbarModule,
     MatButtonModule,
-    MatSidenavModule,
     MatIconModule,
     MatListModule
   ], exports: [

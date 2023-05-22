@@ -5,6 +5,30 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent, pathMatch: 'full' },
+  {
+    path: 'building',
+    component: DashboardComponent,
+    pathMatch: 'full',
+    data: { title: 'Building' },
+  },
+  {
+    path: 'floor',
+    component: DashboardComponent,
+    pathMatch: 'full',
+    data: { title: 'Floor' },
+  },
+  {
+    path: 'slot',
+    component: DashboardComponent,
+    pathMatch: 'full',
+    data: { title: 'Slot' },
+  },
+  {
+    path: 'park',
+    component: DashboardComponent,
+    pathMatch: 'full',
+    data: { title: 'Park' },
+  },
 ];
 
 @NgModule({

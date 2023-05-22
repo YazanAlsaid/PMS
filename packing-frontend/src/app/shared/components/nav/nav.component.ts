@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -18,7 +18,11 @@ export class NavComponent {
       shareReplay()
     );
 
-  public openNav() {
-    console.log('first');
+  @Output() sideBarToogle = new EventEmitter();
+
+  @Input() title = '';
+
+  toogleSideBar() {
+    this.sideBarToogle.emit();
   }
 }
