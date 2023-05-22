@@ -1,16 +1,24 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RoutedComponent, UserRoutingModule } from './user-routing.module';
+import {SharedModule} from "../shared/shared.module";
+import {MatCardModule} from "@angular/material/card";
+import {MatGridListModule} from "@angular/material/grid-list";
+import {MatIconModule} from "@angular/material/icon";
 
 
 
 @NgModule({
   declarations: [
-    RoutedComponent
+    RoutedComponent,
   ],
-  imports: [
-    CommonModule,
-    UserRoutingModule
-  ]
+    imports: [
+        CommonModule,
+        UserRoutingModule,
+        SharedModule,
+        MatCardModule,
+        MatGridListModule,
+        MatIconModule
+    ]
 })
 export class UserModule { }
