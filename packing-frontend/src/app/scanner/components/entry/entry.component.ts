@@ -6,28 +6,35 @@ import { Component } from '@angular/core';
   styleUrls: ['./entry.component.scss'],
 })
 export class EntryComponent {
-  checkNFCSupport() {
-    if (!('NDEFReader' in window)) {
-      return console.log('Web NFC not supported');
-    }
-  }
+  NFCErrored: boolean | undefined;
+  error: string = '';
 
   async startScan() {
-    this.checkNFCSupport();
+    if (!('NDEFReader' in window)) {
+      const error = 'Web NFC not supported';
+      this.error = error;
+      this.NFCErrored = true;
+      return console.log(error);
+    }
 
     try {
       const ndef = new NDEFReader();
       await ndef.scan();
 
       ndef.addEventListener('readingerror', () => {
-        console.log("Couldn't read from NFC tag, try another one");
+        const error = "Couldn't read from NFC tag, try another one";
+        this.error = error;
+        this.NFCErrored = true;
+        console.log(error);
       });
 
       ndef.addEventListener('reading', (e) => {
         console.log({ e });
       });
     } catch (error) {
-      console.log('Error occured!');
+      this.error = 'Error occured!';
+      console.log(error);
+      this.NFCErrored = true;
       console.log({ error });
     }
   }
