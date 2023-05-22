@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 public class TimeStampDetails {
     @CreationTimestamp
     private LocalDateTime createDateTime;
+    @UpdateTimestamp
+    private LocalDateTime updateDateTime;
 
     public LocalDateTime getCreateDateTime() {
         return createDateTime;
@@ -26,6 +28,4 @@ public class TimeStampDetails {
         this.updateDateTime = updateDateTime;
     }
 
-    @UpdateTimestamp
-    private LocalDateTime updateDateTime;
 }
