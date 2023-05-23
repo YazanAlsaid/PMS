@@ -3,8 +3,13 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  title = 'PackingManagementSystem';
+  title = 'Park Management System';
+
+  sideBarOpen = true;
+  toogleSideBar() {
+    this.sideBarOpen = !this.sideBarOpen;
+  }
 }
