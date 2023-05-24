@@ -1,15 +1,21 @@
 package edu.fra.uas.parking.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 import java.time.LocalDateTime;
+
 @Embeddable
 public class TimeStampDetails {
-    @CreationTimestamp
+
+    @Column(name = "created_at")
     private LocalDateTime createDateTime;
     @UpdateTimestamp
+    private LocalDateTime updateDateTime;
+
+    @Column(name = "updated_at")
     private LocalDateTime updateDateTime;
 
     public LocalDateTime getCreateDateTime() {
@@ -28,4 +34,13 @@ public class TimeStampDetails {
         this.updateDateTime = updateDateTime;
     }
 
+    @PrePersist
+    public void prePersist() {
+        createDateTime = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updateDateTime = LocalDateTime.now();
+    }
 }
