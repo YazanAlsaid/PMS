@@ -7,4 +7,10 @@ import { Component } from '@angular/core';
 })
 export class AdminAppComponent {
 
+  title = 'Park Management System';
+
+  sideBarOpen = true;
+  toogleSideBar() {
+    this.sideBarOpen = !this.sideBarOpen;
+  }
 }
