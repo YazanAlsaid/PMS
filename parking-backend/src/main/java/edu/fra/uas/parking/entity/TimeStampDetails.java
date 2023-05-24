@@ -12,8 +12,6 @@ public class TimeStampDetails {
 
     @Column(name = "created_at")
     private LocalDateTime createDateTime;
-    @UpdateTimestamp
-    private LocalDateTime updateDateTime;
 
     @Column(name = "updated_at")
     private LocalDateTime updateDateTime;
