@@ -11,11 +11,7 @@ import javax.validation.constraints.Size;
 
 
 @Entity
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class User extends BaseEntity{
     @Column(name = "firstName", nullable = false)
     @Size(min = 3, max = 50)
     private String firstName;
@@ -37,9 +33,6 @@ public class User {
     private List<Reservation> reservations = new ArrayList<>();
     @OneToOne(mappedBy = "user",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     private NfcCard nfcCard;
-    @Embedded
-    private TimeStampDetails timeStampDetails;
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -55,11 +48,6 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
-    public Long getId() {
-        return id;
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -85,7 +73,6 @@ public class User {
                 Objects.equals(email, user.email) &&
                 Objects.equals(password, user.password);
     }
-
     @Override
     public int hashCode() {
         return Objects.hash(firstName, lastName, email, password);
@@ -94,11 +81,13 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
+                "firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", roles=" + roles +
+                ", reservations=" + reservations +
+                ", nfcCard=" + nfcCard +
                 '}';
     }
 }

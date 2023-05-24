@@ -9,10 +9,7 @@ import java.util.Objects;
 
 
 @Entity
-public class NfcCard {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class NfcCard extends BaseEntity{
     private LocalDateTime nfcFrom;
     private LocalDateTime nfcTo;
     @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
@@ -20,12 +17,6 @@ public class NfcCard {
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
-    @Embedded
-    private TimeStampDetails timeStampDetails;
-
-    public Long getId() {
-        return id;
-    }
 
     public LocalDateTime getNfcFrom() {
         return nfcFrom;
