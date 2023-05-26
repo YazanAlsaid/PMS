@@ -2,12 +2,17 @@ package edu.fra.uas.parking.entity;
 
 import jakarta.persistence.*;
 
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Building extends BaseEntity {
+
+    @Column(name = "Name",nullable = false)
+    @Size(min = 3,max = 50)
+    private String name;
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
     @JoinColumn(name = "park_id",nullable = false)
     private Park park;
@@ -17,8 +22,12 @@ public class Building extends BaseEntity {
         this.park = park;
         this.floors = floors;
     }
-    public Building() {
-
+    public Building() {}
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
     public Park getPark() {
         return park;
@@ -29,7 +38,6 @@ public class Building extends BaseEntity {
     public List<Floor> getFloors() {
         return floors;
     }
-
     public void setFloors(List<Floor> floors) {
         this.floors = floors;
     }
