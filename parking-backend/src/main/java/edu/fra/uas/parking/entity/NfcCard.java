@@ -2,6 +2,7 @@ package edu.fra.uas.parking.entity;
 
 import jakarta.persistence.*;
 
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +10,10 @@ import java.util.Objects;
 
 
 @Entity
-public class NfcCard {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class NfcCard extends BaseEntity{
+    @Column(name = "Name",nullable = false)
+    @Size(min = 3,max = 50)
+    private String name;
     private LocalDateTime nfcFrom;
     private LocalDateTime nfcTo;
     @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
@@ -20,11 +21,29 @@ public class NfcCard {
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
-    @Embedded
-    private TimeStampDetails timeStampDetails;
 
-    public Long getId() {
-        return id;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public LocalDateTime getNfcFrom() {
