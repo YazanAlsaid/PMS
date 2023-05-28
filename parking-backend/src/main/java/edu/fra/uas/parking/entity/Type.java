@@ -2,19 +2,18 @@ package edu.fra.uas.parking.entity;
 
 import jakarta.persistence.*;
 
-
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Role extends BaseEntity {
+public class Type extends BaseEntity{
     @Column(name = "Name",nullable = false)
     @Size(min = 3,max = 50)
     private String name;
-    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
-    private List<User> users = new ArrayList<>();
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "slot_id",nullable = false)
+    private Slot slot;
+
     public String getName() {
         return name;
     }
@@ -22,30 +21,27 @@ public class Role extends BaseEntity {
         this.name = name;
     }
 
-    public List<User> getUsers() {
-        return users;
+    public Slot getSlot() {
+        return slot;
     }
-
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setSlot(Slot slot) {
+        this.slot = slot;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Role role = (Role) o;
-        return Objects.equals(users, role.users);
+        Type type = (Type) o;
+        return Objects.equals(slot, type.slot);
     }
-
     @Override
     public int hashCode() {
-        return Objects.hash(users);
+        return Objects.hash(slot);
     }
     @Override
     public String toString() {
-        return "Role{" +
-                "users=" + users +
+        return "Type{" +
+                "slot=" + slot +
                 '}';
     }
 }
