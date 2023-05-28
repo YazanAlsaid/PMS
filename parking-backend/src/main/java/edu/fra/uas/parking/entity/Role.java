@@ -1,24 +1,43 @@
 package edu.fra.uas.parking.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Role extends BaseEntity {
-    @Column(name = "Name",nullable = false)
-    @Size(min = 3,max = 50)
+public class Role extends BaseEntity implements Serializable {
+    @Column(name = "Name", nullable = false)
+    @Size(min = 3, max = 50)
     private String name;
-    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     private List<User> users = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JoinTable(name = "privilege_role",
+            joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
+    private List<Privilege> privileges = new ArrayList<>();
+
+    public Role() {
+    }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUsers(User user) {
+        this.users.add(user);
+    }
+
+    public Role(String name) {
         this.name = name;
     }
 
@@ -26,22 +45,24 @@ public class Role extends BaseEntity {
         return users;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public List<Privilege> getPrivileges() {
+        return privileges;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Role role = (Role) o;
-        return Objects.equals(users, role.users);
+        return name.equals(role.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(users);
+        return Objects.hash(super.hashCode(), name);
     }
+
     @Override
     public String toString() {
         return "Role{" +
