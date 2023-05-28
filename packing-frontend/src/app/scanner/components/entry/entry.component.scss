@@ -1,0 +1,29 @@
+.scanner-icon {
+  --size: 200px;
+  font-size: var(--size);
+  height: var(--size);
+  width: var(--size);
+}
+
+.pulse-color {
+  animation-name: color;
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate-reverse;
+  animation-timing-function: ease;
+}
+
+@keyframes color {
+  to {
+    color: rgb(199, 199, 199);
+  }
+}
+
+.scanning-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 400px;
+  margin-inline: auto;
+}

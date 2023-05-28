@@ -6,8 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./entry.component.scss'],
 })
 export class EntryComponent {
-  NFCErrored: boolean | undefined;
+  NFCErrored: boolean = false;
   error: string = '';
+  abortController = new AbortController();
+  isScanning: boolean = false;
 
   async startScan() {
     if (!('NDEFReader' in window)) {
@@ -19,7 +21,9 @@ export class EntryComponent {
 
     try {
       const ndef = new NDEFReader();
-      await ndef.scan();
+      const signal = this.abortController.signal;
+
+      await ndef.scan({ signal });
 
       ndef.addEventListener('readingerror', () => {
         const error = "Couldn't read from NFC tag, try another one";
@@ -31,11 +35,19 @@ export class EntryComponent {
       ndef.addEventListener('reading', (e) => {
         console.log({ e });
       });
+
+      this.isScanning = true;
     } catch (error) {
+      this.abortController.abort();
       this.error = 'Error occured!';
       console.log(error);
       this.NFCErrored = true;
       console.log({ error });
     }
+  }
+
+  stopScan() {
+    this.abortController.abort();
+    this.isScanning = false;
   }
 }

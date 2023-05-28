@@ -1,6 +1,26 @@
-<p>entry works!</p>
-
-<button disabled="{{ NFCErrored }}" (click)="startScan()">
+<!-- *ngIf="isScanning" -->
+<div class="scanning-container">
+  <mat-icon class="scanner-icon pulse-color" *ngIf="!isScanning" color="primary"
+    >sensors</mat-icon
+  >
+  <h2>Scan card</h2>
+  <p>Hold your card against the sesor to scan</p>
+  <button
+    mat-raised-button
+    disabled="{{ !isScanning }}"
+    color="warn"
+    (click)="stopScan()"
+  >
+    Stop NFC Scan
+  </button>
+</div>
+<button
+  mat-raised-button
+  *ngIf="!isScanning"
+  disabled="{{ NFCErrored }}"
+  color="primary"
+  (click)="startScan()"
+>
   Start NFC Scan
 </button>
 
