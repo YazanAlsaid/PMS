@@ -10,7 +10,7 @@ import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
   declarations: [
-    RoutedComponent,
+    RoutedComponent
   ],
     imports: [
         CommonModule,
@@ -18,7 +18,7 @@ import {MatIconModule} from "@angular/material/icon";
         SharedModule,
         MatCardModule,
         MatGridListModule,
-        MatIconModule
+        MatIconModule,
     ]
 })
 export class UserModule { }

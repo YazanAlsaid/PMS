@@ -1,1 +1,3 @@
-<p>admin-app works!</p>
+<app-nav [title]="title" (sideBarToogle)="toggleSideBar()"></app-nav>
+
+<app-sidebar [routeItems]="routeItems" [sideBarOpen]="sideBarOpen"></app-sidebar>

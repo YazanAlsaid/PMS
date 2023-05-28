@@ -8,8 +8,4 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'Park Management System';
 
-  sideBarOpen = true;
-  toogleSideBar() {
-    this.sideBarOpen = !this.sideBarOpen;
-  }
 }
