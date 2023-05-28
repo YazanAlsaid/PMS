@@ -6,10 +6,10 @@ export class Nfc {
   public name : string;
   public nfcFrom : Nfc;
   public nfcTo : Nfc;
-  public reservations : Reservation;
+  public reservations : Reservation[];
   public user : User;
 
-  constructor(id: number, name: string, nfcFrom: Nfc, nfcTo: Nfc, reservations: Reservation, user: User) {
+  constructor(id: number, name: string, nfcFrom: Nfc, nfcTo: Nfc, reservations: Reservation[], user: User) {
     this.id = id;
     this.name = name;
     this.nfcFrom = nfcFrom;

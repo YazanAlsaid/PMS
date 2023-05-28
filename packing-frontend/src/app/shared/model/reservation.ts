@@ -11,12 +11,13 @@ export class Reservation {
   public nfc : Nfc;
   public slot : Slot;
 
-  constructor(id,reservationFrom,reservationTo,user,nfc,slot) {
-    this.nfc=nfc;
-    this.id=id;
-    this.slot=slot;
-    this.user=user;
-    this.reservationFrom=reservationFrom;
-    this.reservationTo=reservationTo;
+
+  constructor(id: number, reservationFrom: Date, reservationTo: Date, user: User, nfc: Nfc, slot: Slot) {
+    this.id = id;
+    this.reservationFrom = reservationFrom;
+    this.reservationTo = reservationTo;
+    this.user = user;
+    this.nfc = nfc;
+    this.slot = slot;
   }
 }

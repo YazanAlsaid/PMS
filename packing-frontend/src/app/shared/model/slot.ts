@@ -6,15 +6,15 @@ export class Slot {
   public id : number;
   public name : string;
   public floor : Floor;
-  public types : Type;
-  public reservations : Reservation;
+  public types : Type[];
+  public reservations : Reservation[];
 
-  constructor(id,name,floor,types,reservations) {
+
+  constructor(id: number, name: string, floor: Floor, types: Type[], reservations: Reservation[]) {
     this.id = id;
     this.name = name;
     this.floor = floor;
-    this.types  =types;
+    this.types = types;
     this.reservations = reservations;
   }
-
 }

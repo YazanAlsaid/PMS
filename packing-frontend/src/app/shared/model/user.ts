@@ -8,12 +8,12 @@ export class User {
   public lastName : string;
   public email : string;
   public password : string;
-  public roles : Role;
-  public reservations : Reservation;
+  public roles : Role[];
+  public reservations : Reservation[];
   public nfc : Nfc;
 
 
-  constructor(id: number, firstName: string, lastName: string, email: string, password: string, roles: Role, reservations: Reservation, nfc: Nfc) {
+  constructor(id: number, firstName: string, lastName: string, email: string, password: string, roles: Role[], reservations: Reservation[], nfc: Nfc) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;

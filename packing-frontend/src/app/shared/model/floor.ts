@@ -5,12 +5,13 @@ export class Floor {
   public id : number;
   public name : string;
   public building : Building;
-  public slots : Slot;
+  public slots : Slot[];
 
-  constructor(id,name,building,slots) {
-  this.id = id;
-  this.name = name;
-  this.building  =building;
-  this.slots = slots;
+
+  constructor(id: number, name: string, building: Building, slots: Slot[]) {
+    this.id = id;
+    this.name = name;
+    this.building = building;
+    this.slots = slots;
   }
 }
