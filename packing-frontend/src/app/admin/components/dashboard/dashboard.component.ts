@@ -34,6 +34,15 @@ export class DashboardComponent {
   ngOnInit() {
     this.sub = this.activatedRoute.data.subscribe((v) => (this.data = v));
   }
+
+  edit() {
+    console.log('editing item ' + 'dvbxj');
+  }
+
+  deleteItem() {
+    console.log('deleting item ' + ' dptoj');
+  }
+
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
