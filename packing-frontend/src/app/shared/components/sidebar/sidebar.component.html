@@ -1,0 +1,15 @@
+<mat-drawer-container class="container-fluid sidenav-container" autosize>
+  <mat-drawer [opened]="sideBarOpen" class="sidebar" mode="side">
+    <ul class="nav">
+      <li *ngFor="let item of routeItems">
+        <a [routerLink]="[item.link]">
+          <mat-icon>{{item.icon}}</mat-icon>
+          <span>{{item.name}}</span>
+        </a>
+      </li>
+    </ul>
+  </mat-drawer>
+  <mat-drawer-content class="content">
+    <router-outlet></router-outlet>
+  </mat-drawer-content>
+</mat-drawer-container>
