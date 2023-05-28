@@ -10,6 +10,11 @@ export class EntryComponent {
   error: string = '';
   abortController = new AbortController();
   isScanning: boolean = false;
+  readCards: {
+    serialNumber: string;
+    data: DataView | undefined;
+  }[] = [];
+  displayedColumns: string[] = ['serialNumber', 'data'];
 
   async startScan() {
     if (!('NDEFReader' in window)) {
@@ -25,16 +30,25 @@ export class EntryComponent {
 
       await ndef.scan({ signal });
 
-      ndef.addEventListener('readingerror', () => {
-        const error = "Couldn't read from NFC tag, try another one";
-        this.error = error;
-        this.NFCErrored = true;
-        console.log(error);
-      });
+      ndef.onreading = (event) => {
+        console.log(event);
+        console.log(event.serialNumber);
+        console.log(event.message.records[0].data);
 
-      ndef.addEventListener('reading', (e) => {
-        console.log({ e });
-      });
+        this.readCards.push({
+          serialNumber: event.serialNumber,
+          data: event.message.records[0].data,
+        });
+        // this.stopScan();
+      };
+
+      ndef.onreadingerror = (error) => {
+        console.log(error);
+        const errorMsg = "Couldn't read from NFC tag, try another one";
+        this.error = errorMsg;
+        this.NFCErrored = true;
+        // this.stopScan();
+      };
 
       this.isScanning = true;
     } catch (error) {
