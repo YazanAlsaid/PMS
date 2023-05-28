@@ -1,15 +1,13 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Reservation {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Reservation extends BaseEntity {
     @Column(name = "reservationFrom", nullable = false)
     private LocalDateTime reservationFrom;
     @Column(name = "reservationTo", nullable = false)
@@ -20,13 +18,10 @@ public class Reservation {
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
     @JoinColumn(name = "nfcCard_id")
     private NfcCard nfcCard;
-    @Embedded
-    private TimeStampDetails timeStampDetails;
 
-    public Long getId() {
-        return id;
-    }
-
+    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @JoinColumn(name = "slot_id",nullable = false)
+    private Slot slot;
     public LocalDateTime getReservationFrom() {
         return reservationFrom;
     }
