@@ -6,5 +6,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./auth-app.component.scss']
 })
 export class AuthAppComponent {
+  title = 'Park Management System';
 
+  sideBarOpen = true;
+  toogleSideBar() {
+    this.sideBarOpen = !this.sideBarOpen;
+  }
 }
