@@ -41,7 +41,7 @@ export class DashboardComponent {
   }
 
   deleteItem(e: any) {
-    this.dataSource.filter((item) => item.id !== e.id);
+    this.dataSource = this.dataSource.filter((item) => item.id !== e.id);
     console.log('deleting item ' + ' dptoj');
     console.log({ e });
   }
