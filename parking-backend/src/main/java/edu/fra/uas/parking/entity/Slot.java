@@ -1,6 +1,6 @@
 package edu.fra.uas.parking.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
