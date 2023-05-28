@@ -1,8 +1,6 @@
 package edu.fra.uas.parking.entity;
 
-import com.fasterxml.jackson.databind.ser.Serializers;
-import jakarta.persistence.*;
-
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
