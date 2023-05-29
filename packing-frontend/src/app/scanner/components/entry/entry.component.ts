@@ -16,7 +16,7 @@ export class EntryComponent {
   }[] = [
     {
       serialNumber: '123456789',
-      data: ' ',
+      data: '',
     },
   ];
   displayedColumns: string[] = ['serialNumber', 'data'];
@@ -49,10 +49,10 @@ export class EntryComponent {
       };
 
       ndef.onreadingerror = (error) => {
-        console.log(error);
+        console.log({ error });
         const errorMsg = "Couldn't read from NFC tag, try another one";
         this.error = errorMsg;
-        this.NFCErrored = true;
+        // this.NFCErrored = true;
         // this.stopScan();
       };
 
