@@ -7,12 +7,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { RouterLink, RouterOutlet } from "@angular/router";
-<<<<<<< HEAD
 import { MatSidenavModule } from '@angular/material/sidenav';
-=======
 import { AddReservationComponent } from './components/add-reservation/add-reservation.component';
 import {MatDialogModule} from "@angular/material/dialog";
->>>>>>> 6cdcdeaabef2b17a0743efd019e241691bf9b643
 
 @NgModule({
   declarations: [
