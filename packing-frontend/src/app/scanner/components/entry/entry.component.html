@@ -1,6 +1,5 @@
-<!-- *ngIf="isScanning" -->
-<div class="scanning-container">
-  <mat-icon class="scanner-icon pulse-color" *ngIf="!isScanning" color="primary"
+<div class="scanning-container" *ngIf="isScanning">
+  <mat-icon class="scanner-icon pulse-color" *ngIf="isScanning" color="primary"
     >sensors</mat-icon
   >
   <h2>Scan card</h2>
@@ -14,17 +13,24 @@
     Stop NFC Scan
   </button>
 </div>
-<button
-  mat-raised-button
-  *ngIf="!isScanning"
-  disabled="{{ NFCErrored }}"
-  color="primary"
-  (click)="startScan()"
->
-  Start NFC Scan
-</button>
 
-<p *ngIf="NFCErrored">{{ error }}</p>
+<div class="scanning-container" *ngIf="!isScanning">
+  <mat-icon class="scanner-icon" *ngIf="!isScanning" color="disabled"
+    >sensors</mat-icon
+  >
+  <h2>Scan card</h2>
+  <p>Press the button to start scanning</p>
+  <button
+    mat-raised-button
+    *ngIf="!isScanning"
+    disabled="{{ NFCErrored }}"
+    color="primary"
+    (click)="startScan()"
+  >
+    Start NFC Scan
+  </button>
+  <p *ngIf="NFCErrored">{{ error }}</p>
+</div>
 
 <!-- table for read cards with serialnumbers and data -->
 <table mat-table [dataSource]="readCards" class="mat-elevation-z8">

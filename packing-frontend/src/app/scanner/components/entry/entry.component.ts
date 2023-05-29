@@ -12,8 +12,13 @@ export class EntryComponent {
   isScanning: boolean = false;
   readCards: {
     serialNumber: string;
-    data: DataView | undefined;
-  }[] = [];
+    data: string;
+  }[] = [
+    {
+      serialNumber: '123456789',
+      data: ' ',
+    },
+  ];
   displayedColumns: string[] = ['serialNumber', 'data'];
 
   async startScan() {
@@ -33,12 +38,13 @@ export class EntryComponent {
       ndef.onreading = (event) => {
         console.log(event);
         console.log(event.serialNumber);
-        console.log(event.message.records[0].data);
 
-        this.readCards.push({
-          serialNumber: event.serialNumber,
-          data: event.message.records[0].data,
-        });
+        this.readCards = [
+          ...this.readCards,
+          { serialNumber: event.serialNumber, data: ' ' },
+        ];
+
+        console.log({ readCards: this.readCards });
         // this.stopScan();
       };
 
@@ -52,7 +58,7 @@ export class EntryComponent {
 
       this.isScanning = true;
     } catch (error) {
-      this.abortController.abort();
+      this.startScan();
       this.error = 'Error occured!';
       console.log(error);
       this.NFCErrored = true;
@@ -62,6 +68,7 @@ export class EntryComponent {
 
   stopScan() {
     this.abortController.abort();
+    this.abortController = new AbortController();
     this.isScanning = false;
   }
 }
