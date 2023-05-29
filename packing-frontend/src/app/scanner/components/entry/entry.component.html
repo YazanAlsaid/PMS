@@ -1,0 +1,7 @@
+<p>entry works!</p>
+
+<button disabled="{{ NFCErrored }}" (click)="startScan()">
+  Start NFC Scan
+</button>
+
+<p *ngIf="NFCErrored">{{ error }}</p>
