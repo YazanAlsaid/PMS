@@ -2,17 +2,10 @@ package edu.fra.uas.parking.controller;
 
 import edu.fra.uas.parking.entity.Building;
 import edu.fra.uas.parking.repository.BuildingRepository;
-import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -32,7 +25,7 @@ public class BuildingController implements BaseController<Building> {
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Object> getById(@PathParam("id") Long id) {
+    public ResponseEntity<Object> getById(@RequestParam("id") Long id) {
         return new ResponseEntity<>(this.buildingRepository.findById(id), HttpStatus.OK);
     }
 
@@ -45,7 +38,7 @@ public class BuildingController implements BaseController<Building> {
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Object> updateById(@PathParam("id") Long id, Building building) {
+    public ResponseEntity<Object> updateById(@RequestParam("id") Long id, Building building) {
         Building buildingUpdated = this.buildingRepository.findById(id).get();
         if (buildingUpdated == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
