@@ -1,9 +1,6 @@
 package edu.fra.uas.parking.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import javax.persistence.*;
 
 import java.time.LocalDateTime;
 

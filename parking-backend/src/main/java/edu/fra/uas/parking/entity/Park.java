@@ -1,9 +1,6 @@
 package edu.fra.uas.parking.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import javax.persistence.*;
 
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
