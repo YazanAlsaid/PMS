@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {Building} from "../model/building";
 
 
 @Injectable({
@@ -24,8 +25,8 @@ export class HttpService {
     }
 
     /**
-     * 
-     * @param entity 
+     *
+     * @param entity
      * @returns Observable<any[]>
      * Author: Kaddour Alnaasan
      */
@@ -34,9 +35,9 @@ export class HttpService {
     }
 
     /**
-     * 
-     * @param entity 
-     * @param id 
+     *
+     * @param entity
+     * @param id
      * @returns Observable<any>
      * @Author: Kaddour Alnaasan
      */
@@ -45,7 +46,7 @@ export class HttpService {
     }
 
     /**
-     * 
+     *
      * @param entity
      * @param obj
      * @returns Observable<any>
@@ -56,10 +57,10 @@ export class HttpService {
     }
 
     /**
-     * 
-     * @param entity 
-     * @param id 
-     * @param obj 
+     *
+     * @param entity
+     * @param id
+     * @param obj
      * @returns Observable<any>
      * @author: Kaddour Alnaasan
      */
@@ -68,9 +69,9 @@ export class HttpService {
     }
 
     /**
-     * 
-     * @param entity 
-     * @param id 
+     *
+     * @param entity
+     * @param id
      * @returns Observable<any>
      * @author: Kaddour Alnaasan
      */
