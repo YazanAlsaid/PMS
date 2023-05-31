@@ -13,7 +13,8 @@ const routes: Routes = [
       {path:'buildings',component:BuildingComponent,pathMatch: 'full'},
       {path:'floors',component:FloorsComponent,pathMatch: 'full'},
       {path:'slots',component:SlotComponent,pathMatch: 'full'},
-      {path:'parks',component:ParksComponent,pathMatch: 'full'}
+      {path:'parks',component:ParksComponent,pathMatch: 'full'},
+      {path:'', redirectTo:'/user/dashboard', pathMatch: 'full'},
     ]
   },
 ];
