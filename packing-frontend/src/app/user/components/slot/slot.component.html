@@ -1,15 +1,18 @@
-<h2 style="text-align: center">Total Green Items: {{ getGreenCount() }}</h2>
-<mat-grid-list gutterSize="10px" cols="4" rowHeight="180px" class="mt-5">
-  <ng-container *ngIf="slots.length > 0; else noItemsTemplate">
-    <mat-grid-tile *ngFor="let item of slots; let i = index">
-      <div class="card slot-height" [style.background]="item.color">
-        <h5 class="card-title text-center">{{ 'Slot ' + (i+1) }}</h5>
-        <p class="card-text text-center">{{item.name_tybe}}</p>
-        <div><mat-icon class="car-icon"> directions_car</mat-icon></div>
-      </div>
-    </mat-grid-tile>
-  </ng-container>
-  <ng-template #noItemsTemplate>
-    <h2 class="card-title text-center">No Slots to display.</h2>
-  </ng-template>
+<mat-grid-list cols="4" rowHeight="200px">
+  <mat-grid-tile *ngFor="let parking of parkings">
+    <mat-card class="card card-green mat-elevation-z8" [class.reserved-morning]="isReservedMorning(parking.reservations[0])" [class.reserved-afternoon]="isReservedAfternoon(parking.reservations[0])">
+      <mat-card-header class="card-header">
+        <div class="header-element">
+          <mat-icon class="header-icon">local_parking</mat-icon>
+        </div>
+        <div class="header-element">
+          <mat-card-title>{{ parking.name }}</mat-card-title>
+        </div>
+        <div class="header-element">
+          <mat-card-subtitle>{{ parking.type }}</mat-card-subtitle>
+        </div>
+      </mat-card-header>
+    </mat-card>
+  </mat-grid-tile>
 </mat-grid-list>
+

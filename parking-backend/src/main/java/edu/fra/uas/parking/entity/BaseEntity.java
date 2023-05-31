@@ -1,23 +1,33 @@
 package edu.fra.uas.parking.entity;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @MappedSuperclass
 public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Embedded
-    private TimeStampDetails timeStampDetails;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
 
     public Long getId() {
         return id;
     }
-    public TimeStampDetails getTimeStampDetails() {
-        return timeStampDetails;
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setTimeStampDetails(TimeStampDetails timeStampDetails) {
-        this.timeStampDetails = timeStampDetails;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
+
 }

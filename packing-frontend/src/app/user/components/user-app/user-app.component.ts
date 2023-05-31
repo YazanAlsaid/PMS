@@ -13,11 +13,11 @@ export class UserAppComponent implements OnInit {
   public sideBarOpen: boolean = true;
 
   ngOnInit() : void {
-    this.routeItems.push(new RouteItem("Dashboard", "/home/dashboard", "dashboard"));
-    this.routeItems.push(new RouteItem("Parks", "/home/buildings", "location_city"));
-    this.routeItems.push(new RouteItem("Buildings", "/home/buildings", "location_city"));
-    this.routeItems.push(new RouteItem("Floors", "/home/buildings", "location_city"));
-    this.routeItems.push(new RouteItem("Slots", "/home/slots", "space_dashboard"));
+    this.routeItems.push(new RouteItem("Dashboard", "/user/dashboard", "dashboard"));
+    this.routeItems.push(new RouteItem("Parks", "/user/parks", "location_city"));
+    this.routeItems.push(new RouteItem("Buildings", "/user/buildings", "location_city"));
+    this.routeItems.push(new RouteItem("Floors", "/user/floors", "location_city"));
+    this.routeItems.push(new RouteItem("Slots", "/user/slots", "space_dashboard"));
   }
   toggleSideBar() {
     this.sideBarOpen = !this.sideBarOpen;
