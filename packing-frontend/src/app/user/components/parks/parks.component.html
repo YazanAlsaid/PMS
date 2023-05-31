@@ -1,0 +1,13 @@
+<mat-grid-list gutterSize="10px" cols="3" rowHeight="150px" class="mt-5">
+  <ng-container *ngIf="tiles.length > 0; else noItemsTemplate">
+    <mat-grid-tile *ngFor="let item of tiles">
+      <div class="card">
+        <h5 class="card-title text-center">{{item.text}}</h5>
+        <p class="card-text text-center"> {{item.building}}</p>
+      </div>
+    </mat-grid-tile>
+  </ng-container>
+  <ng-template #noItemsTemplate>
+    <h2 class="card-title text-center">No Buildings to display.</h2>
+  </ng-template>
+</mat-grid-list>
