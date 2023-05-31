@@ -1,12 +1,23 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
-
-export interface Slots {
-  color: string;
-  cols: number;
-  rows: number;
-  name_tybe: string;
+export interface Reservation {
+  id: number;
+  parkingName: string;
+  building: string;
+  floor: string;
+  slotNumber: string;
+  date: string;
+  time: string;
+  parkingId: number;
 }
+
+export interface Parking {
+  id: number;
+  name: string;
+  type: string;
+  reservations: Reservation[];
+}
+
 @Component({
   selector: 'app-slot',
   templateUrl: './slot.component.html',
@@ -14,22 +25,43 @@ export interface Slots {
 })
 
 
-export class SlotComponent {
+export class SlotComponent implements OnInit {
+  parkings: Parking[] = [];
 
-  slots: Slots[] = [
-    {name_tybe: 'Behenderung', cols: 1, rows: 1, color: 'green'},
-    {name_tybe: 'Behenderung', cols: 2, rows: 1, color: 'green'},
-    {name_tybe: 'Behenderung', cols: 1, rows: 1, color: 'green'},
-    {name_tybe: 'Behenderung', cols: 2, rows: 1, color: 'green'},
-    {name_tybe: '   Frauen  ', cols: 1, rows: 2, color: 'green'},
-    {name_tybe: '   Frauen  ', cols: 2, rows: 2, color: 'red'},
-    {name_tybe: '   Frauen  ', cols: 1, rows: 2, color: 'red'},
-    {name_tybe: '   slot    ', cols: 2, rows: 2, color: 'red'},
-    {name_tybe: '   slot    ', cols: 1, rows: 3, color: 'red'},
-    {name_tybe: '   slot    ', cols: 2, rows: 3, color: 'red'},
-];
-  getGreenCount(): number {
-    return this.slots.filter(slot => slot.color === 'green').length;
+  ngOnInit() {
+    this.generateDummyData(24)
   }
 
+  isReservedMorning(reservation: Reservation): boolean {
+    return reservation.time === 'Morning';
+  }
+
+  isReservedAfternoon(reservation: Reservation): boolean {
+    return (reservation.time === 'Afternoon');
+  }
+
+  generateDummyData(count: number) {
+    for (let i = 1; i <= count; i++) {
+      const reservation = {
+        id: i,
+        parkingName: `Parking ${i}`,
+        building: `Building ${i}`,
+        floor: `Floor ${i}`,
+        slotNumber: `Slot ${i}`,
+        date: "Wed May 30 2023 03:38:35 GMT+0200",
+        time: (i % 3 == 0) ? 'Morning' : 'Afternoon',
+        parkingId: i
+      };
+      let parking: Parking = {
+        id: i,
+        name: `Parkplatz ${i}`,
+        type: (i % 4 == 0) ? 'Frauen' : 'normal',
+        reservations: []
+      }
+      parking.reservations.push(reservation);
+      this.parkings.push(parking);
+
+    }
+    console.log(this.parkings);
+  }
 }

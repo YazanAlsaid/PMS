@@ -1,69 +1,52 @@
-.card {
-  margin: 0;
-  padding: 0;
-  width: 300px;
-  background-color: #f0f0f0;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  transition: 0.3s;
-  padding: 20px;
-  border-color: #efebeb;
-}
+
 .card:hover {
   transform: translateY(-9px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
-.card-content {
-  padding: 20px;
-}
-.card-title {
-  font-size: 20px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-  padding: 5px;
-  color: #fff;
-  background-color: #4343ff;
 
-}
-.card-text {
-  font-size: 16px;
-  color: #fff;
-}
-
-mat-grid-tile{
-  min-height: 180px;
-  max-height: 180px;
-  margin: 0;
-  padding: 0;
-  max-width: 300px !important;
-}
-
-ng-container{
-  padding: 0;
-  margin: 0 ;
-}
 .slot-height {
   min-height: 160px;
   max-height: 160px;
 }
 
-.hour-height{
-  min-height: 20px;
-  max-height: 20px;
-  max-width: 100%;
-  position: relative;
+.card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
 }
 
-.hour-color{
-  background-color: red;
+.header-element {
+  margin: 5px;
 }
 
-.car-icon{
-  position: relative;
-  min-height: 100px;
-  min-width: 100px;
-  font-size: 100px;
-  top: -30px;
-  left: 70px;
+.header-icon {
+  font-size: 48px;
+  width: 64px;
+  height: 64px;
+}
+
+.parking-card {
+  /* Stil für den normalen Zustand des Cards */
+  /* Hintergrundfarbe für grünen Zustand */
+  background-color: #8bc34a;
+}
+
+.red-card {
+  /* Hintergrundfarbe für roten Zustand */
+  background-color: #f44336;
+}
+
+.reserved-morning {
+  background: linear-gradient(to bottom, red 50%, transparent 50%);
+}
+
+.reserved-afternoon {
+  background: linear-gradient(to top, red 50%, transparent 50%);
+}
+
+.card-green {
+  background-color: green;
+  color: white;
 }
