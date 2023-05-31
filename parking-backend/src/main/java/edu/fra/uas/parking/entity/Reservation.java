@@ -18,7 +18,7 @@ public class Reservation extends BaseEntity {
     private NfcCard nfcCard;
 
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
-    @JoinColumn(name = "slot_id",nullable = false)
+    @JoinColumn(name = "slot_id")
     private Slot slot;
     public LocalDateTime getReservationFrom() {
         return reservationFrom;
