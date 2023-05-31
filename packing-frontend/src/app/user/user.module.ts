@@ -5,6 +5,7 @@ import {SharedModule} from "../shared/shared.module";
 import {MatCardModule} from "@angular/material/card";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {MatIconModule} from "@angular/material/icon";
+import { ParksComponent } from './components/parks/parks.component';
 
 
 
