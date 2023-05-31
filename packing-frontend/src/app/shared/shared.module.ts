@@ -9,6 +9,7 @@ import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { RouterLink, RouterOutlet } from "@angular/router";
 import { AddReservationComponent } from './components/add-reservation/add-reservation.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import {MatSidenavModule} from "@angular/material/sidenav";
 
 @NgModule({
   declarations: [
