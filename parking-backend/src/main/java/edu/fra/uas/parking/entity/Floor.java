@@ -13,7 +13,7 @@ public class Floor extends BaseEntity{
     @Size(min = 3,max = 50)
     private String name;
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
-    @JoinColumn(name = "building_id",nullable = false)
+    @JoinColumn(name = "building_id")
     private Building building;
     @OneToMany(mappedBy = "floor",cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
     private List<Slot> slots = new ArrayList<>();

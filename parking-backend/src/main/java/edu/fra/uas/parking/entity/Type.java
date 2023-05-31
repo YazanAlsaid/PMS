@@ -11,7 +11,7 @@ public class Type extends BaseEntity{
     @Size(min = 3,max = 50)
     private String name;
     @ManyToOne(cascade = CascadeType.REFRESH)
-    @JoinColumn(name = "slot_id",nullable = false)
+    @JoinColumn(name = "slot_id")
     private Slot slot;
 
     public String getName() {
