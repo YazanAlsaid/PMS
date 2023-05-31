@@ -40,6 +40,11 @@ export class AdminAppComponent implements OnInit {
       link: '/dashboard/role',
       icon: 'admin_panel_settings',
     },
+    {
+      name: 'Reservations',
+      link: '/dashboard/reservations',
+      icon: 'list_alt',
+    },
   ];
 
   ngOnInit() {}
