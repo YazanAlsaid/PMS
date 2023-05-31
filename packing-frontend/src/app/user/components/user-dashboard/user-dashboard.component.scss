@@ -1,5 +1,16 @@
-.mat-grid-tile.grid-table{
-  position: absolute;
-  height: calc(100%) !important;
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+}
 
+.sidenav-container {
+  flex: 1;
+}
+
+.content {
+  padding: 16px;
+}
+
+.reservation-card {
+  margin-bottom: 16px;
 }
