@@ -8,6 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { SharedModule } from '../shared/shared.module';
+import {MatPaginatorModule} from "@angular/material/paginator";
+import {MatCardModule} from "@angular/material/card";
 
 @NgModule({
   declarations: [RoutedComponent, DashboardComponent],
@@ -20,6 +22,8 @@ import { SharedModule } from '../shared/shared.module';
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
+    MatPaginatorModule,
+    MatCardModule,
   ],
 })
 export class AdminModule {}
