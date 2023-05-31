@@ -14,7 +14,7 @@ export class UserAppComponent implements OnInit {
 
   ngOnInit() : void {
     this.routeItems.push(new RouteItem("Dashboard", "/home/dashboard", "dashboard"));
-    this.routeItems.push(new RouteItem("Parks", "/home/buildings", "location_city"));
+    this.routeItems.push(new RouteItem("Parks", "/home/parks", "location_city"));
     this.routeItems.push(new RouteItem("Buildings", "/home/buildings", "location_city"));
     this.routeItems.push(new RouteItem("Floors", "/home/buildings", "location_city"));
     this.routeItems.push(new RouteItem("Slots", "/home/slots", "space_dashboard"));
