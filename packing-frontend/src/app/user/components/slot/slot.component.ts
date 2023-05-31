@@ -29,7 +29,7 @@ export class SlotComponent implements OnInit {
   parkings: Parking[] = [];
 
   ngOnInit() {
-    this.generateDummyData(24)
+    this.generateDummyData(12)
   }
 
   isReservedMorning(reservation: Reservation): boolean {
