@@ -4,34 +4,49 @@ import { AdminAppComponent } from './components/admin-app/admin-app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 const routes: Routes = [
-  {path: '', component: AdminAppComponent,children:[
-    { path: '', component: DashboardComponent, pathMatch: 'full' },
-    {
-      path: 'building',
-      component: DashboardComponent,
-      pathMatch: 'full',
-      data: { title: 'Building' },
-    },
-    {
-      path: 'floor',
-      component: DashboardComponent,
-      pathMatch: 'full',
-      data: { title: 'Floor' },
-    },
-    {
-      path: 'slot',
-      component: DashboardComponent,
-      pathMatch: 'full',
-      data: { title: 'Slot' },
-    },
-    {
-      path: 'park',
-      component: DashboardComponent,
-      pathMatch: 'full',
-      data: { title: 'Park' },
-    },
-  ]}
-
+  {
+    path: '',
+    component: AdminAppComponent,
+    children: [
+      { path: '', component: DashboardComponent, pathMatch: 'full' },
+      {
+        path: 'building',
+        component: DashboardComponent,
+        pathMatch: 'full',
+        data: { title: 'Building' },
+      },
+      {
+        path: 'floor',
+        component: DashboardComponent,
+        pathMatch: 'full',
+        data: { title: 'Floor' },
+      },
+      {
+        path: 'slot',
+        component: DashboardComponent,
+        pathMatch: 'full',
+        data: { title: 'Slot' },
+      },
+      {
+        path: 'park',
+        component: DashboardComponent,
+        pathMatch: 'full',
+        data: { title: 'Park' },
+      },
+      {
+        path: 'user',
+        component: DashboardComponent,
+        pathMatch: 'full',
+        data: { title: 'User' },
+      },
+      {
+        path: 'role',
+        component: DashboardComponent,
+        pathMatch: 'full',
+        data: { title: 'Role' },
+      },
+    ],
+  },
 ];
 
 @NgModule({
@@ -40,7 +55,4 @@ const routes: Routes = [
 })
 export class AdminRoutingModule {}
 
-export const RoutedComponent = [
-  AdminAppComponent,
-  DashboardComponent,
-];
+export const RoutedComponent = [AdminAppComponent, DashboardComponent];
