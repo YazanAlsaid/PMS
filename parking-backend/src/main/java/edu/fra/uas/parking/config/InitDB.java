@@ -44,7 +44,7 @@ public class InitDB {
 
         for(int i = 1 ; i <= 10 ; i++){
             Park park = new Park();
-            park.setName("park "+i);
+            park.setName("park"+i);
             this.parkRepository.save(park);
         }
         for(int i = 1 ; i <= 10 ; i++) {
@@ -59,12 +59,12 @@ public class InitDB {
         }
         for(int i = 1 ; i <= 100 ; i++) {
             Slot slot = new Slot();
-            slot.setName("slot "+i);
+            slot.setName("slot"+i);
             this.slotRepository.save(slot);
         }
         for(int i = 1;i <= 10 ; i++){
             Type type = new Type();
-            type.setName("type "+i);
+            type.setName("type"+i);
             this.typeRepository.save(type);
         }
         for(int i = 1;i <= 100 ; i++){
@@ -75,8 +75,8 @@ public class InitDB {
         }
         for(int i = 1;i <= 100 ; i++){
             User user = new User();
-            user.setFirstName("user "+i);
-            user.setLastName("user "+i);
+            user.setFirstName("user"+i);
+            user.setLastName("user"+i);
             user.setEmail("user"+i+"@user.com");
             user.setPassword("user"+i);
             this.userRepository.save(user);

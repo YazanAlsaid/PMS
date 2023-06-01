@@ -1,11 +1,17 @@
 package edu.fra.uas.parking.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
+@Table(name =  "types")
+@SQLDelete(sql = "UPDATE types SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Type extends BaseEntity{
     @Column(name = "Name",nullable = false)
     @Size(min = 3,max = 50)

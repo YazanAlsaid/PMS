@@ -1,10 +1,16 @@
 package edu.fra.uas.parking.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
+@Table(name = "reservations")
+@SQLDelete(sql = "UPDATE reservations SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Reservation extends BaseEntity {
     @Column(name = "reservationFrom", nullable = false)
     private LocalDateTime reservationFrom;
