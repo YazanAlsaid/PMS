@@ -10,9 +10,13 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { SharedModule } from '../shared/shared.module';
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatCardModule} from "@angular/material/card";
+import { AddUserDialogComponent } from './components/add-user-dialog/add-user-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @NgModule({
-  declarations: [RoutedComponent, DashboardComponent],
+  declarations: [RoutedComponent, DashboardComponent, AddUserDialogComponent],
   imports: [
     CommonModule,
     AdminRoutingModule,
@@ -24,6 +28,11 @@ import {MatCardModule} from "@angular/material/card";
     MatButtonModule,
     MatPaginatorModule,
     MatCardModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatInputModule,
+    MatButtonModule
   ],
 })
 export class AdminModule {}
