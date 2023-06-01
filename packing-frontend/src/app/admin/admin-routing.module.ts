@@ -45,6 +45,12 @@ const routes: Routes = [
         pathMatch: 'full',
         data: { title: 'Role' },
       },
+      {
+        path: 'reservations',
+        component: DashboardComponent,
+        pathMatch: 'full',
+        data: { title: 'Reservation' },
+      },
     ],
   },
 ];
