@@ -1,5 +1,8 @@
 package edu.fra.uas.parking.entity;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 import javax.validation.constraints.Size;
@@ -8,8 +11,10 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Table(name = "buildings")
+@SQLDelete(sql = "UPDATE buildings SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Building extends BaseEntity {
-
     @Column(name = "Name",nullable = false)
     @Size(min = 3,max = 50)
     private String name;

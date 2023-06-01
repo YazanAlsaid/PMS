@@ -1,6 +1,9 @@
 package edu.fra.uas.parking.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 
 import javax.validation.constraints.Size;
@@ -10,6 +13,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "privileges")
+@SQLDelete(sql = "UPDATE privileges SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class Privilege  extends BaseEntity{
     @Size(min = 3, max = 45)
     @Column(name = "name", nullable = false, unique = true)
