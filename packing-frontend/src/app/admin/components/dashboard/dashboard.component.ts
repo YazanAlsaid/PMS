@@ -4,6 +4,7 @@ import { MatPaginator } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { MatDialog } from '@angular/material/dialog';
 import { AddUserDialogComponent } from '../add-user-dialog/add-user-dialog.component';
+import {AddSlotDialogComponent} from "../add-slot-dialog/add-slot-dialog.component";
 
 export interface Row {
   id: number;
@@ -69,12 +70,25 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
   create() {
     if (this.data != null && this.data["title"] === "User") {
-      this.createUeer();
+      this.createUser();
+    } else if (this.data!= null && this.data["title"] === "Slot") {
+      this.createSlot();
     }
   }
 
-  createUeer(): void {
+  createUser(): void {
     const dialogRef = this.dialog.open(AddUserDialogComponent, {
+      width: '400px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle any actions after the dialog is closed
+      console.log('Dialog closed', result);
+    });
+  }
+
+  createSlot(){
+    const dialogRef = this.dialog.open(AddSlotDialogComponent, {
       width: '400px'
     });
 

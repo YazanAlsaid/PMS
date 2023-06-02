@@ -1,0 +1,39 @@
+<h2 mat-dialog-title>Add Slots</h2>
+<div mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Park</mat-label>
+    <mat-select [(ngModel)]="selectedParking">
+      <mat-option *ngFor="let parking of parkings" [value]="parking">{{ parking }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Building</mat-label>
+    <mat-select [(ngModel)]="selectedBuilding">
+      <mat-option *ngFor="let building of buildings" [value]="building">{{ building }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Floor</mat-label>
+    <mat-select [(ngModel)]="selectedFloor">
+      <mat-option *ngFor="let floor of floors" [value]="floor">{{ floor }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="name" placeholder="Name">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Type</mat-label>
+    <mat-select [(ngModel)]="selectedType">
+      <mat-option *ngFor="let type of types" [value]="type">{{ type }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onNoClick()">Cancel</button>
+  <button mat-button color="primary" (click)="onAddClick()">Add</button>
+</div>

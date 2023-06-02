@@ -14,9 +14,16 @@ import { AddUserDialogComponent } from './components/add-user-dialog/add-user-di
 import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import {AddSlotDialogComponent} from "./components/add-slot-dialog/add-slot-dialog.component";
+import {MatOptionModule} from "@angular/material/core";
+import {MatSelectModule} from "@angular/material/select";
 
 @NgModule({
-  declarations: [RoutedComponent, DashboardComponent, AddUserDialogComponent],
+  declarations: [
+    RoutedComponent,
+    DashboardComponent,
+    AddUserDialogComponent,
+    AddSlotDialogComponent],
   imports: [
     CommonModule,
     AdminRoutingModule,
@@ -32,7 +39,9 @@ import { MatInputModule } from '@angular/material/input';
     ReactiveFormsModule,
     MatDialogModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatOptionModule,
+    MatSelectModule
   ],
 })
 export class AdminModule {}

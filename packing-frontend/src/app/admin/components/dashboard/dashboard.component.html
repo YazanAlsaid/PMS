@@ -2,8 +2,8 @@
   <mat-card class="mb-3 shadow-sm">
     <mat-card-content>
       <h1 *ngIf="data" class="text-center h1">{{ data["title"] }}</h1>
-      <button *ngIf="data" mat-raised-button color="primary" (click)="create()">Create {{ data["title"] }}</button>
-      <button *ngIf="data" mat-raised-button color="primary" (click)="create()" class="mx-3">Export {{ data["title"] }}s</button>
+      <button *ngIf="data" mat-raised-button color="primary" (click)="create()">Add {{ data["title"] }}</button>
+      <button *ngIf="data" mat-raised-button color="primary" class="mx-3">Export {{ data["title"] }}s</button>
     </mat-card-content>
   </mat-card>
 

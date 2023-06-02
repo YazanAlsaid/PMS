@@ -1,6 +1,8 @@
 package edu.fra.uas.parking.entity;
 
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -15,6 +17,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
+@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
+@Where(clause = "deleted=false")
 public class User extends BaseEntity {
     @Column(name = "firstName", nullable = false)
     @Size(min = 3, max = 50)
