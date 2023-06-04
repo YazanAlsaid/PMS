@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 export interface Reservation {
   id: number;
@@ -7,8 +7,13 @@ export interface Reservation {
   floor: string;
   slotNumber: string;
   date: string;
-  time: string;
+  time: ReservationTime;
   parkingId: number;
+}
+
+enum ReservationTime {
+  MORNING = 'Morning',
+  AFTERNOON = 'Afternoon',
 }
 
 export interface Parking {
@@ -21,15 +26,13 @@ export interface Parking {
 @Component({
   selector: 'app-slot',
   templateUrl: './slot.component.html',
-  styleUrls: ['./slot.component.scss']
+  styleUrls: ['./slot.component.scss'],
 })
-
-
 export class SlotComponent implements OnInit {
   parkings: Parking[] = [];
 
   ngOnInit() {
-    this.generateDummyData(12)
+    this.generateDummyData(12);
   }
 
   isReservedMorning(reservation: Reservation): boolean {
@@ -37,7 +40,7 @@ export class SlotComponent implements OnInit {
   }
 
   isReservedAfternoon(reservation: Reservation): boolean {
-    return (reservation.time === 'Afternoon');
+    return reservation.time === 'Afternoon';
   }
 
   generateDummyData(count: number) {
@@ -48,20 +51,23 @@ export class SlotComponent implements OnInit {
         building: `Building ${i}`,
         floor: `Floor ${i}`,
         slotNumber: `Slot ${i}`,
-        date: "Wed May 30 2023 03:38:35 GMT+0200",
-        time: (i % 3 == 0) ? 'Morning' : 'Afternoon',
-        parkingId: i
+        date: new Date().toDateString(),
+        time: i % 3 == 0 ? ReservationTime.MORNING : ReservationTime.AFTERNOON,
+        parkingId: i,
       };
       let parking: Parking = {
         id: i,
         name: `Parkplatz ${i}`,
-        type: (i % 4 == 0) ? 'Frauen' : 'normal',
-        reservations: []
-      }
+        type: i % 4 == 0 ? 'Frauen' : 'normal',
+        reservations: [],
+      };
       parking.reservations.push(reservation);
       this.parkings.push(parking);
-
     }
     console.log(this.parkings);
+  }
+  onSelect(parking: Parking) {
+    console.log(parking);
+    // open modal with calendar
   }
 }
