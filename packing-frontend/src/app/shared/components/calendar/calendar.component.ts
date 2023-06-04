@@ -1,5 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Inject,
+  Input,
+  Optional,
+  Output,
+} from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { th } from 'date-fns/locale';
 
 @Component({
   selector: 'app-calendar',
@@ -8,20 +17,19 @@ import { Router } from '@angular/router';
 })
 export class CalendarComponent {
   viewDate: Date = new Date();
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<CalendarComponent>
+  ) {}
   dateSelected(date: any) {
-    console.log(date);
-
-    this.closeModal();
-
+    this.dialogRef.close();
     this.router.navigate([`dashboard/slot`], {
-      queryParams: { date: new Date(date.date).toISOString() },
+      queryParams: {
+        slotId: this.data.parking.id,
+        date: new Date(date.date).toISOString(),
+      },
     });
-  }
-  @Output() closeModalEvent = new EventEmitter();
-
-  closeModal() {
-    this.closeModalEvent.emit();
   }
 
   events = [
