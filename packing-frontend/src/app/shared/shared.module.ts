@@ -10,12 +10,14 @@ import { RouterLink, RouterOutlet } from "@angular/router";
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { AddReservationComponent } from './components/add-reservation/add-reservation.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import { CalendarComponent } from './components/calendar/calendar.component';
 
 @NgModule({
   declarations: [
     NavComponent,
     SidebarComponent,
-    AddReservationComponent
+    AddReservationComponent,
+    CalendarComponent
   ],
     imports: [
         CommonModule,
