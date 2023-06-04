@@ -3,8 +3,8 @@ package edu.fra.uas.parking.entity;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
+/*import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;*/
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -50,8 +50,9 @@ public class User extends BaseEntity {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        this.password = passwordEncoder.encode(password);
+//        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//        this.password = passwordEncoder.encode(password);
+        this.password = password;
     }
 
     public void setFirstName(String firstName) {
@@ -76,8 +77,9 @@ public class User extends BaseEntity {
         }
     }
     public void setHashedPassword(String password) {
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        this.password = passwordEncoder.encode(password);
+//        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+//        this.password = passwordEncoder.encode(password);
+        this.password = password;
     }
     public Boolean hasRole(String roleName) {
         for (Role role : this.roles) {
