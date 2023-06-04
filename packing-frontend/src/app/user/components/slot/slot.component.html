@@ -1,6 +1,14 @@
 <mat-grid-list cols="4" rowHeight="200px">
-  <mat-grid-tile *ngFor="let parking of parkings">
-    <mat-card class="card card-green mat-elevation-z8" [class.reserved-morning]="isReservedMorning(parking.reservations[0])" [class.reserved-afternoon]="isReservedAfternoon(parking.reservations[0])">
+  <mat-grid-tile
+    class="slot-container"
+    *ngFor="let parking of parkings"
+    (click)="onSelect(parking)"
+  >
+    <mat-card
+      class="card card-green mat-elevation-z8"
+      [class.reserved-morning]="isReservedMorning(parking.reservations[0])"
+      [class.reserved-afternoon]="isReservedAfternoon(parking.reservations[0])"
+    >
       <mat-card-header class="card-header">
         <div class="header-element">
           <mat-icon class="header-icon">local_parking</mat-icon>
@@ -15,4 +23,3 @@
     </mat-card>
   </mat-grid-tile>
 </mat-grid-list>
-
