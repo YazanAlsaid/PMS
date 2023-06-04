@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CalendarComponent } from 'src/app/shared/components/calendar/calendar.component';
 
 export interface Reservation {
   id: number;
@@ -31,16 +33,18 @@ export interface Parking {
 export class SlotComponent implements OnInit {
   parkings: Parking[] = [];
 
+  constructor(public dialog: MatDialog) {}
+
   ngOnInit() {
     this.generateDummyData(12);
   }
 
   isReservedMorning(reservation: Reservation): boolean {
-    return reservation.time === 'Morning';
+    return reservation.time === ReservationTime.MORNING;
   }
 
   isReservedAfternoon(reservation: Reservation): boolean {
-    return reservation.time === 'Afternoon';
+    return reservation.time === ReservationTime.AFTERNOON;
   }
 
   generateDummyData(count: number) {
@@ -67,7 +71,10 @@ export class SlotComponent implements OnInit {
     console.log(this.parkings);
   }
   onSelect(parking: Parking) {
-    console.log(parking);
-    // open modal with calendar
+    this.dialog.open(CalendarComponent, {
+      data: {
+        parking: parking,
+      },
+    });
   }
 }

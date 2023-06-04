@@ -1,1 +1,23 @@
-<p>calendar works!</p>
+<mwl-calendar-month-view
+  [viewDate]="viewDate"
+  [events]="events"
+  (dayClicked)="dateSelected($event.day)"
+>
+  <!-- <ng-template #cellTemplate let-day="day" let-locale="locale">
+    <div class="cal-cell-top">
+      <b>{{ day.date | calendarDate : "monthViewColumnHeader" : locale }}</b>
+    </div>
+    <div class="cal-cell-bottom">
+      <div
+        *ngFor="let event of day.events"
+        [ngClass]="event?.cssClass"
+        [mwlCalendarTooltip]="
+          event.title | calendarEventTitle : 'monthTooltip' : event
+        "
+        tooltipPlacement="top"
+      >
+        <span (click)="logDate(day.date)">{{ event.title }}</span>
+      </div>
+    </div>
+  </ng-template> -->
+</mwl-calendar-month-view>
