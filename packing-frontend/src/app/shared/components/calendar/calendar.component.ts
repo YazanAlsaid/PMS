@@ -18,7 +18,6 @@ export class CalendarComponent {
       queryParams: { date: new Date(date.date).toISOString() },
     });
   }
-  // emit closeModal
   @Output() closeModalEvent = new EventEmitter();
 
   closeModal() {
