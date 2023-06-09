@@ -1,0 +1,32 @@
+version: '3'
+services:
+  backend:
+    build: ./parking-backend
+    image: pms-backend:latest
+    container_name: backend
+    restart: always
+    networks:
+      compose:
+        ipv4_address: 10.20.30.2
+    ports:
+      - 8080:8080
+    environment:
+      spring.profiles.active: 'prod'
+  frontend:
+    build: ./packing-frontend
+    image: pms-frontend:latest
+    container_name: frontend
+    restart: always
+    networks:
+      compose:
+        ipv4_address: 10.20.30.3
+    ports:
+      - 4200:80
+
+networks:
+  compose:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 10.20.30.0/16
+         gateway: 10.20.30.1
