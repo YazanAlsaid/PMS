@@ -1,0 +1,55 @@
+.card:hover {
+  transform: translateY(-9px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.slot-height {
+  min-height: 160px;
+  max-height: 160px;
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+}
+
+.header-element {
+  margin: 5px;
+}
+
+.header-icon {
+  font-size: 48px;
+  width: 64px;
+  height: 64px;
+}
+
+.parking-card {
+  /* Stil für den normalen Zustand des Cards */
+  /* Hintergrundfarbe für grünen Zustand */
+  background-color: #8bc34a;
+}
+
+.red-card {
+  /* Hintergrundfarbe für roten Zustand */
+  background-color: #f44336;
+}
+
+.reserved-morning {
+  background: linear-gradient(to bottom, red 50%, transparent 50%);
+}
+
+.reserved-afternoon {
+  background: linear-gradient(to top, red 50%, transparent 50%);
+}
+
+.card-green {
+  background-color: green;
+  color: white;
+}
+
+.slot-container {
+  cursor: pointer;
+}
