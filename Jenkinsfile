@@ -12,7 +12,7 @@ node ('docker'){
         }
     
     stage "Compose Build"
-        sh "cd ./parking-backend && mvnw clean package"
+        sh "cd ./parking-backend && ls -lah && mvnw clean package"
         sh "cd ../ && docker-compose build"
     
      stage "Compose up"
