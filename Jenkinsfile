@@ -13,7 +13,7 @@ node ('docker'){
     
     stage "Compose Build"
         sh "cd ./parking-backend && ls -lah && mvn clean package"
-        sh "cd ../ && docker-compose build"
+        sh "docker-compose build"
     
      stage "Compose up"
         sh "docker-compose -p ${appName} up -d"
