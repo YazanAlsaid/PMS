@@ -1,10 +1,13 @@
 package edu.fra.uas.parking.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
-
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +15,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "floors")
-@SQLDelete(sql = "UPDATE floors SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class Floor extends BaseEntity{
     @Column(name = "Name",nullable = false)
     @Size(min = 3,max = 50)

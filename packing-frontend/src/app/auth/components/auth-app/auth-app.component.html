@@ -10,7 +10,7 @@
       <div class="form">
         <form class="login-form">
           <h1 class = "login-title">Login</h1>
-          <input type="text" placeholder="Username" />
+          <input type="email" placeholder="Email" />
           <input type="password" placeholder="Password" />
           <button>Log in</button>
           <p class="forgot-password"><a href="#">Forgot Password?</a></p>
@@ -25,9 +25,9 @@
       // Adding an event listener to the form submission event
       form.addEventListener("submit", (event) => {
         event.preventDefault(); // Preventing the default form submission behavior
-        const username = form.username.value; // Retrieving the username from the form field
+        const email = form.email.value; // Retrieving the username from the form field
         const password = form.password.value; // Retrieving the password from the form field
-        console.log(`Username: ${username}, Password: ${password}`); // Logging the credentials for testing purposes
+        console.log(`Email: ${email}, Password: ${password}`); // Logging the credentials for testing purposes
       });
 
       // Adding an event listener to the Forgot Password link click event

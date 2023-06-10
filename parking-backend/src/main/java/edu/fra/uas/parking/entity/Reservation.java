@@ -1,34 +1,39 @@
 package edu.fra.uas.parking.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "reservations")
-@SQLDelete(sql = "UPDATE reservations SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class Reservation extends BaseEntity {
-    @Column(name = "reservationFrom", nullable = false)
+    @Column(name = "reservation_from", nullable = false)
     private LocalDateTime reservationFrom;
-    @Column(name = "reservationTo", nullable = false)
+    @Column(name = "reservation_to", nullable = false)
     private LocalDateTime reservationTo;
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "user_id")
     private User user;
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JoinColumn(name = "guest_id")
+    private Guest guest;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "nfcCard_id")
     private NfcCard nfcCard;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "slot_id")
     private Slot slot;
+
     public LocalDateTime getReservationFrom() {
         return reservationFrom;
     }
+
     public LocalDateTime getReservationTo() {
         return reservationTo;
     }
@@ -40,7 +45,18 @@ public class Reservation extends BaseEntity {
     public void setReservationTo(LocalDateTime reservationTo) {
         this.reservationTo = reservationTo;
     }
-
+    public User getUser() {
+        return user;
+    }
+    public void setUser(User user) {
+        this.user = user;
+    }
+    public Guest getGuest() {
+        return guest;
+    }
+    public void setGuest(Guest guest) {
+        this.guest = guest;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,11 +1,13 @@
 package edu.fra.uas.parking.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import javax.persistence.*;
-
-
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -14,8 +16,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "roles")
-@SQLDelete(sql = "UPDATE roles SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class Role extends BaseEntity implements Serializable {
     @Column(name = "Name", nullable = false)
     @Size(min = 3, max = 50)

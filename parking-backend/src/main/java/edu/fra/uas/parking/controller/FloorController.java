@@ -1,5 +1,5 @@
 package edu.fra.uas.parking.controller;
-import edu.fra.uas.parking.entity.Building;
+
 import edu.fra.uas.parking.entity.Floor;
 import edu.fra.uas.parking.repository.FloorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +9,18 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/floors")
 public class FloorController implements BaseController<Floor> {
 
+    private final FloorRepository floorRepository;
+
     @Autowired
-    private FloorRepository floorRepository;
+    public FloorController(FloorRepository floorRepository) {
+        this.floorRepository = floorRepository;
+    }
 
     @GetMapping()
     @Override
@@ -25,7 +30,7 @@ public class FloorController implements BaseController<Floor> {
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Object> getById(@RequestParam("id") Long id) {
+    public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(this.floorRepository.findById(id), HttpStatus.OK);
     }
 
@@ -38,9 +43,9 @@ public class FloorController implements BaseController<Floor> {
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Object> updateById(@RequestParam("id") Long id, Floor floor) {
-        Floor floorUpdated = this.floorRepository.findById(id).get();
-        if (floorUpdated  == null) {
+    public ResponseEntity<Object> updateById(@PathVariable("id") Long id, @RequestBody Floor floor) {
+        Optional<Floor> floorUpdated = this.floorRepository.findById(id);
+        if (floorUpdated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         floor = this.floorRepository.save(floor);

@@ -1,6 +1,5 @@
 package edu.fra.uas.parking.controller;
 
-import edu.fra.uas.parking.entity.Building;
 import edu.fra.uas.parking.entity.Privilege;
 import edu.fra.uas.parking.repository.PrivilegeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +9,18 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/privileges")
 public class PrivilegeController implements BaseController<Privilege> {
 
+    private final PrivilegeRepository privilegeRepository;
+
     @Autowired
-    private PrivilegeRepository privilegeRepository;
+    public PrivilegeController(PrivilegeRepository privilegeRepository) {
+        this.privilegeRepository = privilegeRepository;
+    }
 
     @GetMapping()
     @Override
@@ -27,7 +31,7 @@ public class PrivilegeController implements BaseController<Privilege> {
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<Object> getById(@PathVariable Long id) {
-        Privilege privilege = this.privilegeRepository.findById(id).orElse(null); // gibt ein Optional zurück
+        Privilege privilege = this.privilegeRepository.findById(id).orElse(null);
         if (privilege == null) {
             return new ResponseEntity<>("Privilege not found.", HttpStatus.NOT_FOUND);
         }
@@ -43,9 +47,9 @@ public class PrivilegeController implements BaseController<Privilege> {
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Object> updateById(@RequestParam("id") Long id, Privilege privilege) {
-        Privilege privilegeUpdated = this.privilegeRepository.findById(id).get();
-        if (privilegeUpdated == null) {
+    public ResponseEntity<Object> updateById(@PathVariable("id") Long id, Privilege privilege) {
+        Optional<Privilege> privilegeUpdated = this.privilegeRepository.findById(id);
+        if (privilegeUpdated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
