@@ -14,11 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name ="nfcCards")
-@SQLDelete(sql = "UPDATE nfcCards SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class NfcCard extends BaseEntity{
-    @Column(name = "Deleted")
-    private boolean deleted = Boolean.FALSE;
     @Column(name = "Name",nullable = false)
     @Size(min = 3,max = 50)
     private String name;

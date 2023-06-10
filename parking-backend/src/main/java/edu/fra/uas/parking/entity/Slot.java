@@ -12,8 +12,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "slots")
-@SQLDelete(sql = "UPDATE slots SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class Slot extends BaseEntity{
     @Column(name = "Name",nullable = false)
     @Size(min = 3,max = 50)
@@ -21,8 +19,9 @@ public class Slot extends BaseEntity{
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
     @JoinColumn(name = "floor_id")
     private Floor floor;
-    @OneToMany(mappedBy = "slot",cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
-    private List<Type> types = new ArrayList<>();
+    @ManyToOne(cascade = CascadeType.REFRESH)
+    @JoinColumn(name = "type_id")
+    private Type type;
 
     @OneToMany(mappedBy = "slot", cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
     private List<Reservation> reservations = new ArrayList<>();
@@ -41,11 +40,11 @@ public class Slot extends BaseEntity{
     public void setFloor(Floor floor) {
         this.floor = floor;
     }
-    public List<Type> getTypes() {
-        return types;
+    public Type getType() {
+        return type;
     }
-    public void setTypes(List<Type> types) {
-        this.types = types;
+    public void setType(Type types) {
+        this.type = types;
     }
     public List<Reservation> getReservations() {
         return reservations;
@@ -58,17 +57,16 @@ public class Slot extends BaseEntity{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Slot slot = (Slot) o;
-        return Objects.equals(floor, slot.floor) && Objects.equals(types, slot.types) && Objects.equals(reservations, slot.reservations);
+        return Objects.equals(floor, slot.floor) && Objects.equals(reservations, slot.reservations);
     }
     @Override
     public int hashCode() {
-        return Objects.hash(floor, types, reservations);
+        return Objects.hash(floor, reservations);
     }
     @Override
     public String toString() {
         return "Slot{" +
                 "floor=" + floor +
-                ", types=" + types +
                 ", reservations=" + reservations +
                 '}';
     }
