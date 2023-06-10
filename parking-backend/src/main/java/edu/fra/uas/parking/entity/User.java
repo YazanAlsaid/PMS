@@ -1,8 +1,6 @@
 package edu.fra.uas.parking.entity;
 
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.CascadeType;
@@ -49,7 +47,6 @@ public class User extends BaseEntity {
     private NfcCard nfcCard;
 
     public User() {
-
     }
 
     public User(String firstName, String lastName, String email, String password) {
@@ -81,10 +78,12 @@ public class User extends BaseEntity {
             this.roles.add(role);
         }
     }
+
     public void setHashedPassword(String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         this.password = bCryptPasswordEncoder.encode(password);
     }
+
     public Boolean hasRole(String roleName) {
         for (Role role : this.roles) {
             if (role.getName().equals(roleName)) {
@@ -114,6 +113,25 @@ public class User extends BaseEntity {
         return roles;
     }
 
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    public void setReservation(Reservation reservation) {
+        this.reservations.add(reservation);
+    }
+
+    public NfcCard getNfcCard() {
+        return nfcCard;
+    }
+
+    public void setNfcCard(NfcCard nfcCard) {
+        this.nfcCard = nfcCard;
+    }
 
     @Override
     public boolean equals(Object o) {

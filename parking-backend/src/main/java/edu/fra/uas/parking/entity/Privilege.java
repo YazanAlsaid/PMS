@@ -1,11 +1,12 @@
 package edu.fra.uas.parking.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
-
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "privileges")
-public class Privilege  extends BaseEntity{
+public class Privilege extends BaseEntity {
     @Size(min = 3, max = 45)
     @Column(name = "name", nullable = false, unique = true)
     private String name;
@@ -53,15 +54,15 @@ public class Privilege  extends BaseEntity{
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
     public String toString() {
         return "Privilege{" +
                 "id=" + this.getId() +
                 ", name='" + name + '\'' +
                 '}';
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name);
     }
 }
