@@ -1,10 +1,13 @@
 package edu.fra.uas.parking.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
-
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -13,17 +16,17 @@ import java.util.Objects;
 
 
 @Entity
-@Table(name ="nfcCards")
-public class NfcCard extends BaseEntity{
-    @Column(name = "Name",nullable = false)
-    @Size(min = 3,max = 50)
+@Table(name = "nfcCards")
+public class NfcCard extends BaseEntity {
+    @Column(name = "name", nullable = false)
+    @Size(min = 3, max = 50)
     private String name;
     private LocalDateTime nfcFrom;
     private LocalDateTime nfcTo;
     @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     private List<Reservation> reservations = new ArrayList<>();
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     public String getName() {
