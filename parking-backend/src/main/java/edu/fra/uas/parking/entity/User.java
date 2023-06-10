@@ -3,10 +3,18 @@ package edu.fra.uas.parking.entity;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-/*import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;*/
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -17,13 +25,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class User extends BaseEntity {
-    @Column(name = "firstName", nullable = false)
+    @Column(name = "first_name", nullable = false)
     @Size(min = 3, max = 50)
     private String firstName;
-    @Column(name = "lastName", nullable = false)
+    @Column(name = "last_name", nullable = false)
     @Size(min = 3, max = 50)
     private String lastName;
     @Column(name = "email", nullable = false, unique = true)
@@ -50,9 +56,8 @@ public class User extends BaseEntity {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-//        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//        this.password = passwordEncoder.encode(password);
-        this.password = password;
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        this.password = bCryptPasswordEncoder.encode(password);
     }
 
     public void setFirstName(String firstName) {
@@ -77,9 +82,8 @@ public class User extends BaseEntity {
         }
     }
     public void setHashedPassword(String password) {
-//        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//        this.password = passwordEncoder.encode(password);
-        this.password = password;
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        this.password = bCryptPasswordEncoder.encode(password);
     }
     public Boolean hasRole(String roleName) {
         for (Role role : this.roles) {

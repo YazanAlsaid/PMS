@@ -9,25 +9,30 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController implements BaseController<Reservation> {
 
+    private final ReservationRepository reservationRepository;
+
     @Autowired
-    private ReservationRepository reservationRepository;
+    public ReservationController(ReservationRepository reservationRepository) {
+        this.reservationRepository = reservationRepository;
+    }
 
     @GetMapping()
     @Override
     public ResponseEntity<List<Reservation>> index() {
-        List<Reservation> reservations = this.reservationRepository.findAll(); // speichern Sie das Ergebnis von findAll() in einer Variable
-        return new ResponseEntity<>(reservations, HttpStatus.OK); // geben Sie die Variable zurück
+        List<Reservation> reservations = this.reservationRepository.findAll();
+        return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Object> getById(@PathVariable Long id) { // verwenden Sie @PathVariable anstelle von @RequestParam
-        Reservation reservation = this.reservationRepository.findById(id).orElse(null); // gibt ein Optional zurück
+    public ResponseEntity<Object> getById(@PathVariable Long id) {
+        Reservation reservation = this.reservationRepository.findById(id).orElse(null);
         if (reservation == null) {
             return new ResponseEntity<>("Reservation not found.", HttpStatus.NOT_FOUND);
         }
@@ -42,9 +47,9 @@ public class ReservationController implements BaseController<Reservation> {
     }
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Object> updateById(@RequestParam("id") Long id, Reservation reservation) {
-        Reservation reservationUpdated = this.reservationRepository.findById(id).get();
-        if (reservationUpdated == null) {
+    public ResponseEntity<Object> updateById(@PathVariable("id") Long id, Reservation reservation) {
+        Optional<Reservation> reservationUpdated = this.reservationRepository.findById(id);
+        if (reservationUpdated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -54,7 +59,7 @@ public class ReservationController implements BaseController<Reservation> {
 
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<Object> deleteById(@PathVariable("id") Long id) { // verwenden Sie ebenfalls @PathVariable
+    public ResponseEntity<Object> deleteById(@PathVariable("id") Long id) {
         Reservation reservationToDelete = this.reservationRepository.findById(id).orElse(null);
         if (reservationToDelete == null) {
             return new ResponseEntity<>("Reservation not found.", HttpStatus.NOT_FOUND);

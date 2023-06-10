@@ -9,13 +9,18 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/buildings")
 public class BuildingController implements BaseController<Building> {
 
+    private final BuildingRepository buildingRepository;
+
     @Autowired
-    private BuildingRepository buildingRepository;
+    public BuildingController(BuildingRepository buildingRepository) {
+        this.buildingRepository = buildingRepository;
+    }
 
     @GetMapping()
     @Override
@@ -25,7 +30,7 @@ public class BuildingController implements BaseController<Building> {
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Object> getById(@RequestParam("id") Long id) {
+    public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
         return new ResponseEntity<>(this.buildingRepository.findById(id), HttpStatus.OK);
     }
 
@@ -38,9 +43,9 @@ public class BuildingController implements BaseController<Building> {
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Object> updateById(@RequestParam("id") Long id, Building building) {
-        Building buildingUpdated = this.buildingRepository.findById(id).get();
-        if (buildingUpdated == null) {
+    public ResponseEntity<Object> updateById(@PathVariable("id") Long id, Building building) {
+        Optional<Building> buildingUpdated = this.buildingRepository.findById(id);
+        if (buildingUpdated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -50,9 +55,9 @@ public class BuildingController implements BaseController<Building> {
 
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<Object> deleteById(Long id) {
-        Building buildingUpdated = this.buildingRepository.findById(id).get();
-        if (buildingUpdated == null) {
+    public ResponseEntity<Object> deleteById(@PathVariable("id")Long id) {
+        Optional<Building> buildingUpdated = this.buildingRepository.findById(id);
+        if (buildingUpdated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         this.buildingRepository.deleteById(id);

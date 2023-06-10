@@ -16,8 +16,7 @@ public abstract class BaseEntity {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @Column(name = "Deleted")
-    private boolean deleted = Boolean.FALSE;
+
     public Long getId() {
         return id;
     }
@@ -28,8 +27,5 @@ public abstract class BaseEntity {
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-    public boolean isDeleted() {
-        return deleted;
     }
 }

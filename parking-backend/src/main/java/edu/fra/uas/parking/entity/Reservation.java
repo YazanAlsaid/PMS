@@ -9,8 +9,6 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "reservations")
-@SQLDelete(sql = "UPDATE reservations SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class Reservation extends BaseEntity {
     @Column(name = "reservationFrom", nullable = false)
     private LocalDateTime reservationFrom;

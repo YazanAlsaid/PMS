@@ -1,6 +1,5 @@
 package edu.fra.uas.parking.controller;
 
-import edu.fra.uas.parking.entity.Building;
 import edu.fra.uas.parking.entity.Type;
 import edu.fra.uas.parking.repository.TypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,13 +9,18 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/types") // Verwenden Sie einen eindeutigen Request-Mapping-Pfad
+@RequestMapping("/types")
 public class TypeController implements BaseController<Type> {
 
+    private final TypeRepository typeRepository;
+
     @Autowired
-    private TypeRepository typeRepository; // Verwenden Sie den richtigen Repository-Namen
+    public TypeController(TypeRepository typeRepository) {
+        this.typeRepository = typeRepository;
+    }
 
     @GetMapping()
     @Override
@@ -26,8 +30,8 @@ public class TypeController implements BaseController<Type> {
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Object> getById(@PathVariable("id") Long id) { // Verwenden Sie @PathVariable, um den ID-Parameter zu erhalten
-        Type type = this.typeRepository.findById(id).orElse(null); // Mit orElse(null) setzen wir das Object auf null, falls es nicht gefunden wurde.
+    public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
+        Type type = this.typeRepository.findById(id).orElse(null);
         if (type == null) {
             return new ResponseEntity<>("Type not found.", HttpStatus.NOT_FOUND);
         }
@@ -36,16 +40,16 @@ public class TypeController implements BaseController<Type> {
 
     @PostMapping
     @Override
-    public ResponseEntity<Object> create(@Valid @RequestBody Type type) { // Benutzen Sie den Parameter-Typ "Type" anstatt "Building"
-        Type createdType = this.typeRepository.save(type); // Verwenden Sie "typeRepository" anstatt "typeController"
+    public ResponseEntity<Object> create(@Valid @RequestBody Type type) {
+        Type createdType = this.typeRepository.save(type);
         return new ResponseEntity<>(createdType, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Object> updateById(@RequestParam("id") Long id, Type type) {
-        Type typeUpdated = this.typeRepository.findById(id).get();
-        if (typeUpdated == null) {
+    public ResponseEntity<Object> updateById(@PathVariable("id") Long id, @RequestBody Type type) {
+        Optional<Type> typeUpdated = this.typeRepository.findById(id);
+        if (typeUpdated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -55,12 +59,12 @@ public class TypeController implements BaseController<Type> {
 
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<Object> deleteById(@PathVariable("id") Long id) { // Verwenden Sie "@PathVariable"
-        Type typeToDelete = this.typeRepository.findById(id).orElse(null); // Mit orElse(null) setzen wir das Object auf null, falls es nicht gefunden wurde.
+    public ResponseEntity<Object> deleteById(@PathVariable("id") Long id) {
+        Type typeToDelete = this.typeRepository.findById(id).orElse(null);
         if (typeToDelete == null) {
             return new ResponseEntity<>("Type not found.", HttpStatus.NOT_FOUND);
         }
         this.typeRepository.deleteById(id);
-        return new ResponseEntity<>("Type deleted.", HttpStatus.NO_CONTENT); // Ändern Sie die Rückgabe-Nachricht
+        return new ResponseEntity<>("Type deleted.", HttpStatus.NO_CONTENT);
     }
 }
