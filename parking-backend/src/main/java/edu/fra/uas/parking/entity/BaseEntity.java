@@ -21,14 +21,17 @@ public abstract class BaseEntity {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @SuppressWarnings("unused")
     public Long getId() {
         return id;
     }
 
+    @SuppressWarnings("unused")
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
+    @SuppressWarnings("unused")
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }

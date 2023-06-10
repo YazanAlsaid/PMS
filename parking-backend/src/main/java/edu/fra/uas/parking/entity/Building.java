@@ -41,18 +41,22 @@ public class Building extends BaseEntity {
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
     public Park getPark() {
         return park;
     }
 
+    @SuppressWarnings("unused")
     public void setPark(Park park) {
         this.park = park;
     }
 
+    @SuppressWarnings("unused")
     public List<Floor> getFloors() {
         return floors;
     }
 
+    @SuppressWarnings("unused")
     public void setFloors(List<Floor> floors) {
         this.floors = floors;
     }
