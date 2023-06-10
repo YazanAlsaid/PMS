@@ -29,18 +29,22 @@ public class Privilege extends BaseEntity {
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
     public String getName() {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public void setName(String name) {
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
     public List<Role> getRoles() {
         return roles;
     }
 
+    @SuppressWarnings("unused")
     public void setRole(Role role) {
         this.roles.add(role);
     }

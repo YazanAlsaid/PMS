@@ -19,22 +19,33 @@ public class Type extends BaseEntity {
     @OneToMany(mappedBy = "type", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     private Set<Slot> slots = new HashSet<>();
 
+    public Type() {
+    }
+    public Type(String name) {
+        this.name = name;
+    }
+
+    @SuppressWarnings("unused")
     public String getName() {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public void setName(String name) {
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
     public Set<Slot> getSlot() {
         return slots;
     }
 
+    @SuppressWarnings("unused")
     public void setSlots(Set<Slot> slot) {
         this.slots = slot;
     }
 
+    @SuppressWarnings("unused")
     public void addSlot(Slot slot) {
         this.slots.add(slot);
     }

@@ -31,26 +31,31 @@ public class Role extends BaseEntity implements Serializable {
     public Role() {
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setUsers(User user) {
-        this.users.add(user);
-    }
-
     public Role(String name) {
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
+    public String getName() {
+        return name;
+    }
+
+    @SuppressWarnings("unused")
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @SuppressWarnings("unused")
+    public void setUsers(User user) {
+        this.users.add(user);
+    }
+
+    @SuppressWarnings("unused")
     public List<User> getUsers() {
         return users;
     }
 
+    @SuppressWarnings("unused")
     public List<Privilege> getPrivileges() {
         return privileges;
     }
