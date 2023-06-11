@@ -18,9 +18,9 @@ import java.util.Objects;
 @Entity
 @Table(name = "nfc_cards")
 public class NfcCard extends BaseEntity {
-    @Column(name = "name", nullable = false)
+    @Column(name = "serial_number", nullable = false)
     @Size(min = 3, max = 50)
-    private String name;
+    private String serialNumber;
     @Column(name ="nfc_from", nullable = false)
     private LocalDateTime nfcFrom;
     @Column(name ="nfc_to", nullable = false)
@@ -34,20 +34,20 @@ public class NfcCard extends BaseEntity {
     public NfcCard() {
     }
 
-    public NfcCard(String name, LocalDateTime nfcFrom, LocalDateTime nfcTo) {
-        this.name = name;
+    public NfcCard(String serialNumber, LocalDateTime nfcFrom, LocalDateTime nfcTo) {
+        this.serialNumber = serialNumber;
         this.nfcFrom = nfcFrom;
         this.nfcTo = nfcTo;
     }
 
     @SuppressWarnings("unused")
-    public String getName() {
-        return name;
+    public String getSerialNumber() {
+        return serialNumber;
     }
 
     @SuppressWarnings("unused")
-    public void setName(String name) {
-        this.name = name;
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
     }
 
     @SuppressWarnings("unused")
