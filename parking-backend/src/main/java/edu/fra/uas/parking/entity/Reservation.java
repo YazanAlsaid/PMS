@@ -1,46 +1,102 @@
 package edu.fra.uas.parking.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "reservations")
-@SQLDelete(sql = "UPDATE reservations SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class Reservation extends BaseEntity {
-    @Column(name = "reservationFrom", nullable = false)
+    @Column(name = "reservation_from", nullable = false)
     private LocalDateTime reservationFrom;
-    @Column(name = "reservationTo", nullable = false)
+    @Column(name = "reservation_to", nullable = false)
     private LocalDateTime reservationTo;
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "user_id")
     private User user;
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
-    @JoinColumn(name = "nfcCard_id")
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JoinColumn(name = "guest_id")
+    private Guest guest;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JoinColumn(name = "nfc_card_id")
     private NfcCard nfcCard;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "slot_id")
     private Slot slot;
+
+    public Reservation() {
+    }
+
+    public Reservation(LocalDateTime reservationFrom, LocalDateTime reservationTo) {
+        this.reservationFrom = reservationFrom;
+        this.reservationTo = reservationTo;
+    }
+
+    @SuppressWarnings("unused")
     public LocalDateTime getReservationFrom() {
         return reservationFrom;
     }
-    public LocalDateTime getReservationTo() {
-        return reservationTo;
-    }
 
+    @SuppressWarnings("unused")
     public void setReservationFrom(LocalDateTime reservationFrom) {
         this.reservationFrom = reservationFrom;
     }
 
+    @SuppressWarnings("unused")
+    public LocalDateTime getReservationTo() {
+        return reservationTo;
+    }
+
+    @SuppressWarnings("unused")
     public void setReservationTo(LocalDateTime reservationTo) {
         this.reservationTo = reservationTo;
     }
 
+    @SuppressWarnings("unused")
+    public User getUser() {
+        return user;
+    }
+
+    @SuppressWarnings("unused")
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    @SuppressWarnings("unused")
+    public Guest getGuest() {
+        return guest;
+    }
+
+    @SuppressWarnings("unused")
+    public void setGuest(Guest guest) {
+        this.guest = guest;
+    }
+
+    @SuppressWarnings("unused")
+    public NfcCard getNfcCard() {
+        return nfcCard;
+    }
+
+    @SuppressWarnings("unused")
+    public void setNfcCard(NfcCard nfcCard) {
+        this.nfcCard = nfcCard;
+    }
+
+    @SuppressWarnings("unused")
+    public Slot getSlot() {
+        return slot;
+    }
+
+    @SuppressWarnings("unused")
+    public void setSlot(Slot slot) {
+        this.slot = slot;
+    }
 
     @Override
     public boolean equals(Object o) {

@@ -1,6 +1,5 @@
 package edu.fra.uas.parking.controller;
 
-import edu.fra.uas.parking.entity.Building;
 import edu.fra.uas.parking.entity.Slot;
 import edu.fra.uas.parking.repository.SlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,25 +9,30 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/slots")
 public class SlotController implements BaseController<Slot> {
 
+    private final SlotRepository slotRepository;
+
     @Autowired
-    private SlotRepository slotRepository;
+    public SlotController(SlotRepository slotRepository) {
+        this.slotRepository = slotRepository;
+    }
 
     @GetMapping()
     @Override
     public ResponseEntity<List<Slot>> index() {
-        List<Slot> slots = this.slotRepository.findAll(); // speichern Sie das Ergebnis von findAll() in einer Variable
-        return new ResponseEntity<>(slots, HttpStatus.OK); // geben Sie die Variable zurück
+        List<Slot> slots = this.slotRepository.findAll();
+        return new ResponseEntity<>(slots, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Object> getById(@PathVariable Long id) { // verwenden Sie @PathVariable anstelle von @RequestParam
-        Slot slot = this.slotRepository.findById(id).orElse(null); // gibt ein Optional zurück
+    public ResponseEntity<Object> getById(@PathVariable Long id) {
+        Slot slot = this.slotRepository.findById(id).orElse(null);
         if (slot == null) {
             return new ResponseEntity<>("Slot not found.", HttpStatus.NOT_FOUND);
         }
@@ -37,16 +41,16 @@ public class SlotController implements BaseController<Slot> {
 
     @PostMapping
     @Override
-    public ResponseEntity<Object> create(@Valid @RequestBody Slot slot) { // verwenden Sie den richtigen Parameter-Typ
+    public ResponseEntity<Object> create(@Valid @RequestBody Slot slot) {
         Slot slotCreated = this.slotRepository.save(slot);
         return new ResponseEntity<>(slotCreated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Object> updateById(@RequestParam("id") Long id, Slot slot) {
-        Slot slotUpdated = this.slotRepository.findById(id).get();
-        if (slotUpdated == null) {
+    public ResponseEntity<Object> updateById(@PathVariable("id") Long id, @RequestBody Slot slot) {
+        Optional<Slot> slotUpdated = this.slotRepository.findById(id);
+        if (slotUpdated.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
@@ -56,7 +60,7 @@ public class SlotController implements BaseController<Slot> {
 
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<Object> deleteById(@PathVariable("id") Long id) { // verwenden Sie ebenfalls @PathVariable
+    public ResponseEntity<Object> deleteById(@PathVariable("id") Long id) {
         Slot slotToDelete = this.slotRepository.findById(id).orElse(null);
         if (slotToDelete == null) {
             return new ResponseEntity<>("Slot not found.", HttpStatus.NOT_FOUND);
