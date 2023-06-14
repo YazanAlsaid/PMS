@@ -2,7 +2,6 @@ package edu.fra.uas.parking.jwt.config;
 
 import edu.fra.uas.parking.jwt.service.JwtUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -26,8 +25,6 @@ import javax.servlet.Filter;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
     private final JwtUserDetailsService jwtUserDetailsService;
     private final Filter jwtRequestFilter;
 
