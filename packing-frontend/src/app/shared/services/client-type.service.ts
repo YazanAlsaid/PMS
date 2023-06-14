@@ -1,29 +1,35 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpService} from "./httpServeic";
 import {Observable} from "rxjs";
 import {Type} from "../model/type";
+import {ResponseMessage} from "../model/response-message";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClientTypeService {
 
-  constructor(private httpService : HttpService) {}
+  constructor(private httpService: HttpService) {
+  }
 
-  public getType() : Observable<any[]> {
+  public getTypes(): Observable<ResponseMessage> {
     return this.httpService.getAll("types");
   }
-  public getType(id : number) : Observable<any> {
-    return this.httpService.getById("types",id);
+
+  public getType(id: number): Observable<ResponseMessage> {
+    return this.httpService.getById("types", id);
   }
-  public createType(type : Type) : Observable<any> {
-    return this.httpService.create('types',type);
+
+  public createType(type: Type): Observable<ResponseMessage> {
+    return this.httpService.create('types', type);
   }
-  public updateType(id : number,type : Type) : Observable<any> {
-    return this.httpService.update("types",id,type);
+
+  public updateType(id: number, type: Type): Observable<ResponseMessage> {
+    return this.httpService.update("types", id, type);
 
   }
-  public deleteType(id : number) : Observable<any> {
+
+  public deleteType(id: number): Observable<ResponseMessage> {
     return this.httpService.delete("types", id);
   }
 }
