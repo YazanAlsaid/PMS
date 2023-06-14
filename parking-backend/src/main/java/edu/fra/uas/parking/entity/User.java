@@ -23,7 +23,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class    User extends BaseEntity {
     @Column(name = "first_name", nullable = false)
     @Size(min = 3, max = 50)
     private String firstName;
@@ -36,14 +36,14 @@ public class User extends BaseEntity {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(name = "role_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private List<Reservation> reservations = new ArrayList<>();
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private NfcCard nfcCard;
 
     public User() {

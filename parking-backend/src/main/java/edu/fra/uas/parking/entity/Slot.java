@@ -18,15 +18,23 @@ public class Slot extends BaseEntity {
     @Column(name = "Name", nullable = false)
     @Size(min = 3, max = 50)
     private String name;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "floor_id")
     private Floor floor;
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "type_id")
     private Type type;
 
-    @OneToMany(mappedBy = "slot", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "slot", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private List<Reservation> reservations = new ArrayList<>();
+
+    public Slot(String name, Floor floor,Type type) {
+        this.name = name;
+        this.floor = floor;
+        this.type = type;
+    }
+    public Slot() {
+    }
 
     public String getName() {
         return name;

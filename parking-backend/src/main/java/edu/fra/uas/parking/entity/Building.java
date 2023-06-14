@@ -19,15 +19,15 @@ public class Building extends BaseEntity {
     @Column(name = "Name", nullable = false)
     @Size(min = 3, max = 50)
     private String name;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.DETACH})
     @JoinColumn(name = "park_id")
     private Park park;
-    @OneToMany(mappedBy = "building", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "building",cascade = {CascadeType.MERGE,CascadeType.DETACH})
     private List<Floor> floors = new ArrayList<>();
 
-    public Building(Park park, List<Floor> floors) {
+    public Building(String name,Park park) {
+        this.name = name;
         this.park = park;
-        this.floors = floors;
     }
 
     public Building() {
