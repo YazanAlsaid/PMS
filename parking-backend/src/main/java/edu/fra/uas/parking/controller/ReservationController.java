@@ -30,7 +30,7 @@ public class ReservationController implements BaseController<Reservation> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing reservation: {}", this.reservationRepository.count());
-        return  this.message("Indexing reservation", this.reservationRepository.findAll(), HttpStatus.OK);
+        return this.message("Indexing reservation", this.reservationRepository.findAll(), HttpStatus.OK);
 
     }
 
@@ -42,7 +42,7 @@ public class ReservationController implements BaseController<Reservation> {
         if (reservation.isEmpty()) {
             return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting reservation by id", reservation.get(), HttpStatus.OK);
+        return this.message("Getting reservation by id", reservation.get(), HttpStatus.OK);
     }
 
     @PostMapping
@@ -52,13 +52,14 @@ public class ReservationController implements BaseController<Reservation> {
         logger.debug("Creating reservation: {}", reservation);
         Optional<Reservation> optionalBuilding = (reservation.getId() != null) ? this.reservationRepository.findById(reservation.getId()) : Optional.empty();
         if (optionalBuilding.isPresent()) {
-            return  this.message("Reservation is already exists", null, HttpStatus.CONFLICT);
+            return this.message("Reservation is already exists", null, HttpStatus.CONFLICT);
 
         }
         Reservation buildingCreated = this.reservationRepository.save(reservation);
-        return  this.message("Creating reservation", buildingCreated, HttpStatus.CREATED);
+        return this.message("Creating reservation", buildingCreated, HttpStatus.CREATED);
 
     }
+
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Reservation reservation) {
@@ -66,9 +67,9 @@ public class ReservationController implements BaseController<Reservation> {
         Optional<Reservation> optionalReservation = this.reservationRepository.findById(id);
         if (optionalReservation.isPresent() && optionalReservation.get().getId().equals(reservation.getId())) {
             reservation = this.reservationRepository.save(reservation);
-            return  this.message("Updating reservation by id", reservation, HttpStatus.ACCEPTED);
+            return this.message("Updating reservation by id", reservation, HttpStatus.ACCEPTED);
         }
-        return  this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
+        return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
@@ -78,9 +79,9 @@ public class ReservationController implements BaseController<Reservation> {
         Optional<Reservation> reservationUpdated = this.reservationRepository.findById(id);
         if (reservationUpdated.isPresent()) {
             this.reservationRepository.deleteById(id);
-            return  this.message("Reservation is deleted", null, HttpStatus.NO_CONTENT);
+            return this.message("Reservation is deleted", null, HttpStatus.NO_CONTENT);
         }
-        return  this.message("Reservation not found", null,  HttpStatus.NOT_FOUND);
+        return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
 
     }
 

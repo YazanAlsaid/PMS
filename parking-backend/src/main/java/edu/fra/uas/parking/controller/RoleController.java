@@ -19,7 +19,6 @@ import java.util.Optional;
 public class RoleController implements BaseController<Role> {
 
     private final Logger logger = LoggerFactory.getLogger(RoleController.class);
-
     private final RoleRepository roleRepository;
 
     @Autowired
@@ -31,8 +30,7 @@ public class RoleController implements BaseController<Role> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing role: {}", this.roleRepository.count());
-        return  this.message("Indexing role", this.roleRepository.findAll(), HttpStatus.OK);
-
+        return this.message("Indexing role", this.roleRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -43,8 +41,7 @@ public class RoleController implements BaseController<Role> {
         if (role.isEmpty()) {
             return this.message("Role not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting role by id", role.get(), HttpStatus.OK);
-
+        return this.message("Getting role by id", role.get(), HttpStatus.OK);
     }
 
     @PostMapping
@@ -53,25 +50,23 @@ public class RoleController implements BaseController<Role> {
         logger.debug("Creating role: {}", role);
         Optional<Role> optionalRole = (role.getId() != null) ? this.roleRepository.findById(role.getId()) : Optional.empty();
         if (optionalRole.isPresent()) {
-            return  this.message("Role is already exists", null, HttpStatus.CONFLICT);
+            return this.message("Role is already exists", null, HttpStatus.CONFLICT);
 
         }
         Role roleCreated = this.roleRepository.save(role);
-        return  this.message("Creating role", roleCreated, HttpStatus.CREATED);
-
+        return this.message("Creating role", roleCreated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id,@RequestBody Role role) {
+    public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody Role role) {
         logger.debug("Updating role by id: {}", id);
         Optional<Role> optionalRole = this.roleRepository.findById(id);
         if (optionalRole.isPresent() && optionalRole.get().getId().equals(role.getId())) {
             role = this.roleRepository.save(role);
-            return  this.message("Updating role by id", role, HttpStatus.ACCEPTED);
+            return this.message("Updating role by id", role, HttpStatus.ACCEPTED);
         }
-        return  this.message("Role not found", null, HttpStatus.NOT_FOUND);
-
+        return this.message("Role not found", null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
@@ -81,11 +76,11 @@ public class RoleController implements BaseController<Role> {
         Optional<Role> roleUpdated = this.roleRepository.findById(id);
         if (roleUpdated.isPresent()) {
             this.roleRepository.deleteById(id);
-            return  this.message("Role is deleted", null, HttpStatus.NO_CONTENT);
+            return this.message("Role is deleted", null, HttpStatus.NO_CONTENT);
         }
-        return  this.message("Role not found", null,  HttpStatus.NOT_FOUND);
-
+        return this.message("Role not found", null, HttpStatus.NOT_FOUND);
     }
+
     @GetMapping("/{id}/users")
     public ResponseEntity<ResponseMessage> getUsersByRoleId(@PathVariable("id") Long id) {
         logger.debug("Getting users by role id: {}", id);
@@ -93,9 +88,9 @@ public class RoleController implements BaseController<Role> {
         if (role.isEmpty()) {
             return this.message("Role not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting users by role id", role.get().getUsers(), HttpStatus.OK);
-
+        return this.message("Getting users by role id", role.get().getUsers(), HttpStatus.OK);
     }
+
     @GetMapping("/{id}/privileges")
     public ResponseEntity<ResponseMessage> getPrivilegesByRoleId(@PathVariable("id") Long id) {
         logger.debug("Getting privileges by role id: {}", id);
@@ -103,9 +98,9 @@ public class RoleController implements BaseController<Role> {
         if (role.isEmpty()) {
             return this.message("Role not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting privileges by role id", role.get().getPrivileges(), HttpStatus.OK);
-
+        return this.message("Getting privileges by role id", role.get().getPrivileges(), HttpStatus.OK);
     }
+
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }

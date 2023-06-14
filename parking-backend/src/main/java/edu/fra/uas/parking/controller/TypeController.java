@@ -18,7 +18,6 @@ import java.util.Optional;
 @RequestMapping("/types")
 public class TypeController implements BaseController<Type> {
     private final Logger logger = LoggerFactory.getLogger(TypeController.class);
-
     private final TypeRepository typeRepository;
 
     @Autowired
@@ -30,7 +29,7 @@ public class TypeController implements BaseController<Type> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing type: {}", this.typeRepository.count());
-        return  this.message("Indexing type", this.typeRepository.findAll(), HttpStatus.OK);
+        return this.message("Indexing type", this.typeRepository.findAll(), HttpStatus.OK);
 
     }
 
@@ -42,8 +41,7 @@ public class TypeController implements BaseController<Type> {
         if (type.isEmpty()) {
             return this.message("Type not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting type by id", type.get(), HttpStatus.OK);
-
+        return this.message("Getting type by id", type.get(), HttpStatus.OK);
     }
 
     @PostMapping
@@ -52,11 +50,11 @@ public class TypeController implements BaseController<Type> {
         logger.debug("Creating type: {}", type);
         Optional<Type> optionalType = (type.getId() != null) ? this.typeRepository.findById(type.getId()) : Optional.empty();
         if (optionalType.isPresent()) {
-            return  this.message("Type is already exists", null, HttpStatus.CONFLICT);
+            return this.message("Type is already exists", null, HttpStatus.CONFLICT);
 
         }
         Type typeCreated = this.typeRepository.save(type);
-        return  this.message("Creating type", typeCreated, HttpStatus.CREATED);
+        return this.message("Creating type", typeCreated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -66,23 +64,21 @@ public class TypeController implements BaseController<Type> {
         Optional<Type> optionalBuilding = this.typeRepository.findById(id);
         if (optionalBuilding.isPresent() && optionalBuilding.get().getId().equals(type.getId())) {
             type = this.typeRepository.save(type);
-            return  this.message("Updating type by id", type, HttpStatus.ACCEPTED);
+            return this.message("Updating type by id", type, HttpStatus.ACCEPTED);
         }
-        return  this.message("type not found", null, HttpStatus.NOT_FOUND);
+        return this.message("type not found", null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
-
         logger.debug("Deleting type by id: {}", id);
         Optional<Type> typeUpdated = this.typeRepository.findById(id);
         if (typeUpdated.isPresent()) {
             this.typeRepository.deleteById(id);
-            return  this.message("Type is deleted", null, HttpStatus.NO_CONTENT);
+            return this.message("Type is deleted", null, HttpStatus.NO_CONTENT);
         }
-        return  this.message("Type not found", null,  HttpStatus.NOT_FOUND);
-
+        return this.message("Type not found", null, HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{id/slots}")
@@ -92,9 +88,9 @@ public class TypeController implements BaseController<Type> {
         if (type.isEmpty()) {
             return this.message("Type not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting slots by type id", type.get().getSlots(), HttpStatus.OK);
-
+        return this.message("Getting slots by type id", type.get().getSlots(), HttpStatus.OK);
     }
+
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }

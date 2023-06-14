@@ -18,7 +18,7 @@ import edu.fra.uas.parking.repository.ParkRepository;
 
 @RestController
 @RequestMapping("/parks")
-public class    ParkController implements BaseController<Park> {
+public class ParkController implements BaseController<Park> {
 
     private final ParkRepository parkRepository;
     private final Logger logger = LoggerFactory.getLogger(ParkRepository.class);
@@ -33,7 +33,7 @@ public class    ParkController implements BaseController<Park> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing park: {}", this.parkRepository.count());
-        return  this.message("Indexing park", this.parkRepository.findAll(), HttpStatus.OK);
+        return this.message("Indexing park", this.parkRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -44,7 +44,7 @@ public class    ParkController implements BaseController<Park> {
         if (park.isEmpty()) {
             return this.message("Park not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting park by id", park.get(), HttpStatus.OK);
+        return this.message("Getting park by id", park.get(), HttpStatus.OK);
 
     }
 
@@ -54,11 +54,11 @@ public class    ParkController implements BaseController<Park> {
         logger.debug("Creating park: {}", park);
         Optional<Park> optionalPark = (park.getId() != null) ? this.parkRepository.findById(park.getId()) : Optional.empty();
         if (optionalPark.isPresent()) {
-            return  this.message("Park is already exists", null, HttpStatus.CONFLICT);
+            return this.message("Park is already exists", null, HttpStatus.CONFLICT);
 
         }
         Park parkCreated = this.parkRepository.save(park);
-        return  this.message("Creating building", parkCreated, HttpStatus.CREATED);
+        return this.message("Creating building", parkCreated, HttpStatus.CREATED);
 
     }
 
@@ -69,9 +69,9 @@ public class    ParkController implements BaseController<Park> {
         Optional<Park> optionalPark = this.parkRepository.findById(id);
         if (optionalPark.isPresent() && optionalPark.get().getId().equals(park.getId())) {
             park = this.parkRepository.save(park);
-            return  this.message("Updating park by id", park, HttpStatus.ACCEPTED);
+            return this.message("Updating park by id", park, HttpStatus.ACCEPTED);
         }
-        return  this.message("Park not found", null, HttpStatus.NOT_FOUND);
+        return this.message("Park not found", null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
@@ -81,9 +81,9 @@ public class    ParkController implements BaseController<Park> {
         Optional<Park> parkUpdated = this.parkRepository.findById(id);
         if (parkUpdated.isPresent()) {
             this.parkRepository.deleteById(id);
-            return  this.message("Park is deleted", null, HttpStatus.NO_CONTENT);
+            return this.message("Park is deleted", null, HttpStatus.NO_CONTENT);
         }
-        return  this.message("Park not found", null,  HttpStatus.NOT_FOUND);
+        return this.message("Park not found", null, HttpStatus.NOT_FOUND);
 
     }
 
@@ -94,7 +94,7 @@ public class    ParkController implements BaseController<Park> {
         if (optionalPark.isPresent()) {
             return this.message("Get Building by park", optionalPark.get().getBuildings(), HttpStatus.OK);
         }
-        return  this.message("Park not found", null,  HttpStatus.NOT_FOUND);
+        return this.message("Park not found", null, HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
