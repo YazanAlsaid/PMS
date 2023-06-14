@@ -25,6 +25,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> optionalUser = this.userRepository.findByEmail(email);
         if (optionalUser.isPresent()) {
+            // TODO: give list of roles as authorities
             return new org.springframework.security.core.userdetails.User(optionalUser.get().getEmail(), optionalUser.get().getPassword(), new ArrayList<>());
         }
 
