@@ -86,6 +86,17 @@ public class ParkController implements BaseController<Park> {
         return  this.message("Park not found", null,  HttpStatus.NOT_FOUND);
 
     }
+
+    @GetMapping("/{id}/buildings")
+    public ResponseEntity<ResponseMessage> getBuildings(@PathVariable("id") Long id) {
+        logger.debug("getBuildings by id Park: {}", id);
+        Optional<Park> optionalPark = this.parkRepository.findById(id);
+        if (optionalPark.isPresent()) {
+            return this.message("Get Building by park", optionalPark.get().getBuildings(), HttpStatus.OK);
+        }
+        return  this.message("Park not found", null,  HttpStatus.NOT_FOUND);
+    }
+
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
