@@ -1,5 +1,7 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +19,8 @@ public class Park extends BaseEntity {
     @Column(name = "name", nullable = false)
     @Size(min = 3, max = 50)
     private String name;
-    @OneToMany(mappedBy = "park", cascade = {CascadeType.MERGE,CascadeType.DETACH})
+    @JsonIgnore
+    @OneToMany(mappedBy = "park", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private List<Building> buildings = new ArrayList<>();
 
     public Park() {

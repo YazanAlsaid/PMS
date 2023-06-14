@@ -1,6 +1,8 @@
 package edu.fra.uas.parking.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,8 +27,10 @@ public class NfcCard extends BaseEntity {
     private LocalDateTime nfcFrom;
     @Column(name ="nfc_to")
     private LocalDateTime nfcTo;
+    @JsonIgnore
     @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private List<Reservation> reservations = new ArrayList<>();
+    @JsonIgnore
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;

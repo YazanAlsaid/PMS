@@ -27,7 +27,7 @@ public class BuildingController {
     @GetMapping
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing building: {}", this.buildingRepository.count());
-        return new ResponseEntity<>(new ResponseMessage("Indexing building", this.buildingRepository.findAll()), HttpStatus.OK);
+        return  this.message("Indexing building", this.buildingRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -71,5 +71,9 @@ public class BuildingController {
             return new ResponseEntity<>(new ResponseMessage("Building is deleted", null), HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(new ResponseMessage("Building not found", null), HttpStatus.NOT_FOUND);
+    }
+
+    private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
+        return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
 }

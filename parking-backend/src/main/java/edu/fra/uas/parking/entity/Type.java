@@ -1,5 +1,7 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,6 +18,7 @@ public class Type extends BaseEntity {
     @Column(name = "Name", nullable = false)
     @Size(min = 3, max = 50)
     private String name;
+    @JsonIgnore
     @OneToMany(mappedBy = "type", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Set<Slot> slots = new HashSet<>();
 
