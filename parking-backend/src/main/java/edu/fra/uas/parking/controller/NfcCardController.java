@@ -5,7 +5,10 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import edu.fra.uas.parking.common.ResponseMessage;
 import edu.fra.uas.parking.entity.NfcCard;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import edu.fra.uas.parking.repository.NfcCardRepository;
 @RestController
 @RequestMapping("/nfc-cards")
 public class NfcCardController implements BaseController<NfcCard> {
+    private final Logger logger = LoggerFactory.getLogger(NfcCardController.class);
 
     private final NfcCardRepository nfcCardRepository;
 
@@ -26,49 +30,62 @@ public class NfcCardController implements BaseController<NfcCard> {
 
     @GetMapping()
     @Override
-    public ResponseEntity<List<NfcCard>> index() {
-        return new ResponseEntity<>(this.nfcCardRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<ResponseMessage> index() {
+        logger.debug("Indexing nfcCard: {}", this.nfcCardRepository.count());
+        return  this.message("Indexing nfcCard", this.nfcCardRepository.findAll(), HttpStatus.OK);
+
     }
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Object> getById(@PathVariable Long id) {
-        NfcCard nfcCard = this.nfcCardRepository.findById(id).orElse(null);
-        if (nfcCard == null) {
-            return new ResponseEntity<>("NFC card not found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
+        logger.debug("Getting building by id: {}", id);
+        Optional<NfcCard> nfcCard = this.nfcCardRepository.findById(id);
+        if (nfcCard.isEmpty()) {
+            return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(nfcCard, HttpStatus.OK);
-    }
+        return  this.message("Getting nfcCard by id", nfcCard.get(), HttpStatus.OK);    }
 
     @PostMapping
     @Override
-    public ResponseEntity<Object> create(@Valid @RequestBody NfcCard nfcCard) {
-        NfcCard nfcCardCreated = this.nfcCardRepository.save(nfcCard);
-        return new ResponseEntity<>(nfcCardCreated, HttpStatus.CREATED);
+    public ResponseEntity<ResponseMessage> create(@Valid @RequestBody NfcCard nfcCard) {
+        logger.debug("Creating nfcCard: {}", nfcCard);
+        Optional<NfcCard> optionalNfcCard = (nfcCard.getId() != null) ? this.nfcCardRepository.findById(nfcCard.getId()) : Optional.empty();
+        if (optionalNfcCard.isPresent()) {
+            return  this.message("NfcCard is already exists", null, HttpStatus.CONFLICT);
+
+        }
+        NfcCard buildingCreated = this.nfcCardRepository.save(nfcCard);
+        return  this.message("Creating nfcCard", buildingCreated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Object> updateById(@PathVariable("id") Long id, @RequestBody NfcCard nfcCard) {
-        Optional<NfcCard> nfcCardToUpdate= this.nfcCardRepository.findById(id);
-        if (nfcCardToUpdate.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody NfcCard nfcCard) {
+        logger.debug("Updating nfcCard by id: {}", id);
+        Optional<NfcCard> optionalBuilding = this.nfcCardRepository.findById(id);
+        if (optionalBuilding.isPresent() && optionalBuilding.get().getId().equals(nfcCard.getId())) {
+            nfcCard = this.nfcCardRepository.save(nfcCard);
+            return  this.message("Updating nfcCard by id", nfcCard, HttpStatus.ACCEPTED);
         }
-        nfcCard = this.nfcCardRepository.save(nfcCard);
-        return new ResponseEntity<>(nfcCard, HttpStatus.ACCEPTED);
+        return  this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
     }
 
 
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<Object> deleteById(@PathVariable("id") Long id) {
-        NfcCard nfcCardToDelete = this.nfcCardRepository.findById(id).orElse(null);
-        if (nfcCardToDelete == null) {
-            return new ResponseEntity<>("NFC card not found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
+        logger.debug("Deleting nfcCard by id: {}", id);
+        Optional<NfcCard> buildingUpdated = this.nfcCardRepository.findById(id);
+        if (buildingUpdated.isPresent()) {
+            this.nfcCardRepository.deleteById(id);
+            return  this.message("NfcCard is deleted", null, HttpStatus.NO_CONTENT);
         }
+        return  this.message("NfcCard not found", null,  HttpStatus.NOT_FOUND);
+    }
 
-        this.nfcCardRepository.deleteById(id);
-        return new ResponseEntity<>("NFC card deleted.", HttpStatus.NO_CONTENT);
+    private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
+        return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
 
 }
