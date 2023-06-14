@@ -71,9 +71,7 @@ public class ParkController implements BaseController<Park> {
 
         }
         Park parkCreated = this.parkRepository.save(park);
-        return this.message("Creating building", parkCreated, HttpStatus.CREATED);
         parkCreated = this.addLinks(parkCreated);
-
         return  this.message("Creating building", parkCreated, HttpStatus.CREATED);
 
     }
@@ -85,7 +83,6 @@ public class ParkController implements BaseController<Park> {
         Optional<Park> optionalPark = this.parkRepository.findById(id);
         if (optionalPark.isPresent() && optionalPark.get().getId().equals(park.getId())) {
             park = this.parkRepository.save(park);
-            return this.message("Updating park by id", park, HttpStatus.ACCEPTED);
             park = this.addLinks(park);
             return  this.message("Updating park by id", park, HttpStatus.ACCEPTED);
         }
