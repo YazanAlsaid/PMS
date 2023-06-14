@@ -23,9 +23,9 @@ public class NfcCard extends BaseEntity {
     @Column(name = "serial_number", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String serialNumber;
-    @Column(name ="nfc_from")
+    @Column(name = "nfc_from")
     private LocalDateTime nfcFrom;
-    @Column(name ="nfc_to")
+    @Column(name = "nfc_to")
     private LocalDateTime nfcTo;
     @JsonIgnore
     @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.MERGE, CascadeType.DETACH})
@@ -38,19 +38,24 @@ public class NfcCard extends BaseEntity {
     public NfcCard() {
     }
 
+    @SuppressWarnings("unused")
     public NfcCard(String serialNumber, LocalDateTime nfcFrom, LocalDateTime nfcTo) {
         this.serialNumber = serialNumber;
         this.nfcFrom = nfcFrom;
         this.nfcTo = nfcTo;
     }
+
     public NfcCard(String serialNumber, User user) {
         this.serialNumber = serialNumber;
         this.user = user;
     }
+
+    @SuppressWarnings("unused")
     public String getSerialNumber() {
         return serialNumber;
     }
 
+    @SuppressWarnings("unused")
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
     }
@@ -84,9 +89,13 @@ public class NfcCard extends BaseEntity {
     public LocalDateTime getNfcTo() {
         return nfcTo;
     }
+
+    @SuppressWarnings("unused")
     public void setNfcFrom(LocalDateTime nfcFrom) {
         this.nfcFrom = nfcFrom;
     }
+
+    @SuppressWarnings("unused")
     public void setNfcTo(LocalDateTime nfcTo) {
         this.nfcTo = nfcTo;
     }

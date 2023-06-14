@@ -24,7 +24,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class    User extends BaseEntity {
+public class User extends BaseEntity {
     @Column(name = "first_name", nullable = false)
     @Size(min = 3, max = 50)
     private String firstName;

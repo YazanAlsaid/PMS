@@ -20,12 +20,12 @@ public class Building extends BaseEntity {
     @JoinColumn(name = "park_id")
     private Park park;
     @JsonIgnore
-    @OneToMany(mappedBy = "building",cascade = {CascadeType.MERGE,CascadeType.DETACH})
+    @OneToMany(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private List<Floor> floors = new ArrayList<>();
     @OneToOne(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Address address;
 
-    public Building(String name,Park park) {
+    public Building(String name, Park park) {
         this.name = name;
         this.park = park;
     }
@@ -59,6 +59,16 @@ public class Building extends BaseEntity {
     @SuppressWarnings("unused")
     public void setFloors(List<Floor> floors) {
         this.floors = floors;
+    }
+
+    @SuppressWarnings("unused")
+    public Address getAddress() {
+        return address;
+    }
+
+    @SuppressWarnings("unused")
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     @Override

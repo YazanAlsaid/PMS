@@ -58,18 +58,22 @@ public class Role extends BaseEntity implements Serializable {
     public List<User> getUsers() {
         return users;
     }
+
+    @SuppressWarnings("unused")
     public void setPrivilege(Privilege privilege) {
         if (!this.privileges.contains(privilege)) {
             this.privileges.add(privilege);
         }
     }
+
     public void setPrivileges(List<Privilege> privileges) {
-        for (Privilege privilege: privileges){
+        for (Privilege privilege : privileges) {
             if (!this.privileges.contains(privilege)) {
                 this.privileges.add(privilege);
             }
         }
     }
+
     @SuppressWarnings("unused")
     public List<Privilege> getPrivileges() {
         return privileges;
