@@ -1,7 +1,10 @@
 package edu.fra.uas.parking.controller;
 
+import edu.fra.uas.parking.common.ResponseMessage;
 import edu.fra.uas.parking.entity.Slot;
 import edu.fra.uas.parking.repository.SlotRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,8 @@ import java.util.Optional;
 @RequestMapping("/slots")
 public class SlotController implements BaseController<Slot> {
 
+    private final Logger logger = LoggerFactory.getLogger(SlotController.class);
+
     private final SlotRepository slotRepository;
 
     @Autowired
@@ -24,48 +29,62 @@ public class SlotController implements BaseController<Slot> {
 
     @GetMapping()
     @Override
-    public ResponseEntity<List<Slot>> index() {
-        List<Slot> slots = this.slotRepository.findAll();
-        return new ResponseEntity<>(slots, HttpStatus.OK);
+    public ResponseEntity<ResponseMessage> index() {
+        logger.debug("Indexing slot: {}", this.slotRepository.count());
+        return  this.message("Indexing slot", this.slotRepository.findAll(), HttpStatus.OK);
+
     }
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Object> getById(@PathVariable Long id) {
-        Slot slot = this.slotRepository.findById(id).orElse(null);
-        if (slot == null) {
-            return new ResponseEntity<>("Slot not found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
+        logger.debug("Getting slot by id: {}", id);
+        Optional<Slot> slot = this.slotRepository.findById(id);
+        if (slot.isEmpty()) {
+            return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(slot, HttpStatus.OK);
+        return  this.message("Getting slot by id", slot.get(), HttpStatus.OK);
+
     }
 
     @PostMapping
     @Override
-    public ResponseEntity<Object> create(@Valid @RequestBody Slot slot) {
-        Slot slotCreated = this.slotRepository.save(slot);
-        return new ResponseEntity<>(slotCreated, HttpStatus.CREATED);
-    }
+    public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Slot slot) {
+        logger.debug("Creating slot: {}", slot);
+        Optional<Slot> optionalSlot = (slot.getId() != null) ? this.slotRepository.findById(slot.getId()) : Optional.empty();
+        if (optionalSlot.isPresent()) {
+            return this.message("Building is already exists", null, HttpStatus.CONFLICT);
 
-    @PutMapping("/{id}")
-    @Override
-    public ResponseEntity<Object> updateById(@PathVariable("id") Long id, @RequestBody Slot slot) {
-        Optional<Slot> slotUpdated = this.slotRepository.findById(id);
-        if (slotUpdated.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        slot = this.slotRepository.save(slot);
-        return new ResponseEntity<>(slot, HttpStatus.ACCEPTED);
+        Slot buildingCreated = this.slotRepository.save(slot);
+        return this.message("Creating slot", buildingCreated, HttpStatus.CREATED);
     }
+
+        @PutMapping("/{id}")
+    @Override
+    public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody Slot slot) {
+            logger.debug("Updating slot by id: {}", id);
+            Optional<Slot> optionalSlot = this.slotRepository.findById(id);
+            if (optionalSlot.isPresent() && optionalSlot.get().getId().equals(slot.getId())) {
+                slot = this.slotRepository.save(slot);
+                return  this.message("Updating slot by id", slot, HttpStatus.ACCEPTED);
+            }
+            return  this.message("Slot not found", null, HttpStatus.NOT_FOUND);
+        }
 
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<Object> deleteById(@PathVariable("id") Long id) {
-        Slot slotToDelete = this.slotRepository.findById(id).orElse(null);
-        if (slotToDelete == null) {
-            return new ResponseEntity<>("Slot not found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
+        logger.debug("Deleting slot by id: {}", id);
+        Optional<Slot> buildingUpdated = this.slotRepository.findById(id);
+        if (buildingUpdated.isPresent()) {
+            this.slotRepository.deleteById(id);
+            return  this.message("Slot is deleted", null, HttpStatus.NO_CONTENT);
         }
-        this.slotRepository.deleteById(id);
-        return new ResponseEntity<>("Slot deleted.", HttpStatus.NO_CONTENT);
+        return  this.message("Slot not found", null,  HttpStatus.NOT_FOUND);
+
+    }
+    private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
+        return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
 }

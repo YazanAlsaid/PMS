@@ -1,6 +1,7 @@
 package edu.fra.uas.parking.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.CascadeType;
@@ -36,13 +37,16 @@ public class    User extends BaseEntity {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(name = "role_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles = new ArrayList<>();
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private List<Reservation> reservations = new ArrayList<>();
+    @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private NfcCard nfcCard;
 

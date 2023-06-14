@@ -5,7 +5,10 @@ import java.util.Optional;
 
 import javax.validation.Valid;
 
+import edu.fra.uas.parking.common.ResponseMessage;
 import edu.fra.uas.parking.entity.Park;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +21,8 @@ import edu.fra.uas.parking.repository.ParkRepository;
 public class ParkController implements BaseController<Park> {
 
     private final ParkRepository parkRepository;
+    private final Logger logger = LoggerFactory.getLogger(ParkRepository.class);
+
 
     @Autowired
     public ParkController(ParkRepository parkRepository) {
@@ -26,48 +31,62 @@ public class ParkController implements BaseController<Park> {
 
     @GetMapping()
     @Override
-    public ResponseEntity<List<Park>> index() {
-        return new ResponseEntity<>(this.parkRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<ResponseMessage> index() {
+        logger.debug("Indexing park: {}", this.parkRepository.count());
+        return  this.message("Indexing park", this.parkRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Object> getById(@PathVariable Long id) {
-        Park park = this.parkRepository.findById(id).orElse(null);
-        if (park == null) {
-            return new ResponseEntity<>("Park not found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
+        logger.debug("Getting park by id: {}", id);
+        Optional<Park> park = this.parkRepository.findById(id);
+        if (park.isEmpty()) {
+            return this.message("Park not found", null, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(park, HttpStatus.OK);
+        return  this.message("Getting park by id", park.get(), HttpStatus.OK);
+
     }
 
     @PostMapping
     @Override
-    public ResponseEntity<Object> create(@Valid @RequestBody Park park) {
+    public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Park park) {
+        logger.debug("Creating park: {}", park);
+        Optional<Park> optionalPark = (park.getId() != null) ? this.parkRepository.findById(park.getId()) : Optional.empty();
+        if (optionalPark.isPresent()) {
+            return  this.message("Park is already exists", null, HttpStatus.CONFLICT);
+
+        }
         Park parkCreated = this.parkRepository.save(park);
-        return new ResponseEntity<>(parkCreated, HttpStatus.CREATED);
+        return  this.message("Creating building", parkCreated, HttpStatus.CREATED);
+
     }
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Object> updateById(@PathVariable("id") Long id, Park park) {
-        Optional<Park> parkUpdated = this.parkRepository.findById(id);
-        if (parkUpdated.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Park park) {
+        logger.debug("Updating park by id: {}", id);
+        Optional<Park> optionalPark = this.parkRepository.findById(id);
+        if (optionalPark.isPresent() && optionalPark.get().getId().equals(park.getId())) {
+            park = this.parkRepository.save(park);
+            return  this.message("Updating park by id", park, HttpStatus.ACCEPTED);
         }
-
-        park = this.parkRepository.save(park);
-        return new ResponseEntity<>(park, HttpStatus.ACCEPTED);
+        return  this.message("Park not found", null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<Object> deleteById(@PathVariable("id") Long id) {
-        Park parkToDelete = this.parkRepository.findById(id).orElse(null);
-        if (parkToDelete == null) {
-            return new ResponseEntity<>("Park not found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
+        logger.debug("Deleting park by id: {}", id);
+        Optional<Park> parkUpdated = this.parkRepository.findById(id);
+        if (parkUpdated.isPresent()) {
+            this.parkRepository.deleteById(id);
+            return  this.message("Park is deleted", null, HttpStatus.NO_CONTENT);
         }
-        this.parkRepository.deleteById(id);
-        return new ResponseEntity<>("Park deleted.", HttpStatus.NO_CONTENT);
-    }
+        return  this.message("Park not found", null,  HttpStatus.NOT_FOUND);
 
+    }
+    private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
+        return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
+    }
 }
