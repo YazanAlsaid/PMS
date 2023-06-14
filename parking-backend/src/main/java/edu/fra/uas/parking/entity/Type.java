@@ -39,7 +39,7 @@ public class Type extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public Set<Slot> getSlot() {
+    public Set<Slot> getSlots() {
         return slots;
     }
 
