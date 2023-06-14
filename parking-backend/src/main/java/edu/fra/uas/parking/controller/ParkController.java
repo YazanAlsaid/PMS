@@ -1,6 +1,6 @@
 package edu.fra.uas.parking.controller;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -10,11 +10,16 @@ import edu.fra.uas.parking.entity.Park;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import edu.fra.uas.parking.repository.ParkRepository;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/parks")
@@ -33,18 +38,26 @@ public class ParkController implements BaseController<Park> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing park: {}", this.parkRepository.count());
-        return  this.message("Indexing park", this.parkRepository.findAll(), HttpStatus.OK);
+        CollectionModel<Park> parks = CollectionModel.of(this.parkRepository.findAll());
+        parks.add(linkTo(methodOn(ParkController.class).index()).withSelfRel());
+        for (Park p : parks){
+            p = this.addLinks(p);
+        }
+
+        return  this.message("Indexing park", parks, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
         logger.debug("Getting park by id: {}", id);
-        Optional<Park> park = this.parkRepository.findById(id);
-        if (park.isEmpty()) {
+        Optional<Park> optionalPark = this.parkRepository.findById(id);
+        if (optionalPark.isEmpty()) {
             return this.message("Park not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting park by id", park.get(), HttpStatus.OK);
+
+        Park park = this.addLinks(optionalPark.get());
+        return  this.message("Getting park by id", park, HttpStatus.OK);
 
     }
 
@@ -58,6 +71,8 @@ public class ParkController implements BaseController<Park> {
 
         }
         Park parkCreated = this.parkRepository.save(park);
+        parkCreated = this.addLinks(parkCreated);
+
         return  this.message("Creating building", parkCreated, HttpStatus.CREATED);
 
     }
@@ -69,6 +84,7 @@ public class ParkController implements BaseController<Park> {
         Optional<Park> optionalPark = this.parkRepository.findById(id);
         if (optionalPark.isPresent() && optionalPark.get().getId().equals(park.getId())) {
             park = this.parkRepository.save(park);
+            park = this.addLinks(park);
             return  this.message("Updating park by id", park, HttpStatus.ACCEPTED);
         }
         return  this.message("Park not found", null, HttpStatus.NOT_FOUND);
@@ -88,5 +104,11 @@ public class ParkController implements BaseController<Park> {
     }
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
+    }
+
+    private Park addLinks(Park park){
+        park.add(linkTo(methodOn(ParkController.class).getById(park.getId())).withSelfRel());
+        park.add(linkTo(methodOn(ParkController.class).index()).withRel(IanaLinkRelations.COLLECTION));
+        return park;
     }
 }

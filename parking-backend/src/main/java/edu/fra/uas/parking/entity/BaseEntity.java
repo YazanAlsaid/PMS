@@ -2,6 +2,7 @@ package edu.fra.uas.parking.entity;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.hateoas.RepresentationModel;
 
 
 import javax.persistence.Column;
@@ -12,7 +13,7 @@ import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract class BaseEntity extends RepresentationModel<BaseEntity> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
