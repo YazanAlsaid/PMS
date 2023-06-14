@@ -23,18 +23,26 @@ public class Park extends BaseEntity {
     public Park() {
     }
 
+    public Park(String name) {
+        this.name = name;
+    }
+
+    @SuppressWarnings("unused")
     public String getName() {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public void setName(String name) {
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
     public List<Building> getBuildings() {
         return buildings;
     }
 
+    @SuppressWarnings("unused")
     public void setBuildings(List<Building> buildings) {
         this.buildings = buildings;
     }

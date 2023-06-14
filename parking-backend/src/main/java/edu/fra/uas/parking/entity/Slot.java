@@ -14,18 +14,18 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "slots")
-public class Slot extends BaseEntity{
-    @Column(name = "Name",nullable = false)
-    @Size(min = 3,max = 50)
+public class Slot extends BaseEntity {
+    @Column(name = "Name", nullable = false)
+    @Size(min = 3, max = 50)
     private String name;
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "floor_id")
     private Floor floor;
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "type_id")
     private Type type;
 
-    @OneToMany(mappedBy = "slot", cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @OneToMany(mappedBy = "slot", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     private List<Reservation> reservations = new ArrayList<>();
 
     public String getName() {
@@ -36,24 +36,36 @@ public class Slot extends BaseEntity{
         this.name = name;
     }
 
+    @SuppressWarnings("unused")
     public Floor getFloor() {
         return floor;
     }
+
+    @SuppressWarnings("unused")
     public void setFloor(Floor floor) {
         this.floor = floor;
     }
+
+    @SuppressWarnings("unused")
     public Type getType() {
         return type;
     }
+
+    @SuppressWarnings("unused")
     public void setType(Type types) {
         this.type = types;
     }
+
+    @SuppressWarnings("unused")
     public List<Reservation> getReservations() {
         return reservations;
     }
+
+    @SuppressWarnings("unused")
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -61,10 +73,12 @@ public class Slot extends BaseEntity{
         Slot slot = (Slot) o;
         return Objects.equals(floor, slot.floor) && Objects.equals(reservations, slot.reservations);
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(floor, reservations);
     }
+
     @Override
     public String toString() {
         return "Slot{" +

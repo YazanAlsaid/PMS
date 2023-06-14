@@ -57,33 +57,40 @@ public class User extends BaseEntity {
         this.password = bCryptPasswordEncoder.encode(password);
     }
 
+    @SuppressWarnings("unused")
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @SuppressWarnings("unused")
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    @SuppressWarnings("unused")
     public void setEmail(String email) {
         this.email = email;
     }
 
+    @SuppressWarnings("unused")
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @SuppressWarnings("unused")
     public void setRole(Role role) {
         if (!this.roles.contains(role)) {
             this.roles.add(role);
         }
     }
 
+    @SuppressWarnings("unused")
     public void setHashedPassword(String password) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         this.password = bCryptPasswordEncoder.encode(password);
     }
 
+    @SuppressWarnings("unused")
     public Boolean hasRole(String roleName) {
         for (Role role : this.roles) {
             if (role.getName().equals(roleName)) {
@@ -93,42 +100,52 @@ public class User extends BaseEntity {
         return false;
     }
 
+    @SuppressWarnings("unused")
     public String getFirstName() {
         return firstName;
     }
 
+    @SuppressWarnings("unused")
     public String getLastName() {
         return lastName;
     }
 
+    @SuppressWarnings("unused")
     public String getEmail() {
         return email;
     }
 
+    @SuppressWarnings("unused")
     public String getPassword() {
         return password;
     }
 
+    @SuppressWarnings("unused")
     public List<Role> getRoles() {
         return roles;
     }
 
+    @SuppressWarnings("unused")
     public List<Reservation> getReservations() {
         return reservations;
     }
 
+    @SuppressWarnings("unused")
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
     }
 
+    @SuppressWarnings("unused")
     public void setReservation(Reservation reservation) {
         this.reservations.add(reservation);
     }
 
+    @SuppressWarnings("unused")
     public NfcCard getNfcCard() {
         return nfcCard;
     }
 
+    @SuppressWarnings("unused")
     public void setNfcCard(NfcCard nfcCard) {
         this.nfcCard = nfcCard;
     }

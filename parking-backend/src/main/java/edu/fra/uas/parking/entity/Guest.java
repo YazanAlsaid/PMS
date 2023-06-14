@@ -28,30 +28,37 @@ public class Guest extends BaseEntity {
         this.lastName = lastName;
     }
 
+    @SuppressWarnings("unused")
     public String getFirstName() {
         return firstName;
     }
 
+    @SuppressWarnings("unused")
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @SuppressWarnings("unused")
     public String getLastName() {
         return lastName;
     }
 
+    @SuppressWarnings("unused")
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    @SuppressWarnings("unused")
     public List<Reservation> getReservations() {
         return reservations;
     }
 
+    @SuppressWarnings("unused")
     public void setReservations(List<Reservation> reservations) {
         this.reservations = reservations;
     }
 
+    @SuppressWarnings("unused")
     public void setReservation(Reservation reservation) {
         this.reservations.add(reservation);
     }
