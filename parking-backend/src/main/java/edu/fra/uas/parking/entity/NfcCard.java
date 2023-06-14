@@ -18,7 +18,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "nfc_cards")
 public class NfcCard extends BaseEntity {
-    @Column(name = "serial_number", nullable = false)
+    @Column(name = "serial_number", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String serialNumber;
     @Column(name ="nfc_from", nullable = false)
