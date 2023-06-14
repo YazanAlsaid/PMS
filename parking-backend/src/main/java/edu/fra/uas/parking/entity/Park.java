@@ -1,6 +1,7 @@
 package edu.fra.uas.parking.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -8,8 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 
@@ -21,7 +22,7 @@ public class Park extends BaseEntity {
     private String name;
     @JsonIgnore
     @OneToMany(mappedBy = "park", cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    private List<Building> buildings = new ArrayList<>();
+    private Set<Building> buildings = new HashSet<>();
 
     public Park() {
     }
@@ -41,13 +42,18 @@ public class Park extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public List<Building> getBuildings() {
+    public Set<Building> getBuildings() {
         return buildings;
     }
 
     @SuppressWarnings("unused")
-    public void setBuildings(List<Building> buildings) {
+    public void setBuildings(Set<Building> buildings) {
         this.buildings = buildings;
+    }
+
+    @JsonProperty("buildingCount")
+    public Integer getBuildingsCount(){
+        return this.buildings.size();
     }
 
     @Override
