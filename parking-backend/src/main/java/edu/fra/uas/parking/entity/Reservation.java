@@ -22,11 +22,11 @@ public class Reservation extends BaseEntity {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "guest_id")
     private Guest guest;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "nfc_card_id")
     private NfcCard nfcCard;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "slot_id")
     private Slot slot;
 
@@ -36,6 +36,15 @@ public class Reservation extends BaseEntity {
     public Reservation(LocalDateTime reservationFrom, LocalDateTime reservationTo) {
         this.reservationFrom = reservationFrom;
         this.reservationTo = reservationTo;
+    }
+
+    public Reservation(LocalDateTime reservationFrom, LocalDateTime reservationTo, User user, Guest guest, NfcCard nfcCard, Slot slot) {
+        this.reservationFrom = reservationFrom;
+        this.reservationTo = reservationTo;
+        this.user = user;
+        this.guest = guest;
+        this.nfcCard = nfcCard;
+        this.slot = slot;
     }
 
     @SuppressWarnings("unused")

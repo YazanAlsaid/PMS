@@ -1,5 +1,7 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,9 +22,11 @@ public class Role extends BaseEntity implements Serializable {
     @Column(name = "Name", nullable = false)
     @Size(min = 3, max = 50)
     private String name;
-    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private List<User> users = new ArrayList<>();
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(name = "privilege_role",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
@@ -54,7 +58,18 @@ public class Role extends BaseEntity implements Serializable {
     public List<User> getUsers() {
         return users;
     }
-
+    public void setPrivilege(Privilege privilege) {
+        if (!this.privileges.contains(privilege)) {
+            this.privileges.add(privilege);
+        }
+    }
+    public void setPrivileges(List<Privilege> privileges) {
+        for (Privilege privilege: privileges){
+            if (!this.privileges.contains(privilege)) {
+                this.privileges.add(privilege);
+            }
+        }
+    }
     @SuppressWarnings("unused")
     public List<Privilege> getPrivileges() {
         return privileges;

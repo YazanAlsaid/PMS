@@ -34,7 +34,12 @@ public class InitDB {
     private RoleRepository roleRepository;
     @Autowired
     PrivilegeRepository privilegeRepository;
-
+    @Autowired
+    private NfcCardRepository nfcCardRepository;
+    @Autowired
+    private GuestRepository guestRepository;
+    private int count = 1;
+    private int type = 1;
 
     @PostConstruct
     public void init() {
@@ -46,47 +51,79 @@ public class InitDB {
             park.setName("park" + i);
             this.parkRepository.save(park);
         }
-        for (int i = 1; i <= 10; i++) {
-            Building building = new Building();
-            building.setName("building" + i);
+        for (int i = 0; i < 10; i++) {
+            if(i%2 == 0 && i != 0) {count++;}
+            Building building = new Building("building"+(i+1),this.parkRepository.getById(Long.valueOf(count)));
             this.buildingRepository.save(building);
         }
-        for (int i = 1; i <= 10; i++) {
-            Floor floor = new Floor();
-            floor.setName("floor" + i);
+        this.count = 1;
+        for (int i = 0; i < 20; i++) {
+            if(i%2 == 0 && i != 0) {count++;}
+            Floor floor = new Floor("floor" +(i+1),this.buildingRepository.getById(Long.valueOf(count)));
             this.floorRepository.save(floor);
         }
-        for (int i = 1; i <= 100; i++) {
-            Slot slot = new Slot();
-            slot.setName("slot" + i);
-            this.slotRepository.save(slot);
-        }
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= 5; i++) {
             Type type = new Type();
             type.setName("type" + i);
             this.typeRepository.save(type);
         }
-        for (int i = 1; i <= 100; i++) {
-            Reservation reservation = new Reservation();
-            reservation.setReservationFrom(LocalDateTime.now());
-            reservation.setReservationTo(LocalDateTime.now());
-            this.reservationRepository.save(reservation);
-        }
-        for (int i = 1; i <= 100; i++) {
-            User user = new User("user" + i, "user" + i, "user" + i + "@user.com", "user" + i);
-            this.userRepository.save(user);
-        }
-        for (int i = 1; i <= 30; i++) {
-            Role role = new Role();
-            role.setName("role" + i);
-            this.roleRepository.save(role);
+        this.count = 1;
+        for (int i = 0; i < 200; i++) {
+            if(i%10 == 0 && i != 0 ) {count++;}
+            if(type <= 4 && (i%5 == 0 && i != 0)) {type++;}
+            Slot slot = new Slot("slot" +(i+1),
+                                  this.floorRepository.getById(Long.valueOf(count)),
+                                  this.typeRepository.getById(Long.valueOf(type)));
+            if(type == 4) {type = 1;}
+            this.slotRepository.save(slot);
         }
         for (int i = 1; i <= 30; i++) {
             Privilege privilege = new Privilege();
             privilege.setName("privilege" + i);
             this.privilegeRepository.save(privilege);
         }
+        // roles
+        Role roleAdmin = new Role("ADMIN");
+        roleAdmin = roleRepository.save(roleAdmin);
+        Role roleUser = new Role("USER");
+        roleUser=this.roleRepository.save(roleUser);
+
+        roleAdmin.setPrivileges(this.privilegeRepository.findAll());
+        roleAdmin = roleRepository.save(roleAdmin);
+        roleUser.setPrivileges(this.privilegeRepository.findAll());
+        roleUser = roleRepository.save(roleUser);
+
+        for (int i = 1; i <= 100; i++) {
+            User user = new User("user" + i, "user" + i, "user" + i + "@user.com", "user" + i);
+            if (i == 100){
+                user.setRole(roleAdmin);
+            }
+            else
+            user.setRole(roleUser);
+            this.userRepository.save(user);
+        }
+        for (int i = 1; i <= 100; i++){
+            NfcCard nfcCard = new NfcCard("nfc"+ i,this.userRepository.getById(Long.valueOf(i)));
+            nfcCardRepository.save(nfcCard);
+        }
+        for (int i = 1; i <= 30; i++ ){
+            Guest guest = new Guest("guest"+ i,"guest" + i);
+            guestRepository.save(guest);
+        }
+        for (int i = 1; i <= 100; i++) {
+            Reservation reservation = new Reservation(LocalDateTime.now(), LocalDateTime.now());
+           /* Reservation reservation = new Reservation(LocalDateTime.now(),
+                    LocalDateTime.now(),
+                    this.userRepository.getById(Long.valueOf(i)),
+                    this.guestRepository.getById(Long.valueOf(i)),
+                    this.nfcCardRepository.getById(Long.valueOf(i)),
+                    this.slotRepository.getById(Long.valueOf(i)));
+                    this.reservationRepository.save(reservation);
+
+            */
+            this.reservationRepository.save(reservation);
+        }
+
+
     }
-
-
 }
