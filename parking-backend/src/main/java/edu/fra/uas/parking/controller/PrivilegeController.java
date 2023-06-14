@@ -1,7 +1,10 @@
 package edu.fra.uas.parking.controller;
 
+import edu.fra.uas.parking.common.ResponseMessage;
 import edu.fra.uas.parking.entity.Privilege;
 import edu.fra.uas.parking.repository.PrivilegeRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,8 @@ import java.util.Optional;
 public class PrivilegeController implements BaseController<Privilege> {
 
     private final PrivilegeRepository privilegeRepository;
+    private final Logger logger = LoggerFactory.getLogger(PrivilegeRepository.class);
+
 
     @Autowired
     public PrivilegeController(PrivilegeRepository privilegeRepository) {
@@ -24,47 +29,63 @@ public class PrivilegeController implements BaseController<Privilege> {
 
     @GetMapping()
     @Override
-    public ResponseEntity<List<Privilege>> index() {
-        return new ResponseEntity<>(this.privilegeRepository.findAll(), HttpStatus.OK);
+    public ResponseEntity<ResponseMessage> index() {
+        logger.debug("Indexing privilege: {}", this.privilegeRepository.count());
+        return  this.message("Indexing privilege", this.privilegeRepository.findAll(), HttpStatus.OK);
+
     }
 
     @GetMapping("/{id}")
     @Override
-    public ResponseEntity<Object> getById(@PathVariable Long id) {
-        Privilege privilege = this.privilegeRepository.findById(id).orElse(null);
-        if (privilege == null) {
-            return new ResponseEntity<>("Privilege not found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
+        logger.debug("Getting privilege by id: {}", id);
+        Optional<Privilege> privilege = this.privilegeRepository.findById(id);
+        if (privilege.isEmpty()) {
+            return this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(privilege, HttpStatus.OK);
+        return  this.message("Getting Privilege by id", privilege.get(), HttpStatus.OK);
+
     }
 
     @PostMapping
     @Override
-    public ResponseEntity<Object> create(@Valid @RequestBody Privilege privilege) {
+    public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Privilege privilege) {
+        logger.debug("Creating Privilege: {}", privilege);
+        Optional<Privilege> optionalPrivilege = (privilege.getId() != null) ? this.privilegeRepository.findById(privilege.getId()) : Optional.empty();
+        if (optionalPrivilege.isPresent()) {
+            return  this.message("Privilege is already exists", null, HttpStatus.CONFLICT);
+
+        }
         Privilege privilegeCreated = this.privilegeRepository.save(privilege);
-        return new ResponseEntity<>(privilegeCreated, HttpStatus.CREATED);
+        return  this.message("Creating privilege", privilegeCreated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<Object> updateById(@PathVariable("id") Long id, Privilege privilege) {
-        Optional<Privilege> privilegeUpdated = this.privilegeRepository.findById(id);
-        if (privilegeUpdated.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Privilege privilege) {
+        logger.debug("Updating privilege by id: {}", id);
+        Optional<Privilege> optionalPrivilege = this.privilegeRepository.findById(id);
+        if (optionalPrivilege.isPresent() && optionalPrivilege.get().getId().equals(privilege.getId())) {
+            privilege = this.privilegeRepository.save(privilege);
+            return  this.message("Updating privilege by id", privilege, HttpStatus.ACCEPTED);
         }
-
-        privilege = this.privilegeRepository.save(privilege);
-        return new ResponseEntity<>(privilege, HttpStatus.ACCEPTED);
+        return  this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
     @Override
-    public ResponseEntity<Object> deleteById(@PathVariable("id") Long id) {
-        Privilege privilegeToDelete = this.privilegeRepository.findById(id).orElse(null);
-        if (privilegeToDelete == null) {
-            return new ResponseEntity<>("Privilege not found.", HttpStatus.NOT_FOUND);
+    public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
+
+        logger.debug("Deleting privilege by id: {}", id);
+        Optional<Privilege> privilegeUpdated = this.privilegeRepository.findById(id);
+        if (privilegeUpdated.isPresent()) {
+            this.privilegeRepository.deleteById(id);
+            return  this.message("Privilege is deleted", null, HttpStatus.NO_CONTENT);
         }
-        this.privilegeRepository.deleteById(id);
-        return new ResponseEntity<>("Privilege deleted.", HttpStatus.NO_CONTENT);
+        return  this.message("Privilege not found", null,  HttpStatus.NOT_FOUND);
+
+    }
+    private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
+        return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
 }
