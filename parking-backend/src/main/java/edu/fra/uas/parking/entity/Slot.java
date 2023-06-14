@@ -1,6 +1,7 @@
 package edu.fra.uas.parking.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,8 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 @Entity
@@ -30,7 +31,7 @@ public class Slot extends BaseEntity {
     private Type type;
 
     @OneToMany(mappedBy = "slot", cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    private List<Reservation> reservations = new ArrayList<>();
+    private Set<Reservation> reservations = new HashSet<>();
 
     public Slot(String name, Floor floor,Type type) {
         this.name = name;
@@ -69,15 +70,19 @@ public class Slot extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public List<Reservation> getReservations() {
+    public Set<Reservation> getReservations() {
         return reservations;
     }
 
     @SuppressWarnings("unused")
-    public void setReservations(List<Reservation> reservations) {
+    public void setReservations(Set<Reservation> reservations) {
         this.reservations = reservations;
     }
 
+    @JsonProperty("reservationCount")
+    public Integer getReservationsCount(){
+       return this.reservations.size();
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

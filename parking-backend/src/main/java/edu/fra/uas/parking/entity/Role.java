@@ -12,8 +12,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 @Entity
@@ -24,13 +24,13 @@ public class Role extends BaseEntity implements Serializable {
     private String name;
     @JsonIgnore
     @ManyToMany(mappedBy = "roles", cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    private List<User> users = new ArrayList<>();
+    private Set<User> users = new HashSet<>();
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(name = "privilege_role",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
-    private List<Privilege> privileges = new ArrayList<>();
+    private Set<Privilege> privileges = new HashSet<>();
 
     public Role() {
     }
@@ -55,15 +55,13 @@ public class Role extends BaseEntity implements Serializable {
     }
 
     @SuppressWarnings("unused")
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
     public void setPrivilege(Privilege privilege) {
-        if (!this.privileges.contains(privilege)) {
-            this.privileges.add(privilege);
-        }
+          this.privileges.add(privilege);
     }
-    public void setPrivileges(List<Privilege> privileges) {
+    public void setPrivileges(Set<Privilege> privileges) {
         for (Privilege privilege: privileges){
             if (!this.privileges.contains(privilege)) {
                 this.privileges.add(privilege);
@@ -71,7 +69,7 @@ public class Role extends BaseEntity implements Serializable {
         }
     }
     @SuppressWarnings("unused")
-    public List<Privilege> getPrivileges() {
+    public Set<Privilege> getPrivileges() {
         return privileges;
     }
 

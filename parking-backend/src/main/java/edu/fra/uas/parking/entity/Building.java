@@ -1,10 +1,13 @@
 package edu.fra.uas.parking.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 @Entity
@@ -19,7 +22,7 @@ public class Building extends BaseEntity {
     private Park park;
     @JsonIgnore
     @OneToMany(mappedBy = "building",cascade = {CascadeType.MERGE,CascadeType.DETACH})
-    private List<Floor> floors = new ArrayList<>();
+    private Set<Floor> floors = new HashSet<>();
     @OneToOne(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Address address;
 
@@ -50,15 +53,18 @@ public class Building extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public List<Floor> getFloors() {
+    public Set<Floor> getFloors() {
         return floors;
     }
 
     @SuppressWarnings("unused")
-    public void setFloors(List<Floor> floors) {
+    public void setFloors(Set<Floor> floors) {
         this.floors = floors;
     }
-
+    @JsonProperty("floorCount")
+    public Integer getFloorsCount(){
+        return this.floors.size();
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
