@@ -29,6 +29,7 @@ public class Slot extends BaseEntity {
     @JoinColumn(name = "type_id")
     private Type type;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "slot", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private List<Reservation> reservations = new ArrayList<>();
 

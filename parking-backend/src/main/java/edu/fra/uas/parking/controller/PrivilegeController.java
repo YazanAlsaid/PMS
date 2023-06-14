@@ -31,7 +31,7 @@ public class PrivilegeController implements BaseController<Privilege> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing privilege: {}", this.privilegeRepository.count());
-        return  this.message("Indexing privilege", this.privilegeRepository.findAll(), HttpStatus.OK);
+        return this.message("Indexing privilege", this.privilegeRepository.findAll(), HttpStatus.OK);
 
     }
 
@@ -43,7 +43,7 @@ public class PrivilegeController implements BaseController<Privilege> {
         if (privilege.isEmpty()) {
             return this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting Privilege by id", privilege.get(), HttpStatus.OK);
+        return this.message("Getting Privilege by id", privilege.get(), HttpStatus.OK);
 
     }
 
@@ -53,11 +53,11 @@ public class PrivilegeController implements BaseController<Privilege> {
         logger.debug("Creating Privilege: {}", privilege);
         Optional<Privilege> optionalPrivilege = (privilege.getId() != null) ? this.privilegeRepository.findById(privilege.getId()) : Optional.empty();
         if (optionalPrivilege.isPresent()) {
-            return  this.message("Privilege is already exists", null, HttpStatus.CONFLICT);
+            return this.message("Privilege is already exists", null, HttpStatus.CONFLICT);
 
         }
         Privilege privilegeCreated = this.privilegeRepository.save(privilege);
-        return  this.message("Creating privilege", privilegeCreated, HttpStatus.CREATED);
+        return this.message("Creating privilege", privilegeCreated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -67,9 +67,9 @@ public class PrivilegeController implements BaseController<Privilege> {
         Optional<Privilege> optionalPrivilege = this.privilegeRepository.findById(id);
         if (optionalPrivilege.isPresent() && optionalPrivilege.get().getId().equals(privilege.getId())) {
             privilege = this.privilegeRepository.save(privilege);
-            return  this.message("Updating privilege by id", privilege, HttpStatus.ACCEPTED);
+            return this.message("Updating privilege by id", privilege, HttpStatus.ACCEPTED);
         }
-        return  this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
+        return this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
@@ -80,11 +80,23 @@ public class PrivilegeController implements BaseController<Privilege> {
         Optional<Privilege> privilegeUpdated = this.privilegeRepository.findById(id);
         if (privilegeUpdated.isPresent()) {
             this.privilegeRepository.deleteById(id);
-            return  this.message("Privilege is deleted", null, HttpStatus.NO_CONTENT);
+            return this.message("Privilege is deleted", null, HttpStatus.NO_CONTENT);
         }
-        return  this.message("Privilege not found", null,  HttpStatus.NOT_FOUND);
+        return this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
 
     }
+
+    @GetMapping("/{id}/roles")
+    public ResponseEntity<ResponseMessage> getRolesByPrivilegeId(@PathVariable("id") Long id) {
+        logger.debug("Getting roles by privilege id: {}", id);
+        Optional<Privilege> privilege = this.privilegeRepository.findById(id);
+        if (privilege.isEmpty()) {
+            return this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
+        }
+        return this.message("Getting roles by privilege id", privilege.get().getRoles(), HttpStatus.OK);
+
+    }
+
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }

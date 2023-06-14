@@ -32,7 +32,7 @@ public class NfcCardController implements BaseController<NfcCard> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing nfcCard: {}", this.nfcCardRepository.count());
-        return  this.message("Indexing nfcCard", this.nfcCardRepository.findAll(), HttpStatus.OK);
+        return this.message("Indexing nfcCard", this.nfcCardRepository.findAll(), HttpStatus.OK);
 
     }
 
@@ -44,7 +44,8 @@ public class NfcCardController implements BaseController<NfcCard> {
         if (nfcCard.isEmpty()) {
             return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting nfcCard by id", nfcCard.get(), HttpStatus.OK);    }
+        return this.message("Getting nfcCard by id", nfcCard.get(), HttpStatus.OK);
+    }
 
     @PostMapping
     @Override
@@ -52,11 +53,11 @@ public class NfcCardController implements BaseController<NfcCard> {
         logger.debug("Creating nfcCard: {}", nfcCard);
         Optional<NfcCard> optionalNfcCard = (nfcCard.getId() != null) ? this.nfcCardRepository.findById(nfcCard.getId()) : Optional.empty();
         if (optionalNfcCard.isPresent()) {
-            return  this.message("NfcCard is already exists", null, HttpStatus.CONFLICT);
+            return this.message("NfcCard is already exists", null, HttpStatus.CONFLICT);
 
         }
         NfcCard buildingCreated = this.nfcCardRepository.save(nfcCard);
-        return  this.message("Creating nfcCard", buildingCreated, HttpStatus.CREATED);
+        return this.message("Creating nfcCard", buildingCreated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -66,9 +67,9 @@ public class NfcCardController implements BaseController<NfcCard> {
         Optional<NfcCard> optionalBuilding = this.nfcCardRepository.findById(id);
         if (optionalBuilding.isPresent() && optionalBuilding.get().getId().equals(nfcCard.getId())) {
             nfcCard = this.nfcCardRepository.save(nfcCard);
-            return  this.message("Updating nfcCard by id", nfcCard, HttpStatus.ACCEPTED);
+            return this.message("Updating nfcCard by id", nfcCard, HttpStatus.ACCEPTED);
         }
-        return  this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
+        return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
     }
 
 
@@ -79,9 +80,29 @@ public class NfcCardController implements BaseController<NfcCard> {
         Optional<NfcCard> buildingUpdated = this.nfcCardRepository.findById(id);
         if (buildingUpdated.isPresent()) {
             this.nfcCardRepository.deleteById(id);
-            return  this.message("NfcCard is deleted", null, HttpStatus.NO_CONTENT);
+            return this.message("NfcCard is deleted", null, HttpStatus.NO_CONTENT);
         }
-        return  this.message("NfcCard not found", null,  HttpStatus.NOT_FOUND);
+        return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}/reservations")
+    public ResponseEntity<ResponseMessage> getReservationsByNfcCardId(@PathVariable("id") Long id) {
+        logger.debug("Getting reservations by nfcCard id: {}", id);
+        Optional<NfcCard> nfcCard = this.nfcCardRepository.findById(id);
+        if (nfcCard.isEmpty()) {
+            return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
+        }
+        return this.message("Getting reservations by nfcCard id", nfcCard.get().getReservations(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/user")
+    public ResponseEntity<ResponseMessage> getUserByNfcCardId(@PathVariable("id") Long id) {
+        logger.debug("Getting user by nfcCard id: {}", id);
+        Optional<NfcCard> nfcCard = this.nfcCardRepository.findById(id);
+        if (nfcCard.isEmpty()) {
+            return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
+        }
+        return this.message("Getting user by nfcCard id", nfcCard.get().getUser(), HttpStatus.OK);
     }
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
