@@ -38,6 +38,8 @@ public class InitDB {
     private NfcCardRepository nfcCardRepository;
     @Autowired
     private GuestRepository guestRepository;
+    @Autowired
+    private AddressRepository addressRepository;
     private int count = 1;
     private int type = 1;
 
@@ -55,6 +57,14 @@ public class InitDB {
             if(i%2 == 0 && i != 0) {count++;}
             Building building = new Building("building"+(i+1),this.parkRepository.getById(Long.valueOf(count)));
             this.buildingRepository.save(building);
+        }
+        for(int i = 0; i < 10; i++){
+            Address address = new Address("street"+(i+1),
+                                          100+i,
+                                          (i+1)+60400,
+                                          "city"+i,
+                                          this.buildingRepository.getById(Long.valueOf(i+1)));
+            addressRepository.save(address);
         }
         this.count = 1;
         for (int i = 0; i < 20; i++) {

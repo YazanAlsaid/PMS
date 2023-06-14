@@ -1,15 +1,7 @@
 package edu.fra.uas.parking.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +20,8 @@ public class Building extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "building",cascade = {CascadeType.MERGE,CascadeType.DETACH})
     private List<Floor> floors = new ArrayList<>();
+    @OneToOne(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Address address;
 
     public Building(String name,Park park) {
         this.name = name;
