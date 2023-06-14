@@ -1,10 +1,18 @@
 package edu.fra.uas.parking.entity;
 
 
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -16,10 +24,10 @@ import java.util.Objects;
 @Entity
 @Table(name = "users")
 public class User extends BaseEntity {
-    @Column(name = "firstName", nullable = false)
+    @Column(name = "first_name", nullable = false)
     @Size(min = 3, max = 50)
     private String firstName;
-    @Column(name = "lastName", nullable = false)
+    @Column(name = "last_name", nullable = false)
     @Size(min = 3, max = 50)
     private String lastName;
     @Column(name = "email", nullable = false, unique = true)
@@ -39,42 +47,50 @@ public class User extends BaseEntity {
     private NfcCard nfcCard;
 
     public User() {
-
     }
 
     public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        this.password = passwordEncoder.encode(password);
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        this.password = bCryptPasswordEncoder.encode(password);
     }
 
+    @SuppressWarnings("unused")
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @SuppressWarnings("unused")
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    @SuppressWarnings("unused")
     public void setEmail(String email) {
         this.email = email;
     }
 
+    @SuppressWarnings("unused")
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @SuppressWarnings("unused")
     public void setRole(Role role) {
         if (!this.roles.contains(role)) {
             this.roles.add(role);
         }
     }
+
+    @SuppressWarnings("unused")
     public void setHashedPassword(String password) {
-        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-        this.password = passwordEncoder.encode(password);
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        this.password = bCryptPasswordEncoder.encode(password);
     }
+
+    @SuppressWarnings("unused")
     public Boolean hasRole(String roleName) {
         for (Role role : this.roles) {
             if (role.getName().equals(roleName)) {
@@ -84,26 +100,55 @@ public class User extends BaseEntity {
         return false;
     }
 
+    @SuppressWarnings("unused")
     public String getFirstName() {
         return firstName;
     }
 
+    @SuppressWarnings("unused")
     public String getLastName() {
         return lastName;
     }
 
+    @SuppressWarnings("unused")
     public String getEmail() {
         return email;
     }
 
+    @SuppressWarnings("unused")
     public String getPassword() {
         return password;
     }
 
+    @SuppressWarnings("unused")
     public List<Role> getRoles() {
         return roles;
     }
 
+    @SuppressWarnings("unused")
+    public List<Reservation> getReservations() {
+        return reservations;
+    }
+
+    @SuppressWarnings("unused")
+    public void setReservations(List<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    @SuppressWarnings("unused")
+    public void setReservation(Reservation reservation) {
+        this.reservations.add(reservation);
+    }
+
+    @SuppressWarnings("unused")
+    public NfcCard getNfcCard() {
+        return nfcCard;
+    }
+
+    @SuppressWarnings("unused")
+    public void setNfcCard(NfcCard nfcCard) {
+        this.nfcCard = nfcCard;
+    }
 
     @Override
     public boolean equals(Object o) {
