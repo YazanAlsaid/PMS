@@ -17,7 +17,7 @@ public class Park extends BaseEntity {
     @Column(name = "name", nullable = false)
     @Size(min = 3, max = 50)
     private String name;
-    @OneToMany(mappedBy = "park", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "park", cascade = {CascadeType.MERGE,CascadeType.DETACH})
     private List<Building> buildings = new ArrayList<>();
 
     public Park() {

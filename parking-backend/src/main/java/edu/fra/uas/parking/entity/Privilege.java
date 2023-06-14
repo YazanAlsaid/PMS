@@ -19,7 +19,7 @@ public class Privilege extends BaseEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
     @JsonIgnore
-    @ManyToMany(mappedBy = "privileges", cascade = CascadeType.REFRESH)
+    @ManyToMany(mappedBy = "privileges",cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private List<Role> roles = new ArrayList<>();
 
     public Privilege() {

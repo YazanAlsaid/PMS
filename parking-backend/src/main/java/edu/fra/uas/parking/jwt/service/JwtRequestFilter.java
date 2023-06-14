@@ -1,8 +1,11 @@
 package edu.fra.uas.parking.jwt.service;
 
+import edu.fra.uas.parking.common.JwtResponseError;
 import edu.fra.uas.parking.jwt.config.JwtTokenUtil;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -35,7 +39,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String jwtToken = null;
 
         try {
-
             if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
                 jwtToken = authorizationHeader.substring(7);
                 email = jwtTokenUtil.extractUsername(jwtToken);
@@ -49,9 +52,26 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
+
             filterChain.doFilter(request, response);
-        } catch (ExpiredJwtException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+        } catch (ExpiredJwtException ex) {
+            JwtResponseError jwtResponseError = new JwtResponseError(
+                    LocalDateTime.now(),
+                    401,
+                    "Token has expired",
+                    "Token has expired",
+                    request.getServletPath()
+            );
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType("application/json");
+            response.getWriter().write(jwtResponseError.toString());
+            response.getWriter().flush();
+        } catch (JwtException ex) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType("application/json");
+            response.getWriter().write("{ \"message\": \"Invalid token\" }");
+            response.getWriter().flush();
         }
     }
+
 }
