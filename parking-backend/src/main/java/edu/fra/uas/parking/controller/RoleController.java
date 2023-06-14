@@ -86,6 +86,26 @@ public class RoleController implements BaseController<Role> {
         return  this.message("Role not found", null,  HttpStatus.NOT_FOUND);
 
     }
+    @GetMapping("/{id}/users")
+    public ResponseEntity<ResponseMessage> getUsersByRoleId(@PathVariable("id") Long id) {
+        logger.debug("Getting users by role id: {}", id);
+        Optional<Role> role = this.roleRepository.findById(id);
+        if (role.isEmpty()) {
+            return this.message("Role not found", null, HttpStatus.NOT_FOUND);
+        }
+        return  this.message("Getting users by role id", role.get().getUsers(), HttpStatus.OK);
+
+    }
+    @GetMapping("/{id}/privileges")
+    public ResponseEntity<ResponseMessage> getPrivilegesByRoleId(@PathVariable("id") Long id) {
+        logger.debug("Getting privileges by role id: {}", id);
+        Optional<Role> role = this.roleRepository.findById(id);
+        if (role.isEmpty()) {
+            return this.message("Role not found", null, HttpStatus.NOT_FOUND);
+        }
+        return  this.message("Getting privileges by role id", role.get().getPrivileges(), HttpStatus.OK);
+
+    }
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }

@@ -18,7 +18,7 @@ import edu.fra.uas.parking.repository.ParkRepository;
 
 @RestController
 @RequestMapping("/parks")
-public class ParkController implements BaseController<Park> {
+public class    ParkController implements BaseController<Park> {
 
     private final ParkRepository parkRepository;
     private final Logger logger = LoggerFactory.getLogger(ParkRepository.class);

@@ -85,6 +85,17 @@ public class PrivilegeController implements BaseController<Privilege> {
         return  this.message("Privilege not found", null,  HttpStatus.NOT_FOUND);
 
     }
+
+    @GetMapping("/{id}/roles")
+    public ResponseEntity<ResponseMessage> getRolesByPrivilegeId(@PathVariable("id") Long id) {
+        logger.debug("Getting roles by privilege id: {}", id);
+        Optional<Privilege> privilege = this.privilegeRepository.findById(id);
+        if (privilege.isEmpty()) {
+            return this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
+        }
+        return  this.message("Getting roles by privilege id", privilege.get().getRoles(), HttpStatus.OK);
+
+    }
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }

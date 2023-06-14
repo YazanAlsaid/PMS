@@ -3,6 +3,7 @@ package edu.fra.uas.parking.controller;
 import edu.fra.uas.parking.common.ResponseMessage;
 import edu.fra.uas.parking.entity.Building;
 import edu.fra.uas.parking.repository.BuildingRepository;
+import org.aspectj.bridge.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,26 @@ public class BuildingController {
             return  this.message("Building is deleted", null, HttpStatus.NO_CONTENT);
         }
         return  this.message("Building not found", null,  HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}/floors")
+    public ResponseEntity<ResponseMessage> getFloors(@PathVariable("id") Long id){
+        logger.debug("getFloors by id Building: {}", id);
+        Optional<Building> optionalBuilding = this.buildingRepository.findById(id);
+        if (optionalBuilding.isPresent()){
+            return this.message("Get Floor by building" ,optionalBuilding.get().getFloors(), HttpStatus.NOT_FOUND);
+        }
+        return this.message("Building not found", null, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/park")
+    public ResponseEntity<ResponseMessage> getPark(@PathVariable("id") Long id){
+        logger.debug("getPark by Building id: {}", id);
+        Optional<Building> optionalBuilding = this.buildingRepository.findById(id);
+        if (optionalBuilding.isPresent()){
+            return this.message("Get Park by building" ,optionalBuilding.get().getPark(), HttpStatus.NOT_FOUND);
+        }
+        return this.message("Building not found", null, HttpStatus.OK);
     }
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {

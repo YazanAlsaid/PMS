@@ -82,8 +82,40 @@ public class SlotController implements BaseController<Slot> {
             return  this.message("Slot is deleted", null, HttpStatus.NO_CONTENT);
         }
         return  this.message("Slot not found", null,  HttpStatus.NOT_FOUND);
+    }
+    @GetMapping("/{id}/reservations")
+    public ResponseEntity<ResponseMessage> getReservationsBySlotId(@PathVariable("id") Long id) {
+        logger.debug("Getting reservations by slot id: {}", id);
+        Optional<Slot> slot = this.slotRepository.findById(id);
+        if (slot.isEmpty()) {
+            return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
+        }
+        return  this.message("Getting reservations by slot id", slot.get().getReservations(), HttpStatus.OK);
 
     }
+
+    @GetMapping("/{id}/floor")
+    public ResponseEntity<ResponseMessage> getFloorBySlotId(@PathVariable("id") Long id) {
+        logger.debug("Getting floor by slot id: {}", id);
+        Optional<Slot> slot = this.slotRepository.findById(id);
+        if (slot.isEmpty()) {
+            return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
+        }
+        return  this.message("Getting floor by slot id", slot.get().getFloor(), HttpStatus.OK);
+
+    }
+
+    @GetMapping("/{id}/type")
+    public ResponseEntity<ResponseMessage> getTypeBySlotId(@PathVariable("id") Long id) {
+        logger.debug("Getting type by slot id: {}", id);
+        Optional<Slot> slot = this.slotRepository.findById(id);
+        if (slot.isEmpty()) {
+            return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
+        }
+        return  this.message("Getting type by slot id", slot.get().getType(), HttpStatus.OK);
+
+    }
+
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }

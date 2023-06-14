@@ -84,6 +84,26 @@ public class NfcCardController implements BaseController<NfcCard> {
         return  this.message("NfcCard not found", null,  HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/{id}/reservations")
+    public ResponseEntity<ResponseMessage> getReservationsByNfcCardId(@PathVariable("id") Long id) {
+        logger.debug("Getting reservations by nfcCard id: {}", id);
+        Optional<NfcCard> nfcCard = this.nfcCardRepository.findById(id);
+        if (nfcCard.isEmpty()) {
+            return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
+        }
+        return  this.message("Getting reservations by nfcCard id", nfcCard.get().getReservations(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/user")
+    public ResponseEntity<ResponseMessage> getUserByNfcCardId(@PathVariable("id") Long id) {
+        logger.debug("Getting user by nfcCard id: {}", id);
+        Optional<NfcCard> nfcCard = this.nfcCardRepository.findById(id);
+        if (nfcCard.isEmpty()) {
+            return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
+        }
+        return  this.message("Getting user by nfcCard id", nfcCard.get().getUser(), HttpStatus.OK);
+    }
+
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }

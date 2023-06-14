@@ -87,6 +87,39 @@ public class UserController implements BaseController<User> {
 
         }
 
+        @GetMapping("/{id}/roles")
+        public ResponseEntity<ResponseMessage> getRolesByUserId (@PathVariable("id") Long id){
+            logger.debug("Getting roles by user id: {}", id);
+            Optional<User> user = this.userRepository.findById(id);
+            if (user.isEmpty()) {
+                return  this.message("User not found", null, HttpStatus.NOT_FOUND);
+            }
+            return  this.message("Getting roles by user id", user.get().getRoles(), HttpStatus.OK);
+
+        }
+
+        @GetMapping("/{id}/reservations")
+        public ResponseEntity<ResponseMessage> getReservationsByUserId (@PathVariable("id") Long id){
+            logger.debug("Getting reservations by user id: {}", id);
+            Optional<User> user = this.userRepository.findById(id);
+            if (user.isEmpty()) {
+                return  this.message("User not found", null, HttpStatus.NOT_FOUND);
+            }
+            return  this.message("Getting reservations by user id", user.get().getReservations(), HttpStatus.OK);
+
+        }
+
+        @GetMapping("/{id}/nfc-card")
+        public ResponseEntity<ResponseMessage> getNfcCardByUserId (@PathVariable("id") Long id){
+            logger.debug("Getting nfc card by user id: {}", id);
+            Optional<User> user = this.userRepository.findById(id);
+            if (user.isEmpty()) {
+                return  this.message("User not found", null, HttpStatus.NOT_FOUND);
+            }
+            return  this.message("Getting nfc card by user id", user.get().getNfcCard(), HttpStatus.OK);
+
+        }
+
         private ResponseEntity<ResponseMessage> message (String message, Object data, HttpStatus httpStatus){
             return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
         }
