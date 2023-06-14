@@ -29,7 +29,7 @@ public class FloorController implements BaseController<Floor> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing floor: {}", this.floorRepository.count());
-        return  this.message("Indexing floor", this.floorRepository.findAll(), HttpStatus.OK);
+        return this.message("Indexing floor", this.floorRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -41,7 +41,7 @@ public class FloorController implements BaseController<Floor> {
         if (floor.isEmpty()) {
             return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting floor by id", floor.get(), HttpStatus.OK);
+        return this.message("Getting floor by id", floor.get(), HttpStatus.OK);
 
     }
 
@@ -51,11 +51,11 @@ public class FloorController implements BaseController<Floor> {
         logger.debug("Creating floor: {}", floor);
         Optional<Floor> optionalFloor = (floor.getId() != null) ? this.floorRepository.findById(floor.getId()) : Optional.empty();
         if (optionalFloor.isPresent()) {
-            return  this.message("Floor is already exists", null, HttpStatus.CONFLICT);
+            return this.message("Floor is already exists", null, HttpStatus.CONFLICT);
 
         }
         Floor floorCreated = this.floorRepository.save(floor);
-        return  this.message("Creating floor", floorCreated, HttpStatus.CREATED);
+        return this.message("Creating floor", floorCreated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -66,9 +66,9 @@ public class FloorController implements BaseController<Floor> {
 
         if (floorUpdated.isPresent() && floorUpdated.get().getId().equals(floor.getId())) {
             floor = this.floorRepository.save(floor);
-            return  this.message("Updating floor by id", floor, HttpStatus.ACCEPTED);
+            return this.message("Updating floor by id", floor, HttpStatus.ACCEPTED);
         }
-        return  this.message("floor not found", null, HttpStatus.NOT_FOUND);
+        return this.message("floor not found", null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
@@ -79,9 +79,29 @@ public class FloorController implements BaseController<Floor> {
         Optional<Floor> floorUpdated = this.floorRepository.findById(id);
         if (floorUpdated.isPresent()) {
             this.floorRepository.deleteById(id);
-            return  this.message("Floor is deleted", null, HttpStatus.NO_CONTENT);
+            return this.message("Floor is deleted", null, HttpStatus.NO_CONTENT);
         }
-        return  this.message("Floor not found", null,  HttpStatus.NOT_FOUND);
+        return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id/slots}")
+    public ResponseEntity<ResponseMessage> getSlotsByFloorId(@PathVariable("id") Long id) {
+        logger.debug("Getting slots by floor id: {}", id);
+        Optional<Floor> optionalFloor = this.floorRepository.findById(id);
+        if (optionalFloor.isPresent()) {
+            return this.message("Get Slot by Floor", optionalFloor.get().getSlots(), HttpStatus.OK);
+        }
+        return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
+    }
+
+    @GetMapping("/{id}/building")
+    public ResponseEntity<ResponseMessage> getBuildingByFloorId(@PathVariable("id") Long id) {
+        logger.debug("Getting building by floor id: {}", id);
+        Optional<Floor> optionalFloor = this.floorRepository.findById(id);
+        if (optionalFloor.isPresent()) {
+            return this.message("Get Building by Floor", optionalFloor.get().getBuilding(), HttpStatus.OK);
+        }
+        return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
     }
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
