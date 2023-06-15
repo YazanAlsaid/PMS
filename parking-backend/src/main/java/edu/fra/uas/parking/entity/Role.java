@@ -1,57 +1,75 @@
 package edu.fra.uas.parking.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.*;
-
-
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 @Entity
 @Table(name = "roles")
-@SQLDelete(sql = "UPDATE roles SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class Role extends BaseEntity implements Serializable {
     @Column(name = "Name", nullable = false)
     @Size(min = 3, max = 50)
     private String name;
-    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    private List<User> users = new ArrayList<>();
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Set<User> users = new HashSet<>();
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(name = "privilege_role",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
-    private List<Privilege> privileges = new ArrayList<>();
+    private Set<Privilege> privileges = new HashSet<>();
 
     public Role() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setUsers(User user) {
-        this.users.add(user);
     }
 
     public Role(String name) {
         this.name = name;
     }
 
-    public List<User> getUsers() {
-        return users;
+    @SuppressWarnings("unused")
+    public String getName() {
+        return name;
     }
 
-    public List<Privilege> getPrivileges() {
+    @SuppressWarnings("unused")
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @SuppressWarnings("unused")
+    public void setUsers(User user) {
+        this.users.add(user);
+    }
+
+    @SuppressWarnings("unused")
+    public Set<User> getUsers() {
+        return users;
+    }
+    public void setPrivilege(Privilege privilege) {
+          this.privileges.add(privilege);
+    }
+    public void setPrivileges(Set<Privilege> privileges) {
+        for (Privilege privilege: privileges){
+            if (!this.privileges.contains(privilege)) {
+                this.privileges.add(privilege);
+            }
+        }
+    }
+    @SuppressWarnings("unused")
+    public Set<Privilege> getPrivileges() {
         return privileges;
     }
 

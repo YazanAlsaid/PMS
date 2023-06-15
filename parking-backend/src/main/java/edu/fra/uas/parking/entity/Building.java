@@ -1,50 +1,69 @@
 package edu.fra.uas.parking.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
-
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 @Entity
 @Table(name = "buildings")
-@SQLDelete(sql = "UPDATE buildings SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class Building extends BaseEntity {
-    @Column(name = "Name",nullable = false)
-    @Size(min = 3,max = 50)
+    @Column(name = "Name", nullable = false)
+    @Size(min = 3, max = 50)
     private String name;
-    @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.DETACH})
     @JoinColumn(name = "park_id")
     private Park park;
-    @OneToMany(mappedBy = "building",cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
-    private List<Floor> floors = new ArrayList<>();
-    public Building(Park park, List<Floor> floors) {
+    @JsonIgnore
+    @OneToMany(mappedBy = "building",cascade = {CascadeType.MERGE,CascadeType.DETACH})
+    private Set<Floor> floors = new HashSet<>();
+    @OneToOne(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Address address;
+
+    public Building(String name,Park park) {
+        this.name = name;
         this.park = park;
-        this.floors = floors;
     }
-    public Building() {}
+
+    public Building() {
+    }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
+    @SuppressWarnings("unused")
     public Park getPark() {
         return park;
     }
+
+    @SuppressWarnings("unused")
     public void setPark(Park park) {
         this.park = park;
     }
-    public List<Floor> getFloors() {
+
+    @SuppressWarnings("unused")
+    public Set<Floor> getFloors() {
         return floors;
     }
-    public void setFloors(List<Floor> floors) {
+
+    @SuppressWarnings("unused")
+    public void setFloors(Set<Floor> floors) {
         this.floors = floors;
+    }
+    @JsonProperty("floorCount")
+    public Integer getFloorsCount(){
+        return this.floors.size();
     }
     @Override
     public boolean equals(Object o) {
@@ -53,10 +72,12 @@ public class Building extends BaseEntity {
         Building building = (Building) o;
         return Objects.equals(park, building.park) && Objects.equals(floors, building.floors);
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(park, floors);
     }
+
     @Override
     public String toString() {
         return "Building{" +

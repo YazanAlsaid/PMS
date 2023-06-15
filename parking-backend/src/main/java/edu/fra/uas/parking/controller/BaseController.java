@@ -1,19 +1,19 @@
 package edu.fra.uas.parking.controller;
 
+import edu.fra.uas.parking.common.ResponseMessage;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 public interface BaseController <T>{
 
-    ResponseEntity<List<T>> index();
+    ResponseEntity<ResponseMessage> index();
 
-    ResponseEntity<Object> getById(Long id);
+    ResponseEntity<ResponseMessage> getById(Long id);
 
-    ResponseEntity<Object> create(T t);
+    ResponseEntity<ResponseMessage> create(T t);
 
-    ResponseEntity<Object> updateById(Long id, T t);
+    ResponseEntity<ResponseMessage> updateById(Long id, T t);
 
-    ResponseEntity<Object> deleteById(Long id);
+    ResponseEntity<ResponseMessage> deleteById(Long id);
 }

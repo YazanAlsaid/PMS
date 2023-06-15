@@ -1,29 +1,34 @@
 package edu.fra.uas.parking.entity;
 
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-/*import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;*/
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 
 @Entity
 @Table(name = "users")
-@SQLDelete(sql = "UPDATE users SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
-public class User extends BaseEntity {
-    @Column(name = "firstName", nullable = false)
+public class    User extends BaseEntity {
+    @Column(name = "first_name", nullable = false)
     @Size(min = 3, max = 50)
     private String firstName;
-    @Column(name = "lastName", nullable = false)
+    @Column(name = "last_name", nullable = false)
     @Size(min = 3, max = 50)
     private String lastName;
     @Column(name = "email", nullable = false, unique = true)
@@ -32,55 +37,64 @@ public class User extends BaseEntity {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(name = "role_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    private List<Reservation> reservations = new ArrayList<>();
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    private Set<Role> roles = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Set<Reservation> reservations = new HashSet<>();
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private NfcCard nfcCard;
 
     public User() {
-
     }
 
     public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-//        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//        this.password = passwordEncoder.encode(password);
-        this.password = password;
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        this.password = bCryptPasswordEncoder.encode(password);
     }
 
+    @SuppressWarnings("unused")
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    @SuppressWarnings("unused")
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    @SuppressWarnings("unused")
     public void setEmail(String email) {
         this.email = email;
     }
 
+    @SuppressWarnings("unused")
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @SuppressWarnings("unused")
     public void setRole(Role role) {
         if (!this.roles.contains(role)) {
             this.roles.add(role);
         }
     }
+
+    @SuppressWarnings("unused")
     public void setHashedPassword(String password) {
-//        PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//        this.password = passwordEncoder.encode(password);
-        this.password = password;
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+        this.password = bCryptPasswordEncoder.encode(password);
     }
+
+    @SuppressWarnings("unused")
     public Boolean hasRole(String roleName) {
         for (Role role : this.roles) {
             if (role.getName().equals(roleName)) {
@@ -90,26 +104,55 @@ public class User extends BaseEntity {
         return false;
     }
 
+    @SuppressWarnings("unused")
     public String getFirstName() {
         return firstName;
     }
 
+    @SuppressWarnings("unused")
     public String getLastName() {
         return lastName;
     }
 
+    @SuppressWarnings("unused")
     public String getEmail() {
         return email;
     }
 
+    @SuppressWarnings("unused")
     public String getPassword() {
         return password;
     }
 
-    public List<Role> getRoles() {
+    @SuppressWarnings("unused")
+    public Set<Role> getRoles() {
         return roles;
     }
 
+    @SuppressWarnings("unused")
+    public Set<Reservation> getReservations() {
+        return reservations;
+    }
+
+    @SuppressWarnings("unused")
+    public void setReservations(Set<Reservation> reservations) {
+        this.reservations = reservations;
+    }
+
+    @SuppressWarnings("unused")
+    public void setReservation(Reservation reservation) {
+        this.reservations.add(reservation);
+    }
+
+    @SuppressWarnings("unused")
+    public NfcCard getNfcCard() {
+        return nfcCard;
+    }
+
+    @SuppressWarnings("unused")
+    public void setNfcCard(NfcCard nfcCard) {
+        this.nfcCard = nfcCard;
+    }
 
     @Override
     public boolean equals(Object o) {

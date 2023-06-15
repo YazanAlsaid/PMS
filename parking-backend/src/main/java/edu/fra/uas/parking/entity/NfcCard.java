@@ -1,71 +1,92 @@
 package edu.fra.uas.parking.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 
 @Entity
-@Table(name ="nfcCards")
-@SQLDelete(sql = "UPDATE nfcCards SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
-public class NfcCard extends BaseEntity{
-    @Column(name = "Deleted")
-    private boolean deleted = Boolean.FALSE;
-    @Column(name = "Name",nullable = false)
-    @Size(min = 3,max = 50)
-    private String name;
+@Table(name = "nfc_cards")
+public class NfcCard extends BaseEntity {
+    @Column(name = "serial_number", nullable = false, unique = true)
+    @Size(min = 3, max = 50)
+    private String serialNumber;
+    @Column(name ="nfc_from")
     private LocalDateTime nfcFrom;
+    @Column(name ="nfc_to")
     private LocalDateTime nfcTo;
-    @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    private List<Reservation> reservations = new ArrayList<>();
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "user_id",referencedColumnName = "id")
+    @JsonIgnore
+    @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Set<Reservation> reservations = new HashSet<>();
+    @JsonIgnore
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    public String getName() {
-        return name;
+    public NfcCard() {
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public NfcCard(String serialNumber, LocalDateTime nfcFrom, LocalDateTime nfcTo) {
+        this.serialNumber = serialNumber;
+        this.nfcFrom = nfcFrom;
+        this.nfcTo = nfcTo;
+    }
+    public NfcCard(String serialNumber, User user) {
+        this.serialNumber = serialNumber;
+        this.user = user;
+    }
+    public String getSerialNumber() {
+        return serialNumber;
     }
 
-    public List<Reservation> getReservations() {
+    public void setSerialNumber(String serialNumber) {
+        this.serialNumber = serialNumber;
+    }
+
+    @SuppressWarnings("unused")
+    public Set<Reservation> getReservations() {
         return reservations;
     }
 
-    public void setReservations(List<Reservation> reservations) {
+    @SuppressWarnings("unused")
+    public void setReservations(Set<Reservation> reservations) {
         this.reservations = reservations;
     }
 
+    @SuppressWarnings("unused")
     public User getUser() {
         return user;
     }
 
+    @SuppressWarnings("unused")
     public void setUser(User user) {
         this.user = user;
     }
 
+    @SuppressWarnings("unused")
     public LocalDateTime getNfcFrom() {
         return nfcFrom;
     }
 
+    @SuppressWarnings("unused")
     public LocalDateTime getNfcTo() {
         return nfcTo;
     }
-
     public void setNfcFrom(LocalDateTime nfcFrom) {
         this.nfcFrom = nfcFrom;
     }
-
     public void setNfcTo(LocalDateTime nfcTo) {
         this.nfcTo = nfcTo;
     }

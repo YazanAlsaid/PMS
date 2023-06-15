@@ -1,14 +1,9 @@
 package edu.fra.uas.parking.repository;
 
-import edu.fra.uas.parking.entity.Floor;
+import edu.fra.uas.parking.entity.Guest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FloorRepository extends  JpaRepository<Floor, Long> {
+public interface GuestRepository extends JpaRepository<Guest, Long> {
 }
-
-
-
-
-

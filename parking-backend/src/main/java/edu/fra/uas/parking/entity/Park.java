@@ -1,44 +1,59 @@
 package edu.fra.uas.parking.entity;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
-
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 
 @Entity
 @Table(name = "parks")
-@SQLDelete(sql = "UPDATE parks SET deleted = true WHERE id=?")
-@Where(clause = "deleted=false")
 public class Park extends BaseEntity {
-    @Column(name = "Name",nullable = false)
-    @Size(min = 3,max = 50)
+    @Column(name = "name", nullable = false)
+    @Size(min = 3, max = 50)
     private String name;
-    @OneToMany(mappedBy = "park", cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.DETACH})
-    private List<Building> buildings = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "park", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Set<Building> buildings = new HashSet<>();
 
     public Park() {
     }
 
+    public Park(String name) {
+        this.name = name;
+    }
+
+    @SuppressWarnings("unused")
     public String getName() {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public void setName(String name) {
         this.name = name;
     }
 
-    public List<Building> getBuildings() {
+    @SuppressWarnings("unused")
+    public Set<Building> getBuildings() {
         return buildings;
     }
 
-    public void setBuildings(List<Building> buildings) {
+    @SuppressWarnings("unused")
+    public void setBuildings(Set<Building> buildings) {
         this.buildings = buildings;
+    }
+
+    @JsonProperty("buildingCount")
+    public Integer getBuildingsCount(){
+        return this.buildings.size();
     }
 
     @Override
@@ -48,10 +63,12 @@ public class Park extends BaseEntity {
         Park park = (Park) o;
         return Objects.equals(buildings, park.buildings);
     }
+
     @Override
     public int hashCode() {
         return Objects.hash(buildings);
     }
+
     @Override
     public String toString() {
         return "Park{" +
