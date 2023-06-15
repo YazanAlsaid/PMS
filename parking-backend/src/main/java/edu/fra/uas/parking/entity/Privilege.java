@@ -8,8 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 @Entity
@@ -20,7 +20,7 @@ public class Privilege extends BaseEntity {
     private String name;
     @JsonIgnore
     @ManyToMany(mappedBy = "privileges",cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    private List<Role> roles = new ArrayList<>();
+    private Set<Role> roles = new HashSet<>();
 
     public Privilege() {
     }
@@ -40,7 +40,7 @@ public class Privilege extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
