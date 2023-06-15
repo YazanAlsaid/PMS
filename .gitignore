@@ -39,3 +39,4 @@ build/
 /packing-frontend/dist/
 /packing-frontend/.angular/
 /.idea/
+packing-frontend/.env
