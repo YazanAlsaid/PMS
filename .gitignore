@@ -33,6 +33,9 @@ build/
 .vscode/
 
 
+.idea
 /parking-backend/.idea/
 /packing-frontend/node_modules/
+/packing-frontend/dist/
+/packing-frontend/.angular/
 /.idea/

@@ -1,6 +1,6 @@
 package edu.fra.uas.parking.controller;
 
-import java.util.Collection;
+import java.util.Set;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -67,12 +67,11 @@ public class ParkController implements BaseController<Park> {
         logger.debug("Creating park: {}", park);
         Optional<Park> optionalPark = (park.getId() != null) ? this.parkRepository.findById(park.getId()) : Optional.empty();
         if (optionalPark.isPresent()) {
-            return  this.message("Park is already exists", null, HttpStatus.CONFLICT);
+            return this.message("Park is already exists", null, HttpStatus.CONFLICT);
 
         }
         Park parkCreated = this.parkRepository.save(park);
         parkCreated = this.addLinks(parkCreated);
-
         return  this.message("Creating building", parkCreated, HttpStatus.CREATED);
 
     }
@@ -87,7 +86,7 @@ public class ParkController implements BaseController<Park> {
             park = this.addLinks(park);
             return  this.message("Updating park by id", park, HttpStatus.ACCEPTED);
         }
-        return  this.message("Park not found", null, HttpStatus.NOT_FOUND);
+        return this.message("Park not found", null, HttpStatus.NOT_FOUND);
     }
 
     @DeleteMapping("/{id}")
@@ -97,11 +96,22 @@ public class ParkController implements BaseController<Park> {
         Optional<Park> parkUpdated = this.parkRepository.findById(id);
         if (parkUpdated.isPresent()) {
             this.parkRepository.deleteById(id);
-            return  this.message("Park is deleted", null, HttpStatus.NO_CONTENT);
+            return this.message("Park is deleted", null, HttpStatus.NO_CONTENT);
         }
-        return  this.message("Park not found", null,  HttpStatus.NOT_FOUND);
+        return this.message("Park not found", null, HttpStatus.NOT_FOUND);
 
     }
+
+    @GetMapping("/{id}/buildings")
+    public ResponseEntity<ResponseMessage> getBuildings(@PathVariable("id") Long id) {
+        logger.debug("getBuildings by id Park: {}", id);
+        Optional<Park> optionalPark = this.parkRepository.findById(id);
+        if (optionalPark.isPresent()) {
+            return this.message("Get Building by park", optionalPark.get().getBuildings(), HttpStatus.OK);
+        }
+        return this.message("Park not found", null, HttpStatus.NOT_FOUND);
+    }
+
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }

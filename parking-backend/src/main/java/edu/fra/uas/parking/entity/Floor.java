@@ -1,6 +1,8 @@
 package edu.fra.uas.parking.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +11,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 @Entity
@@ -19,11 +21,21 @@ public class Floor extends BaseEntity {
     @Column(name = "Name", nullable = false)
     @Size(min = 3, max = 50)
     private String name;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "building_id")
     private Building building;
-    @OneToMany(mappedBy = "floor", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    private List<Slot> slots = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "floor", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Set<Slot> slots = new HashSet<>();
+
+    public Floor(String name, Building building) {
+        this.name = name;
+        this.building = building;
+    }
+
+    public Floor() {
+    }
 
     @SuppressWarnings("unused")
     public String getName() {
@@ -46,13 +58,17 @@ public class Floor extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public List<Slot> getSlots() {
+    public Set<Slot> getSlots() {
         return slots;
     }
 
     @SuppressWarnings("unused")
-    public void setSlots(List<Slot> slots) {
+    public void setSlots(Set<Slot> slots) {
         this.slots = slots;
+    }
+
+    public Integer getSlotsCount() {
+        return this.slots.size();
     }
 
     @Override

@@ -1,5 +1,7 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,8 +12,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 @Entity
@@ -20,13 +22,15 @@ public class Role extends BaseEntity implements Serializable {
     @Column(name = "Name", nullable = false)
     @Size(min = 3, max = 50)
     private String name;
-    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    private List<User> users = new ArrayList<>();
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Set<User> users = new HashSet<>();
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(name = "privilege_role",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
-    private List<Privilege> privileges = new ArrayList<>();
+    private Set<Privilege> privileges = new HashSet<>();
 
     public Role() {
     }
@@ -51,12 +55,22 @@ public class Role extends BaseEntity implements Serializable {
     }
 
     @SuppressWarnings("unused")
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
     @SuppressWarnings("unused")
-    public List<Privilege> getPrivileges() {
+    public void setPrivilege(Privilege privilege) {
+        this.privileges.add(privilege);
+    }
+
+    @SuppressWarnings("unused")
+    public void setPrivileges(Set<Privilege> privileges) {
+        this.privileges.addAll(privileges);
+    }
+
+    @SuppressWarnings("unused")
+    public Set<Privilege> getPrivileges() {
         return privileges;
     }
 

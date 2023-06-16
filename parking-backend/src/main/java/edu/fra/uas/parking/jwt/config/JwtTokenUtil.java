@@ -1,10 +1,12 @@
 package edu.fra.uas.parking.jwt.config;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -14,7 +16,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Service;
 
 @Service
-public class JwtTokenUtil implements Serializable{
+public class JwtTokenUtil implements Serializable {
 
     public static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 60;
 
@@ -33,12 +35,9 @@ public class JwtTokenUtil implements Serializable{
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-    }
-
-    private Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
     }
 
     public String generateToken(UserDetails userDetails) {
@@ -56,5 +55,16 @@ public class JwtTokenUtil implements Serializable{
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public Boolean isTokenExpired(String token) {
+        try {
+            final Date expiration = extractExpiration(token);
+            return expiration.before(new Date());
+        } catch (ExpiredJwtException ex) {
+            return true; // Token is considered expired if an exception is thrown
+        } catch (Exception ex) {
+            return true; // Handle any other exception as an expired token
+        }
     }
 }

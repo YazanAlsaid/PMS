@@ -1,6 +1,8 @@
 package edu.fra.uas.parking.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,8 +12,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 
@@ -21,23 +23,31 @@ public class NfcCard extends BaseEntity {
     @Column(name = "serial_number", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String serialNumber;
-    @Column(name ="nfc_from", nullable = false)
+    @Column(name = "nfc_from")
     private LocalDateTime nfcFrom;
-    @Column(name ="nfc_to", nullable = false)
+    @Column(name = "nfc_to")
     private LocalDateTime nfcTo;
-    @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    private List<Reservation> reservations = new ArrayList<>();
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Set<Reservation> reservations = new HashSet<>();
+    @JsonIgnore
+    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     public NfcCard() {
     }
 
+    @SuppressWarnings("unused")
     public NfcCard(String serialNumber, LocalDateTime nfcFrom, LocalDateTime nfcTo) {
         this.serialNumber = serialNumber;
         this.nfcFrom = nfcFrom;
         this.nfcTo = nfcTo;
+    }
+
+    public NfcCard(String serialNumber, User user) {
+        this.serialNumber = serialNumber;
+        this.user = user;
     }
 
     @SuppressWarnings("unused")
@@ -51,12 +61,12 @@ public class NfcCard extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public List<Reservation> getReservations() {
+    public Set<Reservation> getReservations() {
         return reservations;
     }
 
     @SuppressWarnings("unused")
-    public void setReservations(List<Reservation> reservations) {
+    public void setReservations(Set<Reservation> reservations) {
         this.reservations = reservations;
     }
 

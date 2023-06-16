@@ -1,6 +1,7 @@
 package edu.fra.uas.parking.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.CascadeType;
@@ -16,8 +17,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 
@@ -36,14 +37,17 @@ public class User extends BaseEntity {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(name = "role_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private List<Role> roles = new ArrayList<>();
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    private List<Reservation> reservations = new ArrayList<>();
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    private Set<Role> roles = new HashSet<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Set<Reservation> reservations = new HashSet<>();
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private NfcCard nfcCard;
 
     public User() {
@@ -79,9 +83,7 @@ public class User extends BaseEntity {
 
     @SuppressWarnings("unused")
     public void setRole(Role role) {
-        if (!this.roles.contains(role)) {
-            this.roles.add(role);
-        }
+        this.roles.add(role);
     }
 
     @SuppressWarnings("unused")
@@ -121,17 +123,17 @@ public class User extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public List<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
     @SuppressWarnings("unused")
-    public List<Reservation> getReservations() {
+    public Set<Reservation> getReservations() {
         return reservations;
     }
 
     @SuppressWarnings("unused")
-    public void setReservations(List<Reservation> reservations) {
+    public void setReservations(Set<Reservation> reservations) {
         this.reservations = reservations;
     }
 

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {Building} from "../model/building";
+import {ResponseMessage} from "../model/response-message";
 
 
 @Injectable({
@@ -12,7 +12,7 @@ export class HttpService {
     private readonly hostname: string = window.location.hostname;
     private readonly port: string = window.location.port;
     private readonly protocol: string = window.location.protocol;
-    private url: string = '';
+    private readonly url: string = '';
 
     constructor(private http: HttpClient) {
         if (this.hostname === '127.0.0.1' || this.hostname === 'localhost') {
@@ -27,33 +27,33 @@ export class HttpService {
     /**
      *
      * @param entity
-     * @returns Observable<any[]>
+     * @returns Observable<ResponseMessage>
      * Author: Kaddour Alnaasan
      */
-    public getAll(entity: string): Observable<any[]> {
-        return this.http.get<any[]>(`${this.url}/api/v1/web/${entity}/s`);
+    public getAll(entity: string): Observable<ResponseMessage> {
+        return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/${entity}`);
     }
 
     /**
      *
      * @param entity
      * @param id
-     * @returns Observable<any>
+     * @returns Observable<ResponseMessage>
      * @Author: Kaddour Alnaasan
      */
-    public getById(entity: string, id: number): Observable<any> {
-        return this.http.get<any>(`${this.url}/api/v1/web/${entity}/s/${id}`);
+    public getById(entity: string, id: number): Observable<ResponseMessage> {
+        return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/${entity}/s/${id}`);
     }
 
     /**
      *
      * @param entity
      * @param obj
-     * @returns Observable<any>
+     * @returns Observable<ResponseMessage>
      * @author: Kaddour Alnaasan
      */
-    public create(entity: string, obj: any): Observable<any> {
-        return this.http.post<any>(`${this.url}/api/v1/web/${entity}/s`, obj);
+    public create(entity: string, obj: any): Observable<ResponseMessage> {
+        return this.http.post<ResponseMessage>(`${this.url}/api/v1/web/${entity}/s`, obj);
     }
 
     /**
@@ -61,22 +61,22 @@ export class HttpService {
      * @param entity
      * @param id
      * @param obj
-     * @returns Observable<any>
+     * @returns Observable<ResponseMessage>
      * @author: Kaddour Alnaasan
      */
-    public update(entity: string, id: number, obj: any): Observable<any> {
-        return this.http.put<any>(`${this.url}/api/v1/web/${entity}/s/${id}`, obj);
+    public update(entity: string, id: number, obj: any): Observable<ResponseMessage> {
+        return this.http.put<ResponseMessage>(`${this.url}/api/v1/web/${entity}/s/${id}`, obj);
     }
 
     /**
      *
      * @param entity
      * @param id
-     * @returns Observable<any>
+     * @returns Observable<ResponseMessage>
      * @author: Kaddour Alnaasan
      */
-    public delete(entity: string, id: number): Observable<any> {
-        return this.http.delete<any>(`${this.url}/api/v1/web/${entity}/s/${id}`);
+    public delete(entity: string, id: number): Observable<ResponseMessage> {
+        return this.http.delete<ResponseMessage>(`${this.url}/api/v1/web/${entity}/s/${id}`);
     }
 
 }

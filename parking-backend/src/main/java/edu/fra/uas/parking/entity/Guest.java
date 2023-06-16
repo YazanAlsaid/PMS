@@ -1,12 +1,14 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 @Entity
@@ -17,8 +19,9 @@ public class Guest extends BaseEntity {
     private String firstName;
     @Column(name = "last_name", nullable = false)
     private String lastName;
-    @OneToMany(mappedBy = "guest", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    private List<Reservation> reservations = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "guest", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Set<Reservation> reservations = new HashSet<>();
 
     public Guest() {
     }
@@ -49,12 +52,12 @@ public class Guest extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public List<Reservation> getReservations() {
+    public Set<Reservation> getReservations() {
         return reservations;
     }
 
     @SuppressWarnings("unused")
-    public void setReservations(List<Reservation> reservations) {
+    public void setReservations(Set<Reservation> reservations) {
         this.reservations = reservations;
     }
 

@@ -3,7 +3,7 @@ package edu.fra.uas.parking.controller;
 import edu.fra.uas.parking.common.ResponseMessage;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
+import java.util.Set;
 
 public interface BaseController <T>{
 

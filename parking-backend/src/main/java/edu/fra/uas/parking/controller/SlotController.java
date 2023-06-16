@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
+import java.util.Set;
 import java.util.Optional;
 
 @RestController
@@ -19,7 +19,6 @@ import java.util.Optional;
 public class SlotController implements BaseController<Slot> {
 
     private final Logger logger = LoggerFactory.getLogger(SlotController.class);
-
     private final SlotRepository slotRepository;
 
     @Autowired
@@ -31,7 +30,7 @@ public class SlotController implements BaseController<Slot> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing slot: {}", this.slotRepository.count());
-        return  this.message("Indexing slot", this.slotRepository.findAll(), HttpStatus.OK);
+        return this.message("Indexing slot", this.slotRepository.findAll(), HttpStatus.OK);
 
     }
 
@@ -43,8 +42,7 @@ public class SlotController implements BaseController<Slot> {
         if (slot.isEmpty()) {
             return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
         }
-        return  this.message("Getting slot by id", slot.get(), HttpStatus.OK);
-
+        return this.message("Getting slot by id", slot.get(), HttpStatus.OK);
     }
 
     @PostMapping
@@ -60,17 +58,17 @@ public class SlotController implements BaseController<Slot> {
         return this.message("Creating slot", buildingCreated, HttpStatus.CREATED);
     }
 
-        @PutMapping("/{id}")
+    @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody Slot slot) {
-            logger.debug("Updating slot by id: {}", id);
-            Optional<Slot> optionalSlot = this.slotRepository.findById(id);
-            if (optionalSlot.isPresent() && optionalSlot.get().getId().equals(slot.getId())) {
-                slot = this.slotRepository.save(slot);
-                return  this.message("Updating slot by id", slot, HttpStatus.ACCEPTED);
-            }
-            return  this.message("Slot not found", null, HttpStatus.NOT_FOUND);
+        logger.debug("Updating slot by id: {}", id);
+        Optional<Slot> optionalSlot = this.slotRepository.findById(id);
+        if (optionalSlot.isPresent() && optionalSlot.get().getId().equals(slot.getId())) {
+            slot = this.slotRepository.save(slot);
+            return this.message("Updating slot by id", slot, HttpStatus.ACCEPTED);
         }
+        return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
+    }
 
     @DeleteMapping("/{id}")
     @Override
@@ -79,11 +77,41 @@ public class SlotController implements BaseController<Slot> {
         Optional<Slot> buildingUpdated = this.slotRepository.findById(id);
         if (buildingUpdated.isPresent()) {
             this.slotRepository.deleteById(id);
-            return  this.message("Slot is deleted", null, HttpStatus.NO_CONTENT);
+            return this.message("Slot is deleted", null, HttpStatus.NO_CONTENT);
         }
-        return  this.message("Slot not found", null,  HttpStatus.NOT_FOUND);
-
+        return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
     }
+
+    @GetMapping("/{id}/reservations")
+    public ResponseEntity<ResponseMessage> getReservationsBySlotId(@PathVariable("id") Long id) {
+        logger.debug("Getting reservations by slot id: {}", id);
+        Optional<Slot> slot = this.slotRepository.findById(id);
+        if (slot.isEmpty()) {
+            return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
+        }
+        return this.message("Getting reservations by slot id", slot.get().getReservations(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/floor")
+    public ResponseEntity<ResponseMessage> getFloorBySlotId(@PathVariable("id") Long id) {
+        logger.debug("Getting floor by slot id: {}", id);
+        Optional<Slot> slot = this.slotRepository.findById(id);
+        if (slot.isEmpty()) {
+            return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
+        }
+        return this.message("Getting floor by slot id", slot.get().getFloor(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/type")
+    public ResponseEntity<ResponseMessage> getTypeBySlotId(@PathVariable("id") Long id) {
+        logger.debug("Getting type by slot id: {}", id);
+        Optional<Slot> slot = this.slotRepository.findById(id);
+        if (slot.isEmpty()) {
+            return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
+        }
+        return this.message("Getting type by slot id", slot.get().getType(), HttpStatus.OK);
+    }
+
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }

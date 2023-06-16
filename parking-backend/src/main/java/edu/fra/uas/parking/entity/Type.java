@@ -1,5 +1,7 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,11 +18,14 @@ public class Type extends BaseEntity {
     @Column(name = "Name", nullable = false)
     @Size(min = 3, max = 50)
     private String name;
-    @OneToMany(mappedBy = "type", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @OneToMany(mappedBy = "type", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Set<Slot> slots = new HashSet<>();
 
     public Type() {
     }
+
+    @SuppressWarnings("unused")
     public Type(String name) {
         this.name = name;
     }
@@ -36,7 +41,7 @@ public class Type extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public Set<Slot> getSlot() {
+    public Set<Slot> getSlots() {
         return slots;
     }
 
