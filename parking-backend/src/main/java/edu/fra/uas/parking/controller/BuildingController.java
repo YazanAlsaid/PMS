@@ -7,12 +7,17 @@ import org.aspectj.bridge.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/buildings")
@@ -28,18 +33,24 @@ public class BuildingController {
     @GetMapping
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing building: {}", this.buildingRepository.count());
+        CollectionModel<Building> buildings = CollectionModel.of(this.buildingRepository.findAll());
+        buildings.add(linkTo(methodOn(BuildingController.class).index()).withSelfRel());
+
+        for (Building p : buildings){
+            p = this.addLinks(p);
+        }
         return this.message("Indexing building", this.buildingRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
         logger.debug("Getting building by id: {}", id);
-        Optional<Building> building = this.buildingRepository.findById(id);
-        if (building.isEmpty()) {
+        Optional<Building> optionalBuilding = this.buildingRepository.findById(id);
+        if (optionalBuilding.isEmpty()) {
             return this.message("Building not found", null, HttpStatus.NOT_FOUND);
         }
-        return this.message("Getting building by id", this.buildingRepository.findById(id), HttpStatus.OK);
-
+        Building building = this.addLinks(optionalBuilding.get());
+        return this.message("Getting building by id",building, HttpStatus.OK);
     }
 
     @PostMapping
@@ -51,6 +62,8 @@ public class BuildingController {
 
         }
         Building buildingCreated = this.buildingRepository.save(building);
+        buildingCreated = this.addLinks(buildingCreated);
+
         return this.message("Creating building", buildingCreated, HttpStatus.CREATED);
     }
 
@@ -60,6 +73,8 @@ public class BuildingController {
         Optional<Building> optionalBuilding = this.buildingRepository.findById(id);
         if (optionalBuilding.isPresent() && optionalBuilding.get().getId().equals(building.getId())) {
             building = this.buildingRepository.save(building);
+            building = this.addLinks(building);
+
             return this.message("Updating building by id", building, HttpStatus.ACCEPTED);
         }
         return this.message("Building not found", null, HttpStatus.NOT_FOUND);
@@ -99,4 +114,13 @@ public class BuildingController {
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
+
+    private Building addLinks(Building building){
+        building.add(linkTo(methodOn(BuildingController.class).getById(building.getId())).withSelfRel());
+        building.add(linkTo(methodOn(BuildingController.class).index()).withRel(IanaLinkRelations.COLLECTION));
+        building.add(linkTo(methodOn(BuildingController.class).getFloors(building.getId())).withRel("floors"));
+
+        return building;
+    }
+
 }

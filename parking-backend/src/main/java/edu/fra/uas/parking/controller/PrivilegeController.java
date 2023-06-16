@@ -6,13 +6,17 @@ import edu.fra.uas.parking.repository.PrivilegeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Set;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/privileges")
@@ -20,7 +24,6 @@ public class PrivilegeController implements BaseController<Privilege> {
 
     private final PrivilegeRepository privilegeRepository;
     private final Logger logger = LoggerFactory.getLogger(PrivilegeRepository.class);
-
 
     @Autowired
     public PrivilegeController(PrivilegeRepository privilegeRepository) {
@@ -31,6 +34,13 @@ public class PrivilegeController implements BaseController<Privilege> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing privilege: {}", this.privilegeRepository.count());
+        CollectionModel<Privilege> privileges = CollectionModel.of(this.privilegeRepository.findAll());
+        privileges.add(linkTo(methodOn(PrivilegeController.class).index()).withSelfRel());
+
+        for (Privilege p : privileges){
+            p = this.addLinks(p);
+        }
+
         return this.message("Indexing privilege", this.privilegeRepository.findAll(), HttpStatus.OK);
 
     }
@@ -39,11 +49,13 @@ public class PrivilegeController implements BaseController<Privilege> {
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
         logger.debug("Getting privilege by id: {}", id);
-        Optional<Privilege> privilege = this.privilegeRepository.findById(id);
-        if (privilege.isEmpty()) {
+        Optional<Privilege> optionalPrivilege = this.privilegeRepository.findById(id);
+        if (optionalPrivilege.isEmpty()) {
             return this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
         }
-        return this.message("Getting Privilege by id", privilege.get(), HttpStatus.OK);
+        Privilege privilege = this.addLinks(optionalPrivilege.get());
+
+        return this.message("Getting Privilege by id", privilege, HttpStatus.OK);
 
     }
 
@@ -57,6 +69,8 @@ public class PrivilegeController implements BaseController<Privilege> {
 
         }
         Privilege privilegeCreated = this.privilegeRepository.save(privilege);
+        privilegeCreated = this.addLinks(privilegeCreated);
+
         return this.message("Creating privilege", privilegeCreated, HttpStatus.CREATED);
     }
 
@@ -67,6 +81,8 @@ public class PrivilegeController implements BaseController<Privilege> {
         Optional<Privilege> optionalPrivilege = this.privilegeRepository.findById(id);
         if (optionalPrivilege.isPresent() && optionalPrivilege.get().getId().equals(privilege.getId())) {
             privilege = this.privilegeRepository.save(privilege);
+            privilege = this.addLinks(privilege);
+
             return this.message("Updating privilege by id", privilege, HttpStatus.ACCEPTED);
         }
         return this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
@@ -99,5 +115,13 @@ public class PrivilegeController implements BaseController<Privilege> {
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
+    }
+
+    private Privilege addLinks(Privilege privilege) {
+        privilege.add(linkTo(methodOn(PrivilegeController.class).getById(privilege.getId())).withSelfRel());
+        privilege.add(linkTo(methodOn(PrivilegeController.class).index()).withRel(IanaLinkRelations.COLLECTION));
+        privilege.add(linkTo(methodOn(PrivilegeController.class).getRolesByPrivilegeId(privilege.getId())).withRel("roles"));
+
+        return privilege;
     }
 }
