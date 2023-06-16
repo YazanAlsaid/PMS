@@ -26,7 +26,7 @@ public class Building extends BaseEntity {
     @OneToOne(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Address address;
 
-    public Building(String name,Park park) {
+    public Building(String name, Park park) {
         this.name = name;
         this.park = park;
     }
@@ -65,6 +65,17 @@ public class Building extends BaseEntity {
     public Integer getFloorsCount(){
         return this.floors.size();
     }
+
+    @SuppressWarnings("unused")
+    public Address getAddress() {
+        return address;
+    }
+
+    @SuppressWarnings("unused")
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

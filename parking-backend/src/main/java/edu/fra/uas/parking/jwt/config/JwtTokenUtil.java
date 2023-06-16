@@ -1,4 +1,5 @@
 package edu.fra.uas.parking.jwt.config;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Service;
 
 @Service
-public class JwtTokenUtil implements Serializable{
+public class JwtTokenUtil implements Serializable {
 
     public static final long JWT_TOKEN_VALIDITY = 1000 * 60 * 60;
 
@@ -34,6 +35,7 @@ public class JwtTokenUtil implements Serializable{
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
     private Claims extractAllClaims(String token) {
         return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
     }

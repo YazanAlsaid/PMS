@@ -27,6 +27,7 @@ public class Park extends BaseEntity {
     public Park() {
     }
 
+    @SuppressWarnings("unused")
     public Park(String name) {
         this.name = name;
     }

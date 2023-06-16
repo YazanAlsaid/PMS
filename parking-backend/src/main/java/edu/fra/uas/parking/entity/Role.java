@@ -58,6 +58,8 @@ public class Role extends BaseEntity implements Serializable {
     public Set<User> getUsers() {
         return users;
     }
+
+    @SuppressWarnings("unused")
     public void setPrivilege(Privilege privilege) {
           this.privileges.add(privilege);
     }
@@ -68,6 +70,7 @@ public class Role extends BaseEntity implements Serializable {
             }
         }
     }
+
     @SuppressWarnings("unused")
     public Set<Privilege> getPrivileges() {
         return privileges;

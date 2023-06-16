@@ -33,7 +33,9 @@ public class Floor extends BaseEntity {
         this.name = name;
         this.building = building;
     }
-    public Floor() {}
+
+    public Floor() {
+    }
 
     @SuppressWarnings("unused")
     public String getName() {
