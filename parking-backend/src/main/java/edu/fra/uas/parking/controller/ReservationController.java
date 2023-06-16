@@ -6,6 +6,8 @@ import edu.fra.uas.parking.repository.ReservationRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Set;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/reservations")
@@ -30,6 +35,12 @@ public class ReservationController implements BaseController<Reservation> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing reservation: {}", this.reservationRepository.count());
+        CollectionModel<Reservation> reservations = CollectionModel.of(this.reservationRepository.findAll());
+        reservations.add(linkTo(methodOn(ReservationController.class).index()).withSelfRel());
+        for (Reservation p : reservations){
+            p = this.addLinks(p);
+        }
+
         return this.message("Indexing reservation", this.reservationRepository.findAll(), HttpStatus.OK);
 
     }
@@ -37,12 +48,14 @@ public class ReservationController implements BaseController<Reservation> {
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
-        logger.debug("Getting building by id: {}", id);
-        Optional<Reservation> reservation = this.reservationRepository.findById(id);
-        if (reservation.isEmpty()) {
+        logger.debug("Getting reservation by id: {}", id);
+        Optional<Reservation> opetionalReservation = this.reservationRepository.findById(id);
+        if (opetionalReservation.isEmpty()) {
             return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
         }
-        return this.message("Getting reservation by id", reservation.get(), HttpStatus.OK);
+
+        Reservation reservation = this.addLinks(opetionalReservation.get());
+        return this.message("Getting reservation by id", reservation, HttpStatus.OK);
     }
 
     @PostMapping
@@ -50,13 +63,15 @@ public class ReservationController implements BaseController<Reservation> {
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Reservation reservation) {
 
         logger.debug("Creating reservation: {}", reservation);
-        Optional<Reservation> optionalBuilding = (reservation.getId() != null) ? this.reservationRepository.findById(reservation.getId()) : Optional.empty();
-        if (optionalBuilding.isPresent()) {
+        Optional<Reservation> optionalReservation = (reservation.getId() != null) ? this.reservationRepository.findById(reservation.getId()) : Optional.empty();
+        if (optionalReservation.isPresent()) {
             return this.message("Reservation is already exists", null, HttpStatus.CONFLICT);
 
         }
-        Reservation buildingCreated = this.reservationRepository.save(reservation);
-        return this.message("Creating reservation", buildingCreated, HttpStatus.CREATED);
+        Reservation reservationCreated = this.reservationRepository.save(reservation);
+        reservationCreated = this.addLinks(reservationCreated);
+
+        return this.message("Creating reservation", reservationCreated, HttpStatus.CREATED);
 
     }
 
@@ -67,6 +82,8 @@ public class ReservationController implements BaseController<Reservation> {
         Optional<Reservation> optionalReservation = this.reservationRepository.findById(id);
         if (optionalReservation.isPresent() && optionalReservation.get().getId().equals(reservation.getId())) {
             reservation = this.reservationRepository.save(reservation);
+            reservation = this.addLinks(reservation);
+
             return this.message("Updating reservation by id", reservation, HttpStatus.ACCEPTED);
         }
         return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
@@ -88,4 +105,11 @@ public class ReservationController implements BaseController<Reservation> {
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
+
+    private Reservation addLinks(Reservation reservation){
+        reservation.add(linkTo(methodOn(ReservationController.class).getById(reservation.getId())).withSelfRel());
+        reservation.add(linkTo(methodOn(ReservationController.class).index()).withRel(IanaLinkRelations.COLLECTION));
+        return reservation;
+    }
+
 }
