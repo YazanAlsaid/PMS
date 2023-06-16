@@ -34,11 +34,12 @@ public class Slot extends BaseEntity {
     @OneToMany(mappedBy = "slot", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Set<Reservation> reservations = new HashSet<>();
 
-    public Slot(String name, Floor floor,Type type) {
+    public Slot(String name, Floor floor, Type type) {
         this.name = name;
         this.floor = floor;
         this.type = type;
     }
+
     public Slot() {
     }
 
@@ -81,9 +82,10 @@ public class Slot extends BaseEntity {
     }
 
     @JsonProperty("reservationCount")
-    public Integer getReservationsCount(){
-       return this.reservations.size();
+    public Integer getReservationsCount() {
+        return this.reservations.size();
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

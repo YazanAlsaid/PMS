@@ -53,7 +53,7 @@ public class Park extends BaseEntity {
     }
 
     @JsonProperty("buildingCount")
-    public Integer getBuildingsCount(){
+    public Integer getBuildingsCount() {
         return this.buildings.size();
     }
 

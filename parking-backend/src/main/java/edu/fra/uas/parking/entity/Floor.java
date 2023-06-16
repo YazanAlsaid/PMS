@@ -66,7 +66,8 @@ public class Floor extends BaseEntity {
     public void setSlots(Set<Slot> slots) {
         this.slots = slots;
     }
-    public Integer getSlotsCount(){
+
+    public Integer getSlotsCount() {
         return this.slots.size();
     }
 

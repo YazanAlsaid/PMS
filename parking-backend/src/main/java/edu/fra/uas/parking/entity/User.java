@@ -83,9 +83,7 @@ public class User extends BaseEntity {
 
     @SuppressWarnings("unused")
     public void setRole(Role role) {
-        if (!this.roles.contains(role)) {
-            this.roles.add(role);
-        }
+        this.roles.add(role);
     }
 
     @SuppressWarnings("unused")

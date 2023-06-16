@@ -118,9 +118,12 @@ public class InitDB {
         Role roleUser = new Role("USER");
         roleUser = this.roleRepository.save(roleUser);
 
-        roleAdmin.setPrivileges(this.privilegeRepository.findAll());
+        for (Privilege privilege : this.privilegeRepository.findAll()){
+            roleAdmin.setPrivilege(privilege);
+            roleUser.setPrivilege(privilege);
+        }
+
         roleAdmin = roleRepository.save(roleAdmin);
-        roleUser.setPrivileges(this.privilegeRepository.findAll());
         roleUser = roleRepository.save(roleUser);
 
         for (int i = 1; i <= 100; i++) {
