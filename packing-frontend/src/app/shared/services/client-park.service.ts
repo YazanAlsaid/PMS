@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpService} from "./httpServeic";
 import {Observable} from "rxjs";
 import {Park} from "../model/park";
+import {ResponseMessage} from "../model/response-message";
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import {Park} from "../model/park";
 export class ClientParkService {
   constructor(private httpService : HttpService) {}
 
-  public getPark() : Observable<any[]> {
+  public getParks() : Observable<ResponseMessage> {
     return this.httpService.getAll("parks");
   }
   public getPark(id : number) : Observable<any> {
