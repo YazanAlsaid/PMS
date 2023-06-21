@@ -10,6 +10,7 @@ export class AdminAppComponent implements OnInit {
   title = 'Park Management System';
   sideBarOpen = true;
   public routeItems: RouteItem[] = [
+    {name: 'Dashboard', link: '/dashboard', icon: 'dashboard',},
     {name: 'Park', link: '/dashboard/parks', icon: 'local_parking',},
     {name: 'Buildings', link: '/dashboard/buildings', icon: 'location_city',},
     {name: 'Floors', link: '/dashboard/floors', icon: 'backup_table',},
