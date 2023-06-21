@@ -8,6 +8,7 @@ import {BuildingsComponent} from "./components/buildings/buildings.component";
 import {SlotsComponent} from "./components/slots/slots.component";
 import {UsersComponent} from "./components/users/users.component";
 import {RolesComponent} from "./components/roles/roles.component";
+import {ReservationsComponent} from "./components/reservations/reservations.component";
 
 const routes: Routes = [
   {
@@ -53,7 +54,7 @@ const routes: Routes = [
       },
       {
         path: 'reservations',
-        component: DashboardComponent,
+        component: ReservationsComponent,
         pathMatch: 'full',
         data: {title: 'Reservation'},
       },
@@ -74,6 +75,7 @@ export const RoutedComponent = [
   DashboardComponent,
   FloorsComponent,
   ParksComponent,
+  ReservationsComponent,
   RolesComponent,
   SlotsComponent,
   UsersComponent,
