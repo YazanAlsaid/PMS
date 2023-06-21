@@ -6,6 +6,8 @@ import edu.fra.uas.parking.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Set;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/users")
@@ -30,6 +35,14 @@ public class UserController implements BaseController<User> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing user: {}", this.userRepository.count());
+        CollectionModel<User> users = CollectionModel.of(this.userRepository.findAll());
+        users.add(linkTo(methodOn(ParkController.class).index()).withSelfRel());
+        users.add(linkTo(methodOn(UserController.class).index()).withSelfRel());
+
+        for (User p : users){
+            p = this.addLinks(p);
+        }
+
         return this.message("Indexing user", this.userRepository.findAll(), HttpStatus.OK);
     }
 
@@ -37,11 +50,13 @@ public class UserController implements BaseController<User> {
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
         logger.debug("Getting user by id: {}", id);
-        Optional<User> user = this.userRepository.findById(id);
-        if (user.isEmpty()) {
+        Optional<User> optionalUser = this.userRepository.findById(id);
+        if (optionalUser.isEmpty()) {
             return this.message("User not found", null, HttpStatus.NOT_FOUND);
         }
-        return this.message("Getting user by id", user.get(), HttpStatus.OK);
+
+        User user = this.addLinks(optionalUser.get());
+        return this.message("Getting user by id", user, HttpStatus.OK);
     }
 
     @PostMapping
@@ -54,6 +69,8 @@ public class UserController implements BaseController<User> {
 
         }
         User userCreated = this.userRepository.save(user);
+        userCreated = this.addLinks(userCreated);
+
         return this.message("Creating building", userCreated, HttpStatus.CREATED);
     }
 
@@ -64,6 +81,8 @@ public class UserController implements BaseController<User> {
         Optional<User> optionalUser = this.userRepository.findById(id);
         if (optionalUser.isPresent() && optionalUser.get().getId().equals(user.getId())) {
             user = this.userRepository.save(user);
+            user = this.addLinks(user);
+
             return this.message("Updating building by id", user, HttpStatus.ACCEPTED);
         }
         return this.message("Building not found", null, HttpStatus.NOT_FOUND);
@@ -113,5 +132,14 @@ public class UserController implements BaseController<User> {
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
+    }
+
+    private User addLinks(User user){
+        user.add(linkTo(methodOn(UserController.class).getById(user.getId())).withSelfRel());
+        user.add(linkTo(methodOn(UserController.class).index()).withRel(IanaLinkRelations.COLLECTION));
+        user.add(linkTo(methodOn(UserController.class).getReservationsByUserId(user.getId())).withRel("reservations"));
+        user.add(linkTo(methodOn(UserController.class).getRolesByUserId(user.getId())).withRel("roles"));
+
+        return user;
     }
 }

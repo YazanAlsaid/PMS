@@ -1,55 +1,56 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { AdminAppComponent } from './components/admin-app/admin-app.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {AdminAppComponent} from './components/admin-app/admin-app.component';
+import {DashboardComponent} from './components/dashboard/dashboard.component';
+import {ParksComponent} from "./components/parks/parks.component";
 
 const routes: Routes = [
   {
     path: '',
     component: AdminAppComponent,
     children: [
-      { path: '', component: DashboardComponent, pathMatch: 'full' },
+      {path: '', component: DashboardComponent, pathMatch: 'full'},
       {
         path: 'building',
         component: DashboardComponent,
         pathMatch: 'full',
-        data: { title: 'Building' },
+        data: {title: 'Building'},
       },
       {
         path: 'floor',
         component: DashboardComponent,
         pathMatch: 'full',
-        data: { title: 'Floor' },
+        data: {title: 'Floor'},
       },
       {
         path: 'slot',
         component: DashboardComponent,
         pathMatch: 'full',
-        data: { title: 'Slot' },
+        data: {title: 'Slot'},
       },
       {
         path: 'park',
-        component: DashboardComponent,
+        component: ParksComponent,
         pathMatch: 'full',
-        data: { title: 'Park' },
+        data: {title: 'Park'},
       },
       {
         path: 'user',
         component: DashboardComponent,
         pathMatch: 'full',
-        data: { title: 'User' },
+        data: {title: 'User'},
       },
       {
         path: 'role',
         component: DashboardComponent,
         pathMatch: 'full',
-        data: { title: 'Role' },
+        data: {title: 'Role'},
       },
       {
         path: 'reservations',
         component: DashboardComponent,
         pathMatch: 'full',
-        data: { title: 'Reservation' },
+        data: {title: 'Reservation'},
       },
     ],
   },
@@ -59,6 +60,11 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class AdminRoutingModule {}
+export class AdminRoutingModule {
+}
 
-export const RoutedComponent = [AdminAppComponent, DashboardComponent];
+export const RoutedComponent = [
+  AdminAppComponent,
+  DashboardComponent,
+  ParksComponent
+];

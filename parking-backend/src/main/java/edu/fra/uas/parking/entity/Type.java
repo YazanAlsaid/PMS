@@ -24,6 +24,8 @@ public class Type extends BaseEntity {
 
     public Type() {
     }
+
+    @SuppressWarnings("unused")
     public Type(String name) {
         this.name = name;
     }

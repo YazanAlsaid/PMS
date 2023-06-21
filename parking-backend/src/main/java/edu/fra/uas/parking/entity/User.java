@@ -24,7 +24,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "users")
-public class    User extends BaseEntity {
+public class User extends BaseEntity {
     @Column(name = "first_name", nullable = false)
     @Size(min = 3, max = 50)
     private String firstName;
@@ -83,9 +83,7 @@ public class    User extends BaseEntity {
 
     @SuppressWarnings("unused")
     public void setRole(Role role) {
-        if (!this.roles.contains(role)) {
-            this.roles.add(role);
-        }
+        this.roles.add(role);
     }
 
     @SuppressWarnings("unused")

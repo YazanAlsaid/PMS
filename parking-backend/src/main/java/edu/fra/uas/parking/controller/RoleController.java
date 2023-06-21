@@ -6,6 +6,8 @@ import edu.fra.uas.parking.repository.RoleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Set;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/roles")
@@ -30,6 +35,14 @@ public class RoleController implements BaseController<Role> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing role: {}", this.roleRepository.count());
+        CollectionModel<Role> roles = CollectionModel.of(this.roleRepository.findAll());
+        roles.add(linkTo(methodOn(RoleController.class).index()).withSelfRel());
+
+        for (Role p : roles){
+            p = this.addLinks(p);
+        }
+
+
         return this.message("Indexing role", this.roleRepository.findAll(), HttpStatus.OK);
     }
 
@@ -37,11 +50,12 @@ public class RoleController implements BaseController<Role> {
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
         logger.debug("Getting role by id: {}", id);
-        Optional<Role> role = this.roleRepository.findById(id);
-        if (role.isEmpty()) {
+        Optional<Role> optionalRole = this.roleRepository.findById(id);
+        if (optionalRole.isEmpty()) {
             return this.message("Role not found", null, HttpStatus.NOT_FOUND);
         }
-        return this.message("Getting role by id", role.get(), HttpStatus.OK);
+        Role role = this.addLinks(optionalRole.get());
+        return this.message("Getting role by id", role, HttpStatus.OK);
     }
 
     @PostMapping
@@ -54,6 +68,8 @@ public class RoleController implements BaseController<Role> {
 
         }
         Role roleCreated = this.roleRepository.save(role);
+        roleCreated = this.addLinks(roleCreated);
+
         return this.message("Creating role", roleCreated, HttpStatus.CREATED);
     }
 
@@ -64,6 +80,8 @@ public class RoleController implements BaseController<Role> {
         Optional<Role> optionalRole = this.roleRepository.findById(id);
         if (optionalRole.isPresent() && optionalRole.get().getId().equals(role.getId())) {
             role = this.roleRepository.save(role);
+            role = this.addLinks(role);
+
             return this.message("Updating role by id", role, HttpStatus.ACCEPTED);
         }
         return this.message("Role not found", null, HttpStatus.NOT_FOUND);
@@ -103,5 +121,14 @@ public class RoleController implements BaseController<Role> {
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
+    }
+
+    private Role addLinks(Role role){
+        role.add(linkTo(methodOn(RoleController.class).getById(role.getId())).withSelfRel());
+        role.add(linkTo(methodOn(RoleController.class).index()).withRel(IanaLinkRelations.COLLECTION));
+        role.add(linkTo(methodOn(RoleController.class).getUsersByRoleId(role.getId())).withRel("users"));
+        role.add(linkTo(methodOn(RoleController.class).getPrivilegesByRoleId(role.getId())).withRel("privileges"));
+
+        return role;
     }
 }

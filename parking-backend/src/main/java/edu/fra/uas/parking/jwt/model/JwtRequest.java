@@ -6,9 +6,11 @@ public class JwtRequest implements Serializable {
     private String email;
     private String password;
 
+    @SuppressWarnings("unused")
     public JwtRequest() {
     }
 
+    @SuppressWarnings("unused")
     public JwtRequest(String email, String password) {
         this.email = email;
         this.password = password;
@@ -18,6 +20,7 @@ public class JwtRequest implements Serializable {
         return email;
     }
 
+    @SuppressWarnings("unused")
     public void setEmail(String email) {
         this.email = email;
     }
@@ -26,6 +29,7 @@ public class JwtRequest implements Serializable {
         return password;
     }
 
+    @SuppressWarnings("unused")
     public void setPassword(String password) {
         this.password = password;
     }

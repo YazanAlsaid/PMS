@@ -2,38 +2,35 @@ package edu.fra.uas.parking.common;
 
 import java.time.LocalDateTime;
 
-public class JwtResponseError {
-    private LocalDateTime timestamp;
-    private Integer status;
-    private String error;
-    private String message;
-    private String path;
+public record JwtResponseError(LocalDateTime timestamp, Integer status, String error, String message, String path) {
 
-    public JwtResponseError(LocalDateTime timestamp, Integer status, String error, String message, String path) {
-        this.timestamp = timestamp;
-        this.status = status;
-        this.error = error;
-        this.message = message;
-        this.path = path;
-    }
-
-    public LocalDateTime getTimestamp() {
+    @Override
+    @SuppressWarnings("unused")
+    public LocalDateTime timestamp() {
         return timestamp;
     }
 
-    public Integer getStatus() {
+    @Override
+    @SuppressWarnings("unused")
+    public Integer status() {
         return status;
     }
 
-    public String getError() {
+    @Override
+    @SuppressWarnings("unused")
+    public String error() {
         return error;
     }
 
-    public String getMessage() {
+    @Override
+    @SuppressWarnings("unused")
+    public String message() {
         return message;
     }
 
-    public String getPath() {
+    @Override
+    @SuppressWarnings("unused")
+    public String path() {
         return path;
     }
 

@@ -6,6 +6,8 @@ import edu.fra.uas.parking.repository.SlotRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Set;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/slots")
@@ -30,6 +35,13 @@ public class SlotController implements BaseController<Slot> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing slot: {}", this.slotRepository.count());
+        CollectionModel<Slot> slots = CollectionModel.of(this.slotRepository.findAll());
+        slots.add(linkTo(methodOn(SlotController.class).index()).withSelfRel());
+
+        for (Slot p : slots){
+            p = this.addLinks(p);
+        }
+        
         return this.message("Indexing slot", this.slotRepository.findAll(), HttpStatus.OK);
 
     }
@@ -38,11 +50,13 @@ public class SlotController implements BaseController<Slot> {
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
         logger.debug("Getting slot by id: {}", id);
-        Optional<Slot> slot = this.slotRepository.findById(id);
-        if (slot.isEmpty()) {
+        Optional<Slot> optionalSlot = this.slotRepository.findById(id);
+        if (optionalSlot.isEmpty()) {
             return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
         }
-        return this.message("Getting slot by id", slot.get(), HttpStatus.OK);
+
+        Slot slot = this.addLinks(optionalSlot.get());
+        return this.message("Getting slot by id", slot, HttpStatus.OK);
     }
 
     @PostMapping
@@ -54,8 +68,10 @@ public class SlotController implements BaseController<Slot> {
             return this.message("Building is already exists", null, HttpStatus.CONFLICT);
 
         }
-        Slot buildingCreated = this.slotRepository.save(slot);
-        return this.message("Creating slot", buildingCreated, HttpStatus.CREATED);
+        Slot slotCreated = this.slotRepository.save(slot);
+        slotCreated = this.addLinks(slotCreated);
+
+        return this.message("Creating slot", slotCreated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -65,6 +81,8 @@ public class SlotController implements BaseController<Slot> {
         Optional<Slot> optionalSlot = this.slotRepository.findById(id);
         if (optionalSlot.isPresent() && optionalSlot.get().getId().equals(slot.getId())) {
             slot = this.slotRepository.save(slot);
+            slot = this.addLinks(slot);
+
             return this.message("Updating slot by id", slot, HttpStatus.ACCEPTED);
         }
         return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
@@ -114,5 +132,13 @@ public class SlotController implements BaseController<Slot> {
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
+    }
+
+    private Slot addLinks(Slot slot){
+        slot.add(linkTo(methodOn(SlotController.class).getById(slot.getId())).withSelfRel());
+        slot.add(linkTo(methodOn(SlotController.class).index()).withRel(IanaLinkRelations.COLLECTION));
+        slot.add(linkTo(methodOn(SlotController.class).getReservationsBySlotId(slot.getId())).withRel("reservations"));
+
+        return slot;
     }
 }
