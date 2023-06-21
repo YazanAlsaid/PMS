@@ -1,7 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
-import {Floor} from "../../../shared/model/floor";
 import {Building} from "../../../shared/model/building";
 
 @Component({
@@ -21,11 +20,11 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     for (let i = 0; i < 15; i++) {
-      this.dataSource.data.push(new Building(i+1, "Building"+(i+1),[], new Date, new Date))
+      this.dataSource.data.push(new Building(i + 1, "Building" + (i + 1), [], new Date, new Date))
     }
   }
 
-  edit(element:any) {
+  edit(element: any) {
 
   }
 
