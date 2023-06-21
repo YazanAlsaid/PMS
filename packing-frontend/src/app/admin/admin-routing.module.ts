@@ -9,6 +9,7 @@ import {SlotsComponent} from "./components/slots/slots.component";
 import {UsersComponent} from "./components/users/users.component";
 import {RolesComponent} from "./components/roles/roles.component";
 import {ReservationsComponent} from "./components/reservations/reservations.component";
+import {NfcCardsComponent} from "./components/nfc-cards/nfc-cards.component";
 
 const routes: Routes = [
   {
@@ -16,48 +17,14 @@ const routes: Routes = [
     component: AdminAppComponent,
     children: [
       {path: '', component: DashboardComponent, pathMatch: 'full'},
-      {
-        path: 'building',
-        component: BuildingsComponent,
-        pathMatch: 'full',
-        data: {title: 'Building'},
-      },
-      {
-        path: 'floor',
-        component: FloorsComponent,
-        pathMatch: 'full',
-        data: {title: 'Floor'},
-      },
-      {
-        path: 'slot',
-        component: SlotsComponent,
-        pathMatch: 'full',
-        data: {title: 'Slot'},
-      },
-      {
-        path: 'park',
-        component: ParksComponent,
-        pathMatch: 'full',
-        data: {title: 'Park'},
-      },
-      {
-        path: 'user',
-        component: UsersComponent,
-        pathMatch: 'full',
-        data: {title: 'User'},
-      },
-      {
-        path: 'role',
-        component: RolesComponent,
-        pathMatch: 'full',
-        data: {title: 'Role'},
-      },
-      {
-        path: 'reservations',
-        component: ReservationsComponent,
-        pathMatch: 'full',
-        data: {title: 'Reservation'},
-      },
+      {path: 'buildings', component: BuildingsComponent, pathMatch: 'full', data: {title: 'Building'},},
+      {path: 'floors', component: FloorsComponent, pathMatch: 'full', data: {title: 'Floor'},},
+      {path: 'slots', component: SlotsComponent, pathMatch: 'full', data: {title: 'Slot'},},
+      {path: 'parks', component: ParksComponent, pathMatch: 'full', data: {title: 'Park'},},
+      {path: 'users', component: UsersComponent, pathMatch: 'full', data: {title: 'User'},},
+      {path: 'roles', component: RolesComponent, pathMatch: 'full', data: {title: 'Role'},},
+      {path: 'reservations', component: ReservationsComponent, pathMatch: 'full', data: {title: 'Reservation'},},
+      {path: 'nfc-cards', component: NfcCardsComponent, pathMatch: 'full'}
     ],
   },
 ];
@@ -74,6 +41,7 @@ export const RoutedComponent = [
   BuildingsComponent,
   DashboardComponent,
   FloorsComponent,
+  NfcCardsComponent,
   ParksComponent,
   ReservationsComponent,
   RolesComponent,
