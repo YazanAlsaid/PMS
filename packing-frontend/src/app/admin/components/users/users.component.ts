@@ -37,4 +37,8 @@ export class UsersComponent implements AfterViewInit, OnInit {
   create() {
 
   }
+
+  show(element:any) {
+
+  }
 }

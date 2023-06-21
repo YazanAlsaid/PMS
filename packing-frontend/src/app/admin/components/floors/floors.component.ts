@@ -20,15 +20,19 @@ export class FloorsComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     for (let i = 0; i < 15; i++) {
-      this.dataSource.data.push(new Floor(i+1, "Floor"+(i+1),[], new Date, new Date))
+      this.dataSource.data.push(new Floor(i + 1, "Floor" + (i + 1), [], new Date, new Date))
     }
   }
 
-  edit(element:any) {
+  edit(element: any) {
 
   }
 
   create() {
+
+  }
+
+  show(element: any) {
 
   }
 }

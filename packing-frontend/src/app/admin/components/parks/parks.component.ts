@@ -44,4 +44,8 @@ export class ParksComponent implements AfterViewInit, OnInit {
   create() {
 
   }
+
+  show(element: any) {
+
+  }
 }

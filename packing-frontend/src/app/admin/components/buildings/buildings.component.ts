@@ -31,4 +31,8 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   create() {
 
   }
+
+  show(element: any) {
+
+  }
 }
