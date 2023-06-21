@@ -3,6 +3,7 @@ import {RouterModule, Routes} from '@angular/router';
 import {AdminAppComponent} from './components/admin-app/admin-app.component';
 import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {ParksComponent} from "./components/parks/parks.component";
+import {FloorsComponent} from "./components/floors/floors.component";
 
 const routes: Routes = [
   {
@@ -18,7 +19,7 @@ const routes: Routes = [
       },
       {
         path: 'floor',
-        component: DashboardComponent,
+        component: FloorsComponent,
         pathMatch: 'full',
         data: {title: 'Floor'},
       },
@@ -66,5 +67,6 @@ export class AdminRoutingModule {
 export const RoutedComponent = [
   AdminAppComponent,
   DashboardComponent,
+  FloorsComponent,
   ParksComponent
 ];
