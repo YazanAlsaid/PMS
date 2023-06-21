@@ -102,7 +102,7 @@ public class FloorController implements BaseController<Floor> {
         return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{id/slots}")
+    @GetMapping("/{id}/slots")
     public ResponseEntity<ResponseMessage> getSlotsByFloorId(@PathVariable("id") Long id) {
         logger.debug("Getting slots by floor id: {}", id);
         Optional<Floor> optionalFloor = this.floorRepository.findById(id);
