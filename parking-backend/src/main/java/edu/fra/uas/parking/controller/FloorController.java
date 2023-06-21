@@ -6,6 +6,8 @@ import edu.fra.uas.parking.repository.FloorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Set;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/floors")
@@ -29,19 +34,28 @@ public class FloorController implements BaseController<Floor> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing floor: {}", this.floorRepository.count());
-        return this.message("Indexing floor", this.floorRepository.findAll(), HttpStatus.OK);
+        CollectionModel<Floor> floors = CollectionModel.of(this.floorRepository.findAll());
+        floors.add(linkTo(methodOn(FloorController.class).index()).withSelfRel());
+        for (Floor p : floors){
+            p = this.addLinks(p);
+        }
+
+        return  this.message("Indexing floor", this.floorRepository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
         logger.debug("Getting floor by id: {}", id);
-        Optional<Floor> floor = this.floorRepository.findById(id);
+        Optional<Floor> optionalFloor = this.floorRepository.findById(id);
 
-        if (floor.isEmpty()) {
+        if (optionalFloor.isEmpty()) {
             return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
         }
-        return this.message("Getting floor by id", floor.get(), HttpStatus.OK);
+
+        Floor floor = this.addLinks(optionalFloor.get());
+
+        return  this.message("Getting floor by id", floor, HttpStatus.OK);
 
     }
 
@@ -51,11 +65,13 @@ public class FloorController implements BaseController<Floor> {
         logger.debug("Creating floor: {}", floor);
         Optional<Floor> optionalFloor = (floor.getId() != null) ? this.floorRepository.findById(floor.getId()) : Optional.empty();
         if (optionalFloor.isPresent()) {
-            return this.message("Floor is already exists", null, HttpStatus.CONFLICT);
+            return  this.message("Floor is already exists", null, HttpStatus.CONFLICT);
 
         }
         Floor floorCreated = this.floorRepository.save(floor);
-        return this.message("Creating floor", floorCreated, HttpStatus.CREATED);
+        floorCreated = this.addLinks(floorCreated);
+
+        return  this.message("Creating floor", floorCreated, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
@@ -66,6 +82,8 @@ public class FloorController implements BaseController<Floor> {
 
         if (floorUpdated.isPresent() && floorUpdated.get().getId().equals(floor.getId())) {
             floor = this.floorRepository.save(floor);
+            floor = this.addLinks(floor);
+
             return this.message("Updating floor by id", floor, HttpStatus.ACCEPTED);
         }
         return this.message("floor not found", null, HttpStatus.NOT_FOUND);
@@ -84,7 +102,7 @@ public class FloorController implements BaseController<Floor> {
         return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{id/slots}")
+    @GetMapping("/{id}/slots")
     public ResponseEntity<ResponseMessage> getSlotsByFloorId(@PathVariable("id") Long id) {
         logger.debug("Getting slots by floor id: {}", id);
         Optional<Floor> optionalFloor = this.floorRepository.findById(id);
@@ -106,5 +124,13 @@ public class FloorController implements BaseController<Floor> {
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
+    }
+
+    private Floor addLinks(Floor floor){
+        floor.add(linkTo(methodOn(FloorController.class).getById(floor.getId())).withSelfRel());
+        floor.add(linkTo(methodOn(FloorController.class).index()).withRel(IanaLinkRelations.COLLECTION));
+        floor.add(linkTo(methodOn(FloorController.class).getSlotsByFloorId(floor.getId())).withRel("slots"));
+
+        return floor;
     }
 }

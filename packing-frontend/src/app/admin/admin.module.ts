@@ -23,7 +23,8 @@ import {MatSelectModule} from "@angular/material/select";
     RoutedComponent,
     DashboardComponent,
     AddUserDialogComponent,
-    AddSlotDialogComponent],
+    AddSlotDialogComponent
+  ],
   imports: [
     CommonModule,
     AdminRoutingModule,

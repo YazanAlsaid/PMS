@@ -10,11 +10,16 @@ import edu.fra.uas.parking.entity.NfcCard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import edu.fra.uas.parking.repository.NfcCardRepository;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/nfc-cards")
@@ -32,7 +37,13 @@ public class NfcCardController implements BaseController<NfcCard> {
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing nfcCard: {}", this.nfcCardRepository.count());
-        return this.message("Indexing nfcCard", this.nfcCardRepository.findAll(), HttpStatus.OK);
+        CollectionModel<NfcCard> nfcCards = CollectionModel.of(this.nfcCardRepository.findAll());
+        nfcCards.add(linkTo(methodOn(ParkController.class).index()).withSelfRel());
+        for (NfcCard p : nfcCards){
+            p = this.addLinks(p);
+        }
+
+        return  this.message("Indexing nfcCard", this.nfcCardRepository.findAll(), HttpStatus.OK);
 
     }
 
@@ -40,12 +51,13 @@ public class NfcCardController implements BaseController<NfcCard> {
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
         logger.debug("Getting building by id: {}", id);
-        Optional<NfcCard> nfcCard = this.nfcCardRepository.findById(id);
-        if (nfcCard.isEmpty()) {
+        Optional<NfcCard> optionalNfcCard = this.nfcCardRepository.findById(id);
+        if (optionalNfcCard.isEmpty()) {
             return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
         }
-        return this.message("Getting nfcCard by id", nfcCard.get(), HttpStatus.OK);
-    }
+
+         NfcCard nfcCard = this.addLinks(optionalNfcCard.get());
+        return  this.message("Getting nfcCard by id", nfcCard, HttpStatus.OK);    }
 
     @PostMapping
     @Override
@@ -57,6 +69,8 @@ public class NfcCardController implements BaseController<NfcCard> {
 
         }
         NfcCard buildingCreated = this.nfcCardRepository.save(nfcCard);
+        buildingCreated = this.addLinks(buildingCreated);
+
         return this.message("Creating nfcCard", buildingCreated, HttpStatus.CREATED);
     }
 
@@ -67,6 +81,8 @@ public class NfcCardController implements BaseController<NfcCard> {
         Optional<NfcCard> optionalBuilding = this.nfcCardRepository.findById(id);
         if (optionalBuilding.isPresent() && optionalBuilding.get().getId().equals(nfcCard.getId())) {
             nfcCard = this.nfcCardRepository.save(nfcCard);
+            nfcCard = this.addLinks(nfcCard);
+
             return this.message("Updating nfcCard by id", nfcCard, HttpStatus.ACCEPTED);
         }
         return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
@@ -109,4 +125,13 @@ public class NfcCardController implements BaseController<NfcCard> {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
 
+
+
+    private NfcCard addLinks(NfcCard nfcCard){
+        nfcCard.add(linkTo(methodOn(NfcCardController.class).getById(nfcCard.getId())).withSelfRel());
+        nfcCard.add(linkTo(methodOn(NfcCardController.class).index()).withRel(IanaLinkRelations.COLLECTION));
+        nfcCard.add(linkTo(methodOn(NfcCardController.class).getReservationsByNfcCardId(nfcCard.getId())).withRel("reservations"));
+
+        return nfcCard;
+    }
 }

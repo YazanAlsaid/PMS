@@ -46,7 +46,7 @@ public class AuthenticationController {
                     "Incorrect email or password",
                     "Incorrect email or password",
                     "/authenticate"
-                    );
+            );
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(jwtResponseError);
         }
 
