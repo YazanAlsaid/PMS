@@ -6,6 +6,7 @@ import {ParksComponent} from "./components/parks/parks.component";
 import {FloorsComponent} from "./components/floors/floors.component";
 import {BuildingsComponent} from "./components/buildings/buildings.component";
 import {SlotsComponent} from "./components/slots/slots.component";
+import {UsersComponent} from "./components/users/users.component";
 
 const routes: Routes = [
   {
@@ -39,7 +40,7 @@ const routes: Routes = [
       },
       {
         path: 'user',
-        component: DashboardComponent,
+        component: UsersComponent,
         pathMatch: 'full',
         data: {title: 'User'},
       },
@@ -72,5 +73,6 @@ export const RoutedComponent = [
   DashboardComponent,
   FloorsComponent,
   ParksComponent,
-  SlotsComponent
+  SlotsComponent,
+  UsersComponent,
 ];
