@@ -81,7 +81,7 @@ public class TypeController implements BaseController<Type> {
         return this.message("Type not found", null, HttpStatus.NOT_FOUND);
     }
 
-    @GetMapping("/{id/slots}")
+    @GetMapping("/{id}/slots")
     public ResponseEntity<ResponseMessage> getSlotsByTypeId(@PathVariable("id") Long id) {
         logger.debug("Getting slots by type id: {}", id);
         Optional<Type> type = this.typeRepository.findById(id);
