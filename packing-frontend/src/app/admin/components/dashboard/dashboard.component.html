@@ -1,1 +1,49 @@
-<router-outlet></router-outlet>
+<mat-card class="shadow">
+  <mat-card-title class="text-center mt-3">Dashboard</mat-card-title>
+  <mat-card-content>
+    <mat-grid-list [cols]="myBreakPoint"  gutterSize="10px" cols="4" rowHeight="150px" class="mt-5" (window:resize)="handleSize($event)">
+      <ng-container >
+        <mat-grid-tile>
+          <div class="card">
+            <h5 class="card-title text-center">Parks</h5>
+            <p class="card-text text-center">5</p>
+          </div>
+        </mat-grid-tile>
+      </ng-container>
+      <ng-container >
+        <mat-grid-tile>
+          <div class="card">
+            <h5 class="card-title text-center">Buildings</h5>
+            <p class="card-text text-center">10</p>
+          </div>
+        </mat-grid-tile>
+      </ng-container>
+      <ng-container >
+        <mat-grid-tile>
+          <div class="card">
+            <h5 class="card-title text-center">Slots</h5>
+            <p class="card-text text-center">1000</p>
+          </div>
+        </mat-grid-tile>
+      </ng-container>
+      <ng-container >
+        <mat-grid-tile>
+          <div class="card">
+            <h5 class="card-title text-center">Users</h5>
+            <p class="card-text text-center">600</p>
+          </div>
+        </mat-grid-tile>
+      </ng-container>
+      <ng-template #noItemsTemplate>
+        <h2 class="card-title text-center">No Buildings to display.</h2>
+      </ng-template>
+    </mat-grid-list>
+
+    <ng-container>
+      <div class="text-center h6">Reservation Chart</div>
+      <div style="width: 800px;">
+        <canvas id="acquisitions"></canvas>
+      </div>
+    </ng-container>
+  </mat-card-content>
+</mat-card>
