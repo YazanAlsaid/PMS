@@ -19,12 +19,13 @@ public class Privilege extends BaseEntity {
     @Column(name = "name", nullable = false, unique = true)
     private String name;
     @JsonIgnore
-    @ManyToMany(mappedBy = "privileges",cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(mappedBy = "privileges", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Set<Role> roles = new HashSet<>();
 
     public Privilege() {
     }
 
+    @SuppressWarnings("unused")
     public Privilege(String name) {
         this.name = name;
     }

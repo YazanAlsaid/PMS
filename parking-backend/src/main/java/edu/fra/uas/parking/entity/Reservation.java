@@ -38,6 +38,7 @@ public class Reservation extends BaseEntity {
         this.reservationTo = reservationTo;
     }
 
+    @SuppressWarnings("unused")
     public Reservation(LocalDateTime reservationFrom, LocalDateTime reservationTo, User user, Guest guest, NfcCard nfcCard, Slot slot) {
         this.reservationFrom = reservationFrom;
         this.reservationTo = reservationTo;

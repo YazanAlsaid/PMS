@@ -119,6 +119,7 @@ public class ParkController implements BaseController<Park> {
     private Park addLinks(Park park){
         park.add(linkTo(methodOn(ParkController.class).getById(park.getId())).withSelfRel());
         park.add(linkTo(methodOn(ParkController.class).index()).withRel(IanaLinkRelations.COLLECTION));
+        park.add(linkTo(methodOn(ParkController.class).getBuildings(park.getId())).withRel("buildings"));
         return park;
     }
 }

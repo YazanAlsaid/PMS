@@ -4,7 +4,14 @@ package edu.fra.uas.parking.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,16 +24,16 @@ public class Building extends BaseEntity {
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "park_id")
     private Park park;
     @JsonIgnore
-    @OneToMany(mappedBy = "building",cascade = {CascadeType.MERGE,CascadeType.DETACH})
+    @OneToMany(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Set<Floor> floors = new HashSet<>();
     @OneToOne(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Address address;
 
-    public Building(String name,Park park) {
+    public Building(String name, Park park) {
         this.name = name;
         this.park = park;
     }
@@ -61,10 +68,22 @@ public class Building extends BaseEntity {
     public void setFloors(Set<Floor> floors) {
         this.floors = floors;
     }
+
     @JsonProperty("floorCount")
-    public Integer getFloorsCount(){
+    public Integer getFloorsCount() {
         return this.floors.size();
     }
+
+    @SuppressWarnings("unused")
+    public Address getAddress() {
+        return address;
+    }
+
+    @SuppressWarnings("unused")
+    public void setAddress(Address address) {
+        this.address = address;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
