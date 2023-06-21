@@ -4,6 +4,7 @@ import {AdminAppComponent} from './components/admin-app/admin-app.component';
 import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {ParksComponent} from "./components/parks/parks.component";
 import {FloorsComponent} from "./components/floors/floors.component";
+import {BuildingsComponent} from "./components/buildings/buildings.component";
 
 const routes: Routes = [
   {
@@ -13,7 +14,7 @@ const routes: Routes = [
       {path: '', component: DashboardComponent, pathMatch: 'full'},
       {
         path: 'building',
-        component: DashboardComponent,
+        component: BuildingsComponent,
         pathMatch: 'full',
         data: {title: 'Building'},
       },
@@ -66,6 +67,7 @@ export class AdminRoutingModule {
 
 export const RoutedComponent = [
   AdminAppComponent,
+  BuildingsComponent,
   DashboardComponent,
   FloorsComponent,
   ParksComponent
