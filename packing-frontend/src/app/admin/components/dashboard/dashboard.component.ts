@@ -12,6 +12,7 @@ import {AddSlotDialogComponent} from "../add-slot-dialog/add-slot-dialog.compone
 })
 export class DashboardComponent implements OnInit {
   sub: any;
+  public myBreakPoint: number = 0;
 
   constructor(
     private router: Router,
@@ -24,6 +25,25 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.sub = this.activatedRoute.data.subscribe((v) => (this.data = v));
+    this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
+    if (window.innerWidth > 950)
+      this.myBreakPoint = 4;
+    else if (window.innerWidth >= 750 && window.innerWidth <= 950)
+      this.myBreakPoint = 3;
+    else if (window.innerWidth >= 550 && window.innerWidth <= 750)
+      this.myBreakPoint = 2;
+    else if (window.innerWidth <= 550)
+      this.myBreakPoint = 1;
+  }
+  handleSize(event: any) {
+    if (event.target.innerWidth > 950)
+      this.myBreakPoint = 4;
+    else if (event.target.innerWidth >= 750 && event.target.innerWidth <= 950)
+      this.myBreakPoint = 3;
+    else if (event.target.innerWidth >= 550 && event.target.innerWidth <= 750)
+      this.myBreakPoint = 2;
+    else if (event.target.innerWidth <= 550)
+      this.myBreakPoint = 1;
   }
 
   edit(e: any) {
