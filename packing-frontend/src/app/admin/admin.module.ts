@@ -17,6 +17,7 @@ import { MatInputModule } from '@angular/material/input';
 import {AddSlotDialogComponent} from "./components/add-slot-dialog/add-slot-dialog.component";
 import {MatOptionModule} from "@angular/material/core";
 import {MatSelectModule} from "@angular/material/select";
+import {MatGridListModule} from "@angular/material/grid-list";
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import {MatSelectModule} from "@angular/material/select";
     MatInputModule,
     MatButtonModule,
     MatOptionModule,
-    MatSelectModule
+    MatSelectModule,
+    MatGridListModule
   ],
 })
 export class AdminModule {}
