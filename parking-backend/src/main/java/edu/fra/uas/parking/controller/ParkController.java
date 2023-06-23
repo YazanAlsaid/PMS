@@ -14,6 +14,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import edu.fra.uas.parking.repository.ParkRepository;
@@ -33,7 +34,7 @@ public class ParkController implements BaseController<Park> {
     public ParkController(ParkRepository parkRepository) {
         this.parkRepository = parkRepository;
     }
-
+    @PreAuthorize("hasAuthority('VIEW_PARKS')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -46,7 +47,7 @@ public class ParkController implements BaseController<Park> {
 
         return  this.message("Indexing park", parks, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('VIEW_PARK')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
@@ -60,7 +61,7 @@ public class ParkController implements BaseController<Park> {
         return  this.message("Getting park by id", park, HttpStatus.OK);
 
     }
-
+    @PreAuthorize("hasAuthority('ADD_PARK')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Park park) {
@@ -75,7 +76,7 @@ public class ParkController implements BaseController<Park> {
         return  this.message("Creating building", parkCreated, HttpStatus.CREATED);
 
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_PARK')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Park park) {
@@ -88,7 +89,7 @@ public class ParkController implements BaseController<Park> {
         }
         return this.message("Park not found", null, HttpStatus.NOT_FOUND);
     }
-
+    //@PreAuthorize("hasAuthority('privilige1')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
@@ -101,7 +102,7 @@ public class ParkController implements BaseController<Park> {
         return this.message("Park not found", null, HttpStatus.NOT_FOUND);
 
     }
-
+    @PreAuthorize("id == principal.id and hasAuthority('VIEW_BUILDINGS')")
     @GetMapping("/{id}/buildings")
     public ResponseEntity<ResponseMessage> getBuildings(@PathVariable("id") Long id) {
         logger.debug("getBuildings by id Park: {}", id);

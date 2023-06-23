@@ -10,6 +10,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,6 +32,7 @@ public class SlotController implements BaseController<Slot> {
         this.slotRepository = slotRepository;
     }
 
+    @PreAuthorize("hasAuthority('VIEW_SLOTS')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -45,7 +47,7 @@ public class SlotController implements BaseController<Slot> {
         return this.message("Indexing slot", this.slotRepository.findAll(), HttpStatus.OK);
 
     }
-
+    @PreAuthorize("hasAuthority('VIEW_SLOT')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
@@ -58,7 +60,7 @@ public class SlotController implements BaseController<Slot> {
         Slot slot = this.addLinks(optionalSlot.get());
         return this.message("Getting slot by id", slot, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('ADD_SLOT')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Slot slot) {
@@ -73,7 +75,7 @@ public class SlotController implements BaseController<Slot> {
 
         return this.message("Creating slot", slotCreated, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_SLOT')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody Slot slot) {
@@ -87,7 +89,7 @@ public class SlotController implements BaseController<Slot> {
         }
         return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("hasAuthority('DELETE_SLOT')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
@@ -99,7 +101,7 @@ public class SlotController implements BaseController<Slot> {
         }
         return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
     @GetMapping("/{id}/reservations")
     public ResponseEntity<ResponseMessage> getReservationsBySlotId(@PathVariable("id") Long id) {
         logger.debug("Getting reservations by slot id: {}", id);
@@ -109,7 +111,7 @@ public class SlotController implements BaseController<Slot> {
         }
         return this.message("Getting reservations by slot id", slot.get().getReservations(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('VIEW_FLOOR')")
     @GetMapping("/{id}/floor")
     public ResponseEntity<ResponseMessage> getFloorBySlotId(@PathVariable("id") Long id) {
         logger.debug("Getting floor by slot id: {}", id);
@@ -119,7 +121,7 @@ public class SlotController implements BaseController<Slot> {
         }
         return this.message("Getting floor by slot id", slot.get().getFloor(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('VIEW_TYPE')")
     @GetMapping("/{id}/type")
     public ResponseEntity<ResponseMessage> getTypeBySlotId(@PathVariable("id") Long id) {
         logger.debug("Getting type by slot id: {}", id);
