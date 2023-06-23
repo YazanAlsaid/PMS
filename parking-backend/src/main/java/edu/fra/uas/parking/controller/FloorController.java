@@ -10,6 +10,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +30,7 @@ public class FloorController implements BaseController<Floor> {
     public FloorController(FloorRepository floorRepository) {
         this.floorRepository = floorRepository;
     }
-
+    @PreAuthorize("hasAuthority('VIEW_FLOORS')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -42,7 +43,7 @@ public class FloorController implements BaseController<Floor> {
 
         return  this.message("Indexing floor", this.floorRepository.findAll(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('VIEW_FLOOR')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
@@ -58,7 +59,7 @@ public class FloorController implements BaseController<Floor> {
         return  this.message("Getting floor by id", floor, HttpStatus.OK);
 
     }
-
+    @PreAuthorize("hasAuthority('CREATE_FLOOR')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Floor floor) {
@@ -73,7 +74,7 @@ public class FloorController implements BaseController<Floor> {
 
         return  this.message("Creating floor", floorCreated, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_FLOOR')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody Floor floor) {
@@ -88,7 +89,7 @@ public class FloorController implements BaseController<Floor> {
         }
         return this.message("floor not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("hasAuthority('DELETE_FLOOR')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
@@ -101,7 +102,7 @@ public class FloorController implements BaseController<Floor> {
         }
         return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_SLOTS')")
     @GetMapping("/{id}/slots")
     public ResponseEntity<ResponseMessage> getSlotsByFloorId(@PathVariable("id") Long id) {
         logger.debug("Getting slots by floor id: {}", id);
@@ -111,7 +112,7 @@ public class FloorController implements BaseController<Floor> {
         }
         return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_BUILDING')")
     @GetMapping("/{id}/building")
     public ResponseEntity<ResponseMessage> getBuildingByFloorId(@PathVariable("id") Long id) {
         logger.debug("Getting building by floor id: {}", id);

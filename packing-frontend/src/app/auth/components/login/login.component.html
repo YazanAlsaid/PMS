@@ -1,0 +1,23 @@
+<section class="login-container">
+  <div class="card">
+    <img src="\assets\Pictures\parking-lot.png" alt="New Parking System Logo" class="logo"> <!-- Updated src with new URL -->
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" placeholder="Enter your email" formControlName="email">
+        <mat-error *ngIf="this.loginForm.get('email')?.invalid">Please enter a valid email address.</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" placeholder="Enter your password" formControlName="password">
+        <mat-error *ngIf="this.loginForm.get('password')?.invalid">Please enter your password.</mat-error>
+      </mat-form-field>
+      <button type="submit" class="btn-primary">Login</button>
+      <div class="forgot-password-container">
+        <a href="#" class="forgot-password-link">Forgot Your Password?</a>
+      </div>
+      <div *ngIf="isLoginFailed" class="alert alert-danger mt-3" role="alert">{{ errorMessage }}</div>
+    </form>
+  </div>
+</section>

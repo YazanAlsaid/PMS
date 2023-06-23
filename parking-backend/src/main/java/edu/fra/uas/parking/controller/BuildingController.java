@@ -11,6 +11,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +30,7 @@ public class BuildingController {
     public BuildingController(BuildingRepository buildingRepository) {
         this.buildingRepository = buildingRepository;
     }
-
+    @PreAuthorize("hasAuthority('VIEW_BUILDINGS')")
     @GetMapping
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing building: {}", this.buildingRepository.count());
@@ -41,7 +42,7 @@ public class BuildingController {
         }
         return this.message("Indexing building", this.buildingRepository.findAll(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('VIEW_BUILDING')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
         logger.debug("Getting building by id: {}", id);
@@ -52,7 +53,7 @@ public class BuildingController {
         Building building = this.addLinks(optionalBuilding.get());
         return this.message("Getting building by id",building, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('ADD_BUILDING')")
     @PostMapping
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Building building) {
         logger.debug("Creating building: {}", building);
@@ -66,7 +67,7 @@ public class BuildingController {
 
         return this.message("Creating building", buildingCreated, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_BUILDING')")
     @PutMapping("/{id}")
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Building building) {
         logger.debug("Updating building by id: {}", id);
@@ -79,7 +80,7 @@ public class BuildingController {
         }
         return this.message("Building not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("hasAuthority('DELETE_BUILDING')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
         logger.debug("Deleting building by id: {}", id);
@@ -90,7 +91,7 @@ public class BuildingController {
         }
         return this.message("Building not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_FLOORS')")
     @GetMapping("/{id}/floors")
     public ResponseEntity<ResponseMessage> getFloors(@PathVariable("id") Long id) {
         logger.debug("getFloors by id Building: {}", id);
@@ -100,7 +101,7 @@ public class BuildingController {
         }
         return this.message("Building not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_PARK')")
     @GetMapping("/{id}/park")
     public ResponseEntity<ResponseMessage> getPark(@PathVariable("id") Long id) {
         logger.debug("getPark by Building id: {}", id);

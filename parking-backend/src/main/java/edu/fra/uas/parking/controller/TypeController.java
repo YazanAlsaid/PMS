@@ -10,6 +10,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +30,7 @@ public class TypeController implements BaseController<Type> {
     public TypeController(TypeRepository typeRepository) {
         this.typeRepository = typeRepository;
     }
-
+    @PreAuthorize("hasAuthority('VIEW_ALL_TYPES')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -44,7 +45,7 @@ public class TypeController implements BaseController<Type> {
         return this.message("Indexing type", this.typeRepository.findAll(), HttpStatus.OK);
 
     }
-
+    @PreAuthorize("hasAuthority('VIEW_TYPE')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
@@ -56,7 +57,7 @@ public class TypeController implements BaseController<Type> {
         Type type = this.addLinks(optionalType.get());
         return this.message("Getting type by id", type, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('ADD_TYPE')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Type type) {
@@ -71,7 +72,7 @@ public class TypeController implements BaseController<Type> {
 
         return this.message("Creating type", typeCreated, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_TYPE')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody Type type) {
@@ -85,7 +86,7 @@ public class TypeController implements BaseController<Type> {
         }
         return this.message("type not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("hasAuthority('DELETE_TYPE')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
@@ -97,7 +98,7 @@ public class TypeController implements BaseController<Type> {
         }
         return this.message("Type not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_SOLTS')")
     @GetMapping("/{id}/slots")
     public ResponseEntity<ResponseMessage> getSlotsByTypeId(@PathVariable("id") Long id) {
         logger.debug("Getting slots by type id: {}", id);
@@ -107,7 +108,6 @@ public class TypeController implements BaseController<Type> {
         }
         return this.message("Getting slots by type id", type.get().getSlots(), HttpStatus.OK);
     }
-
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
