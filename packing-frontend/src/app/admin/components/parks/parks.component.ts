@@ -3,6 +3,7 @@ import {ClientParkService} from "../../../shared/services/client-park.service";
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {ResponseMessage} from "../../../shared/model/response-message";
+import {Park} from "../../../shared/model/park";
 
 @Component({
   selector: 'app-parks',
@@ -19,13 +20,17 @@ export class ParksComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.parksService.getParks().subscribe(
+    for (let i = 0; i < 15; i++) {
+      this.dataSource.data.push(new Park(i+1, "park" + (i+1), [], new Date(), new Date()));
+    }
+
+    /*this.parksService.getParks().subscribe(
       (res: ResponseMessage) => {
         console.log(res.message)
         this.dataSource = res.data.content
       },
       (err: any) => console.log(err)
-    );
+    );*/
   }
 
   ngAfterViewInit(): void {
@@ -37,6 +42,10 @@ export class ParksComponent implements AfterViewInit, OnInit {
   }
 
   create() {
+
+  }
+
+  show(element: any) {
 
   }
 }
