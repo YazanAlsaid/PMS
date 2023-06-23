@@ -24,7 +24,6 @@ public class Privilege extends BaseEntity {
 
     public Privilege() {
     }
-
     @SuppressWarnings("unused")
     public Privilege(String name) {
         this.name = name;
