@@ -2,7 +2,7 @@
   <mat-card-title class="text-center mt-3">Dashboard</mat-card-title>
   <mat-card-content>
     <mat-grid-list [cols]="myBreakPoint" gutterSize="10px" cols="4" rowHeight="150px" class="mt-5"
-                   (window:resize)="handleSize($event.target.innerWidth)">
+                   (window:resize)="handleSize($event)">
       <ng-container>
         <mat-grid-tile>
           <div class="card">
