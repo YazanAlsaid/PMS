@@ -18,13 +18,15 @@ import {AddSlotDialogComponent} from "./components/add-slot-dialog/add-slot-dial
 import {MatOptionModule} from "@angular/material/core";
 import {MatSelectModule} from "@angular/material/select";
 import {MatGridListModule} from "@angular/material/grid-list";
+import { AddParkDialogComponent } from './components/add-park-dialog/add-park-dialog.component';
 
 @NgModule({
   declarations: [
     RoutedComponent,
     DashboardComponent,
     AddUserDialogComponent,
-    AddSlotDialogComponent
+    AddSlotDialogComponent,
+    AddParkDialogComponent
   ],
   imports: [
     CommonModule,
