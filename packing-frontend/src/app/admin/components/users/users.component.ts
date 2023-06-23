@@ -5,6 +5,8 @@ import {Floor} from "../../../shared/model/floor";
 import {User} from "../../../shared/model/user";
 import {Nfc} from "../../../shared/model/nfc";
 import {da} from "date-fns/locale";
+import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-users',
@@ -16,6 +18,9 @@ export class UsersComponent implements AfterViewInit, OnInit {
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
+
+  constructor(public dialog: MatDialog) {
+  }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
@@ -34,8 +39,15 @@ export class UsersComponent implements AfterViewInit, OnInit {
 
   }
 
-  create() {
+  create(): void {
+    const dialogRef = this.dialog.open(AddUserDialogComponent, {
+      width: '400px'
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle any actions after the dialog is closed
+      console.log('Dialog closed', result);
+    });
   }
 
   show(element:any) {
