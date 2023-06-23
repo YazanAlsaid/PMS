@@ -71,6 +71,11 @@ export class DashboardComponent implements OnInit {
       this.myBreakPoint = 1;
   }
 
+  public onClickCard(routeName: string) {
+    this.router.navigateByUrl("/dashboard/" + routeName).then(() => {
+    });
+  }
+
   edit(e: any) {
     console.log({e});
   }
@@ -140,7 +145,7 @@ export class DashboardComponent implements OnInit {
   }
 
   onMonth() {
-   this.removeDataChart();
+    this.removeDataChart();
 
     const labels = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'June', 'July', 'Aug.', 'Sept.', 'Oct.', 'Nov.', 'Dec.']
     for (let label of labels) {
@@ -166,7 +171,7 @@ export class DashboardComponent implements OnInit {
     this.chart.update();
   }
 
-  private removeDataChart(){
+  private removeDataChart() {
     this.chart.data.labels = [];
     this.chart.data.datasets.pop();
     this.chart.update();
