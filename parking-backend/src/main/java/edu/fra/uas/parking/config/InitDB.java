@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
+import java.util.*;
 
 import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
 
@@ -107,11 +108,82 @@ public class InitDB {
             }
             this.slotRepository.save(slot);
         }
-        for (int i = 1; i <= 30; i++) {
-            Privilege privilege = new Privilege();
-            privilege.setName("privilege" + i);
-            this.privilegeRepository.save(privilege);
-        }
+        Set<Privilege> privileges = new HashSet<>();
+
+        privileges.add(new Privilege("VIEW_ADDRESSES"));
+        privileges.add(new Privilege("VIEW_ADDRESS"));
+        privileges.add(new Privilege("ADD_ADDRESSES"));
+        privileges.add(new Privilege("UPDATE_ADDRESS"));
+        privileges.add(new Privilege("DELETE_ADDRESSES"));
+
+        privileges.add(new Privilege("VIEW_BUILDINGS"));
+        privileges.add(new Privilege("VIEW_BUILDING"));
+        privileges.add(new Privilege("ADD_BUILDING"));
+        privileges.add(new Privilege("UPDATE_BUILDING"));
+        privileges.add(new Privilege("DELETE_BUILDING"));
+
+        privileges.add(new Privilege("VIEW_FLOORS"));
+        privileges.add(new Privilege("VIEW_FLOOR"));
+        privileges.add(new Privilege("ADD_FLOOR"));
+        privileges.add(new Privilege("UPDATE_FLOOR"));
+        privileges.add(new Privilege("DELETE_FLOOR"));
+
+        privileges.add(new Privilege("VIEW_GUESTS"));
+        privileges.add(new Privilege("VIEW_GUEST"));
+        privileges.add(new Privilege("ADD_GUEST"));
+        privileges.add(new Privilege("UPDATE_GUEST"));
+        privileges.add(new Privilege("DELETE_GUEST"));
+
+        privileges.add(new Privilege("VIEW_NFCCARDS"));
+        privileges.add(new Privilege("VIEW_NFCCARD"));
+        privileges.add(new Privilege("ADD_NFCCARD"));
+        privileges.add(new Privilege("UPDATE_NFCCARD"));
+        privileges.add(new Privilege("DELETE_NFCCARD"));
+
+        privileges.add(new Privilege("VIEW_PARKS"));
+        privileges.add(new Privilege("VIEW_PARK"));
+        privileges.add(new Privilege("ADD_PARK"));
+        privileges.add(new Privilege("UPDATE_PARK"));
+        privileges.add(new Privilege("DELETE_PARK"));
+
+        privileges.add(new Privilege("VIEW_PRIVILEGES"));
+        privileges.add(new Privilege("VIEW_PRIVILEGE"));
+        privileges.add(new Privilege("ADD_PRIVILEGE"));
+        privileges.add(new Privilege("UPDATE_PRIVILEGE"));
+        privileges.add(new Privilege("DELETE_PRIVILEGE"));
+
+        privileges.add(new Privilege("VIEW_RESERVATIONS"));
+        privileges.add(new Privilege("VIEW_RESERVATION"));
+        privileges.add(new Privilege("ADD_RESERVATION"));
+        privileges.add(new Privilege("UPDATE_RESERVATION"));
+        privileges.add(new Privilege("DELETE_RESERVATION"));
+
+        privileges.add(new Privilege("VIEW_ROLES"));
+        privileges.add(new Privilege("VIEW_ROLE"));
+        privileges.add(new Privilege("ADD_ROLE"));
+        privileges.add(new Privilege("UPDATE_ROLE"));
+        privileges.add(new Privilege("DELETE_ROLE"));
+
+        privileges.add(new Privilege("VIEW_SLOTS"));
+        privileges.add(new Privilege("VIEW_SLOT"));
+        privileges.add(new Privilege("ADD_SLOT"));
+        privileges.add(new Privilege("UPDATE_SLOT"));
+        privileges.add(new Privilege("DELETE_SLOT"));
+
+        privileges.add(new Privilege("VIEW_TYPES"));
+        privileges.add(new Privilege("VIEW_TYPE"));
+        privileges.add(new Privilege("ADD_TYPE"));
+        privileges.add(new Privilege("UPDATE_TYPE"));
+        privileges.add(new Privilege("DELETE_TYPE"));
+
+        privileges.add(new Privilege("VIEW_USERS"));
+        privileges.add(new Privilege("VIEW_USER"));
+        privileges.add(new Privilege("ADD_USER"));
+        privileges.add(new Privilege("UPDATE_USER"));
+        privileges.add(new Privilege("DELETE_USER"));
+
+        privilegeRepository.saveAll(privileges);
+
         // roles
         Role roleAdmin = new Role("ADMIN");
         roleAdmin = roleRepository.save(roleAdmin);
@@ -119,8 +191,11 @@ public class InitDB {
         roleUser = this.roleRepository.save(roleUser);
 
         for (Privilege privilege : this.privilegeRepository.findAll()){
+           if(privilege.getName().contains("VIEW")){
+               roleUser.setPrivilege(privilege);
+           }
             roleAdmin.setPrivilege(privilege);
-            roleUser.setPrivilege(privilege);
+
         }
 
         roleAdmin = roleRepository.save(roleAdmin);

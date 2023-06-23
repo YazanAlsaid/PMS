@@ -10,6 +10,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,7 +31,7 @@ public class UserController implements BaseController<User> {
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
+    @PreAuthorize("hasAuthority('VIEW_ALL_USERS')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -45,7 +46,7 @@ public class UserController implements BaseController<User> {
 
         return this.message("Indexing user", this.userRepository.findAll(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('VIEW_USER')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
@@ -58,7 +59,7 @@ public class UserController implements BaseController<User> {
         User user = this.addLinks(optionalUser.get());
         return this.message("Getting user by id", user, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('ADD_USER')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody User user) {
@@ -73,7 +74,7 @@ public class UserController implements BaseController<User> {
 
         return this.message("Creating building", userCreated, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_USER')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, User user) {
@@ -87,7 +88,7 @@ public class UserController implements BaseController<User> {
         }
         return this.message("Building not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("hasAuthority('DELETE_USER')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
@@ -99,7 +100,7 @@ public class UserController implements BaseController<User> {
         }
         return this.message("User not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_ROLES')")
     @GetMapping("/{id}/roles")
     public ResponseEntity<ResponseMessage> getRolesByUserId(@PathVariable("id") Long id) {
         logger.debug("Getting roles by user id: {}", id);
@@ -109,7 +110,7 @@ public class UserController implements BaseController<User> {
         }
         return this.message("Getting roles by user id", user.get().getRoles(), HttpStatus.OK);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_RESERVATIONS')")
     @GetMapping("/{id}/reservations")
     public ResponseEntity<ResponseMessage> getReservationsByUserId(@PathVariable("id") Long id) {
         logger.debug("Getting reservations by user id: {}", id);
@@ -119,7 +120,7 @@ public class UserController implements BaseController<User> {
         }
         return this.message("Getting reservations by user id", user.get().getReservations(), HttpStatus.OK);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_NFCCARD')")
     @GetMapping("/{id}/nfc-card")
     public ResponseEntity<ResponseMessage> getNfcCardByUserId(@PathVariable("id") Long id) {
         logger.debug("Getting nfc card by user id: {}", id);
