@@ -14,6 +14,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import edu.fra.uas.parking.repository.NfcCardRepository;
@@ -33,6 +34,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         this.nfcCardRepository = nfcCardRepository;
     }
 
+    @PreAuthorize("hasAuthority('VIEW_NFCCARDS')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -46,7 +48,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         return  this.message("Indexing nfcCard", this.nfcCardRepository.findAll(), HttpStatus.OK);
 
     }
-
+    @PreAuthorize("hasAuthority('VIEW_NFCCARDS')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
@@ -57,8 +59,9 @@ public class NfcCardController implements BaseController<NfcCard> {
         }
 
          NfcCard nfcCard = this.addLinks(optionalNfcCard.get());
-        return  this.message("Getting nfcCard by id", nfcCard, HttpStatus.OK);    }
-
+        return  this.message("Getting nfcCard by id", nfcCard, HttpStatus.OK);
+    }
+    @PreAuthorize("hasAuthority('ADD_NFCCARD')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody NfcCard nfcCard) {
@@ -73,7 +76,7 @@ public class NfcCardController implements BaseController<NfcCard> {
 
         return this.message("Creating nfcCard", buildingCreated, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_NFCCARD')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody NfcCard nfcCard) {
@@ -87,8 +90,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         }
         return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
     }
-
-
+    @PreAuthorize("hasAuthority('DELETE_NFCCARD')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
@@ -100,7 +102,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         }
         return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_RESERVATIONS')")
     @GetMapping("/{id}/reservations")
     public ResponseEntity<ResponseMessage> getReservationsByNfcCardId(@PathVariable("id") Long id) {
         logger.debug("Getting reservations by nfcCard id: {}", id);
@@ -110,7 +112,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         }
         return this.message("Getting reservations by nfcCard id", nfcCard.get().getReservations(), HttpStatus.OK);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_USER')")
     @GetMapping("/{id}/user")
     public ResponseEntity<ResponseMessage> getUserByNfcCardId(@PathVariable("id") Long id) {
         logger.debug("Getting user by nfcCard id: {}", id);

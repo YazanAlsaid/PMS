@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,12 +34,13 @@ public class GuestController implements BaseController<Guest> {
         this.guestRepository = guestRepository;
     }
 
+    @PreAuthorize("hasAuthority('VIEW_GUESTES')")
     @GetMapping
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing guests: {}", this.guestRepository.count());
         return this.message("Indexing guests", this.guestRepository.findAll(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('VIEW_GUESTE')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
         logger.debug("Getting guests by id: {}", id);
@@ -48,7 +50,7 @@ public class GuestController implements BaseController<Guest> {
         }
         return this.message("Getting guest by id", this.guestRepository.findById(id), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('ADD_GUESTE')")
     @PostMapping
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Guest guest) {
         logger.debug("Creating guest: {}", guest);
@@ -59,7 +61,7 @@ public class GuestController implements BaseController<Guest> {
         Guest createdGuest = this.guestRepository.save(guest);
         return this.message("Creating guest", createdGuest, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_GUESTE')")
     @PutMapping("/{id}")
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Guest guest) {
         logger.debug("Updating guest by id: {}", id);
@@ -70,7 +72,7 @@ public class GuestController implements BaseController<Guest> {
         }
         return this.message("guest not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("hasAuthority('DELETE_GUESTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
         logger.debug("Deleting guest by id: {}", id);

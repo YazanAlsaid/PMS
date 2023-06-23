@@ -10,6 +10,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,7 +30,7 @@ public class PrivilegeController implements BaseController<Privilege> {
     public PrivilegeController(PrivilegeRepository privilegeRepository) {
         this.privilegeRepository = privilegeRepository;
     }
-
+    @PreAuthorize("hasAuthority('VIEW_PRIVILIGES')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -44,7 +45,7 @@ public class PrivilegeController implements BaseController<Privilege> {
         return this.message("Indexing privilege", this.privilegeRepository.findAll(), HttpStatus.OK);
 
     }
-
+    @PreAuthorize("hasAuthority('VIEW_PRIVILIGE')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
@@ -58,7 +59,7 @@ public class PrivilegeController implements BaseController<Privilege> {
         return this.message("Getting Privilege by id", privilege, HttpStatus.OK);
 
     }
-
+    @PreAuthorize("hasAuthority('ADD_PRIVILIGE')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Privilege privilege) {
@@ -73,7 +74,7 @@ public class PrivilegeController implements BaseController<Privilege> {
 
         return this.message("Creating privilege", privilegeCreated, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_PRIVILIGE')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Privilege privilege) {
@@ -87,7 +88,7 @@ public class PrivilegeController implements BaseController<Privilege> {
         }
         return this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("hasAuthority('DELETE_PRIVILIGE')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
@@ -101,7 +102,7 @@ public class PrivilegeController implements BaseController<Privilege> {
         return this.message("Privilege not found", null, HttpStatus.NOT_FOUND);
 
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_ROLES')")
     @GetMapping("/{id}/roles")
     public ResponseEntity<ResponseMessage> getRolesByPrivilegeId(@PathVariable("id") Long id) {
         logger.debug("Getting roles by privilege id: {}", id);
