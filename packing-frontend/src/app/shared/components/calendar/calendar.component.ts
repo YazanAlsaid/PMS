@@ -3,6 +3,8 @@ import {
   ChangeDetectionStrategy,
   ViewChild,
   TemplateRef,
+  Inject,
+  Optional,
 } from '@angular/core';
 import {
   startOfDay,
@@ -23,6 +25,8 @@ import {
   CalendarView,
 } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -46,12 +50,26 @@ const colors: Record<string, EventColor> = {
 })
 export class CalendarComponent {
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
+  viewDate: Date = new Date();
+  constructor(
+    private router: Router,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<CalendarComponent> // private modal: NgbModal
+  ) {}
+  dateSelected(date: any) {
+    console.log({ date });
+    // this.dialogRef.close();
+    // this.router.navigate([`dashboard/slots`], {
+    //   queryParams: {
+    //     slotId: this.data.parking.id,
+    //     date: new Date(date.date).toISOString(),
+    //   },
+    // });
+  }
 
   view: CalendarView = CalendarView.Month;
 
   CalendarView = CalendarView;
-
-  viewDate: Date = new Date();
 
   modalData!: {
     action: string;
@@ -121,8 +139,6 @@ export class CalendarComponent {
 
   activeDayIsOpen: boolean = true;
 
-  constructor(private modal: NgbModal) {}
-
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
       if (
@@ -138,10 +154,10 @@ export class CalendarComponent {
   }
 
   eventTimesChanged({
-                      event,
-                      newStart,
-                      newEnd,
-                    }: CalendarEventTimesChangedEvent): void {
+    event,
+    newStart,
+    newEnd,
+  }: CalendarEventTimesChangedEvent): void {
     this.events = this.events.map((iEvent) => {
       if (iEvent === event) {
         return {
@@ -157,7 +173,8 @@ export class CalendarComponent {
 
   handleEvent(action: string, event: CalendarEvent): void {
     this.modalData = { event, action };
-    this.modal.open(this.modalContent, { size: 'lg' });
+    console.log({ event });
+    // this.modal.open(this.modalContent, { size: 'lg' });
   }
 
   addEvent(): void {
