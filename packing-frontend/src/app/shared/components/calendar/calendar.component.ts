@@ -2,9 +2,9 @@
 import { HttpClient } from '@angular/common/http';
 import {
   Component,
+  Inject,
   Optional,
   TemplateRef,
-  Inject,
   ViewChild,
 } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -66,25 +66,6 @@ export class CalendarComponent {
     //     date: new Date(date.date).toISOString(),
     //   },
     // });
-  }
-
-  getEventStart(reservation: Reservation): Date {
-    const date = new Date(reservation.reservationAt);
-    if (reservation.reservationPeriod === 'MORNING') {
-      date.setHours(8);
-    } else {
-      date.setHours(13);
-    }
-    return date;
-  }
-  getEventEnd(reservation: Reservation): Date {
-    const date = new Date(reservation.reservationAt);
-    if (reservation.reservationPeriod === 'MORNING') {
-      date.setHours(13);
-    } else {
-      date.setHours(18);
-    }
-    return date;
   }
 
   view: CalendarView = CalendarView.Month;
@@ -171,7 +152,8 @@ export class CalendarComponent {
 
   handleEvent(action: string, event: CalendarEvent): void {
     this.modalData = { event, action };
-    this.modal.open(this.modalContent, { size: 'lg' });
+    console.log({ event });
+    // this.modal.open(this.modalContent, { size: 'lg' });
   }
 
   addEvent(): void {
