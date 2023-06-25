@@ -80,7 +80,7 @@ public class Role extends BaseEntity implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Role role = (Role) o;
-        return name.equals(role.name);
+        return Objects.equals(name, role.name);
     }
 
     @Override
