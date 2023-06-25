@@ -23,7 +23,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "buildings")
 public class Building extends BaseEntity {
-    @Column(name = "Name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
