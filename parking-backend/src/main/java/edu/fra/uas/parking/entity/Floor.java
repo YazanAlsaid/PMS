@@ -3,14 +3,7 @@ package edu.fra.uas.parking.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,7 +20,10 @@ public class Floor extends BaseEntity {
     @JoinColumn(name = "building_id")
     private Building building;
     @JsonIgnore
-    @OneToMany(mappedBy = "floor", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @JoinTable(name = "floor_slot",
+            joinColumns = @JoinColumn(name = "slot_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "floor_id", referencedColumnName = "id"))
     private Set<Slot> slots = new HashSet<>();
 
     public Floor(String name, Building building) {
