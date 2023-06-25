@@ -103,13 +103,15 @@ public class NfcCard extends BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof NfcCard nfcCard)) return false;
-        return Objects.equals(nfcFrom, nfcCard.nfcFrom) && Objects.equals(nfcTo, nfcCard.nfcTo);
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NfcCard nfcCard = (NfcCard) o;
+        return Objects.equals(serialNumber, nfcCard.serialNumber) && Objects.equals(nfcFrom, nfcCard.nfcFrom) && Objects.equals(nfcTo, nfcCard.nfcTo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nfcFrom, nfcTo);
+        return Objects.hash(super.hashCode(), serialNumber, nfcFrom, nfcTo);
     }
 
     @Override
