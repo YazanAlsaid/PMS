@@ -3,14 +3,7 @@ package edu.fra.uas.parking.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,9 +16,8 @@ public class Slot extends BaseEntity {
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "floor_id")
-    private Floor floor;
+    @ManyToMany(mappedBy = "slots", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    private Set<Floor> floors  = new HashSet<>();
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "type_id")
@@ -35,9 +27,8 @@ public class Slot extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "slot", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Set<Reservation> reservations = new HashSet<>();
 
-    public Slot(String name, Floor floor, Type type) {
+    public Slot(String name,Type type) {
         this.name = name;
-        this.floor = floor;
         this.type = type;
     }
 
@@ -50,16 +41,6 @@ public class Slot extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @SuppressWarnings("unused")
-    public Floor getFloor() {
-        return floor;
-    }
-
-    @SuppressWarnings("unused")
-    public void setFloor(Floor floor) {
-        this.floor = floor;
     }
 
     @SuppressWarnings("unused")
@@ -80,6 +61,14 @@ public class Slot extends BaseEntity {
     @SuppressWarnings("unused")
     public void setReservations(Set<Reservation> reservations) {
         this.reservations = reservations;
+    }
+
+    public Set<Floor> getFloors() {
+        return floors;
+    }
+
+    public void setFloors(Set<Floor> floors) {
+        this.floors = floors;
     }
 
     @JsonProperty("reservationCount")
@@ -104,8 +93,7 @@ public class Slot extends BaseEntity {
     @Override
     public String toString() {
         return "Slot{" +
-                "floor=" + floor +
-                ", reservations=" + reservations +
+                "name='" + name + '\'' +
                 '}';
     }
 }
