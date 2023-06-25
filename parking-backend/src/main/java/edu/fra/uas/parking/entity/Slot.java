@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -22,7 +23,7 @@ public class Slot extends BaseEntity {
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "floor_id")
     private Floor floor;
     @JsonIgnore
@@ -31,7 +32,7 @@ public class Slot extends BaseEntity {
     private Type type;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "slot", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "slot", cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Set<Reservation> reservations = new HashSet<>();
 
     public Slot(String name, Floor floor, Type type) {
@@ -90,13 +91,14 @@ public class Slot extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Slot slot = (Slot) o;
-        return Objects.equals(floor, slot.floor) && Objects.equals(reservations, slot.reservations);
+        return Objects.equals(name, slot.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(floor, reservations);
+        return Objects.hash(super.hashCode(), name);
     }
 
     @Override

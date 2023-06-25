@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -21,7 +22,7 @@ public class Park extends BaseEntity {
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @OneToMany(mappedBy = "park", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "park", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Set<Building> buildings = new HashSet<>();
 
     public Park() {
@@ -61,13 +62,14 @@ public class Park extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Park park = (Park) o;
-        return Objects.equals(buildings, park.buildings);
+        return Objects.equals(name, park.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(buildings);
+        return Objects.hash(super.hashCode(), name);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -22,11 +23,11 @@ public class Floor extends BaseEntity {
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "building_id")
     private Building building;
     @JsonIgnore
-    @OneToMany(mappedBy = "floor", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "floor", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     private Set<Slot> slots = new HashSet<>();
 
     public Floor(String name, Building building) {
@@ -75,13 +76,14 @@ public class Floor extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Floor floor = (Floor) o;
-        return Objects.equals(building, floor.building) && Objects.equals(slots, floor.slots);
+        return Objects.equals(name, floor.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(building, slots);
+        return Objects.hash(super.hashCode(), name);
     }
 
     @Override

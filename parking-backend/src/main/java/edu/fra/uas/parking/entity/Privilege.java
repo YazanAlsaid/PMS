@@ -54,13 +54,14 @@ public class Privilege extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Privilege privilege = (Privilege) o;
-        return name.equals(privilege.name);
+        return Objects.equals(name, privilege.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(super.hashCode(), name);
     }
 
     @Override
