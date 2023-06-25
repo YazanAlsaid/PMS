@@ -13,10 +13,10 @@ import java.util.Objects;
 @Entity
 @Table(name = "reservations")
 public class Reservation extends BaseEntity {
-    @Column(name = "reservation_from", nullable = false)
-    private LocalDateTime reservationFrom;
-    @Column(name = "reservation_to", nullable = false)
-    private LocalDateTime reservationTo;
+    @Column(name = "reservation_at", nullable = false)
+    private LocalDateTime reservationAt;
+    @Column(name = "reservation_period", nullable = false)
+    private Period reservationPeriod;
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "user_id")
     private User user;
@@ -34,15 +34,9 @@ public class Reservation extends BaseEntity {
     public Reservation() {
     }
 
-    public Reservation(LocalDateTime reservationFrom, LocalDateTime reservationTo) {
-        this.reservationFrom = reservationFrom;
-        this.reservationTo = reservationTo;
-    }
-
-    @SuppressWarnings("unused")
-    public Reservation(LocalDateTime reservationFrom, LocalDateTime reservationTo, User user, Guest guest, NfcCard nfcCard, Slot slot) {
-        this.reservationFrom = reservationFrom;
-        this.reservationTo = reservationTo;
+    public Reservation(LocalDateTime reservationAt, Period reservationPeriod, User user, Guest guest, NfcCard nfcCard, Slot slot) {
+        this.reservationAt = reservationAt;
+        this.reservationPeriod = reservationPeriod;
         this.user = user;
         this.guest = guest;
         this.nfcCard = nfcCard;
@@ -50,23 +44,23 @@ public class Reservation extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public LocalDateTime getReservationFrom() {
-        return reservationFrom;
+    public LocalDateTime getReservationAt() {
+        return reservationAt;
     }
 
     @SuppressWarnings("unused")
-    public void setReservationFrom(LocalDateTime reservationFrom) {
-        this.reservationFrom = reservationFrom;
+    public void setReservationAt(LocalDateTime reservationAt) {
+        this.reservationAt = reservationAt;
     }
 
     @SuppressWarnings("unused")
-    public LocalDateTime getReservationTo() {
-        return reservationTo;
+    public Period getReservationPeriod() {
+        return reservationPeriod;
     }
 
     @SuppressWarnings("unused")
-    public void setReservationTo(LocalDateTime reservationTo) {
-        this.reservationTo = reservationTo;
+    public void setReservationPeriod(Period reservationPeriod) {
+        this.reservationPeriod = reservationPeriod;
     }
 
     @SuppressWarnings("unused")
@@ -115,19 +109,11 @@ public class Reservation extends BaseEntity {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Reservation that = (Reservation) o;
-        return Objects.equals(reservationFrom, that.reservationFrom) && Objects.equals(reservationTo, that.reservationTo);
+        return Objects.equals(reservationAt, that.reservationAt) && reservationPeriod == that.reservationPeriod;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), reservationFrom, reservationTo);
-    }
-
-    @Override
-    public String toString() {
-        return "Reservation{" +
-                "reservationFrom=" + reservationFrom +
-                ", reservationTo=" + reservationTo +
-                '}';
+        return Objects.hash(super.hashCode(), reservationAt, reservationPeriod);
     }
 }
