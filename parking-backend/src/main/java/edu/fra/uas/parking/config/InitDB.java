@@ -54,7 +54,7 @@ public class InitDB {
         this.guestRepository = guestRepository;
     }
 
-    @PostConstruct
+    //@PostConstruct
     public void init() {
 
         LOGGER.debug("Init Databases started...");
@@ -101,7 +101,6 @@ public class InitDB {
                 type++;
             }
             Slot slot = new Slot("slot" + (i + 1),
-                    this.floorRepository.getById((long) count),
                     this.typeRepository.getById((long) type));
             if (type == 4) {
                 type = 1;
