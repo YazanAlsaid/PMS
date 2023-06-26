@@ -4,6 +4,7 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {ResponseMessage} from "../../../shared/model/response-message";
 import {Park} from "../../../shared/model/park";
+import {MatSort} from "@angular/material/sort";
 
 @Component({
   selector: 'app-parks',
@@ -11,26 +12,23 @@ import {Park} from "../../../shared/model/park";
   styleUrls: ['./parks.component.scss']
 })
 export class ParksComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator)
-  public paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort!: MatSort;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource = new MatTableDataSource();
+  public dataSource!: MatTableDataSource<Park>;
 
   constructor(private parksService: ClientParkService) {
   }
 
   ngOnInit(): void {
-    for (let i = 0; i < 15; i++) {
-      this.dataSource.data.push(new Park(i+1, "park" + (i+1), [], new Date(), new Date()));
-    }
-
-    /*this.parksService.getParks().subscribe(
+    this.parksService.getParks().subscribe(
       (res: ResponseMessage) => {
-        console.log(res.message)
-        this.dataSource = res.data.content
+        this.dataSource = new MatTableDataSource<Park>(res.data.content)
+        this.dataSource.paginator = this.paginator;
       },
       (err: any) => console.log(err)
-    );*/
+    );
+    setTimeout(() => this.dataSource.paginator = this.paginator);
   }
 
   ngAfterViewInit(): void {
@@ -47,5 +45,10 @@ export class ParksComponent implements AfterViewInit, OnInit {
 
   show(element: any) {
 
+  }
+
+  applyFilter(event: KeyboardEvent) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 }
