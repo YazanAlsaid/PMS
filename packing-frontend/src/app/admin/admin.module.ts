@@ -19,6 +19,7 @@ import {MatOptionModule} from "@angular/material/core";
 import {MatSelectModule} from "@angular/material/select";
 import {MatGridListModule} from "@angular/material/grid-list";
 import { AddParkDialogComponent } from './components/add-park-dialog/add-park-dialog.component';
+import {MatSortModule} from "@angular/material/sort";
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { AddParkDialogComponent } from './components/add-park-dialog/add-park-di
     MatButtonModule,
     MatOptionModule,
     MatSelectModule,
-    MatGridListModule
+    MatGridListModule,
+    MatSortModule
   ],
 })
 export class AdminModule {}
