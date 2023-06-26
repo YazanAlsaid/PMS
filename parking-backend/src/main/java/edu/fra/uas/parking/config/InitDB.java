@@ -59,13 +59,13 @@ public class InitDB {
 
         LOGGER.debug("Init Databases started...");
 
-        for (int i = 1; i <= 10; i++) {
-            Park park = new Park();
-            park.setName("park" + i);
-            this.parkRepository.save(park);
-        }
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0 && i != 0) {
+        this.parkRepository.save(new Park("Frankfurt"));
+        this.parkRepository.save(new Park("Wiesbaden"));
+        this.parkRepository.save(new Park("Köln"));
+        this.parkRepository.save(new Park("Berlin"));
+
+        for (int i = 0; i < 12; i++) {
+            if (i % 3 == 0 && i != 0) {
                 count++;
             }
             Building building = new Building("building" + (i + 1), this.parkRepository.getById((long) count));
@@ -218,8 +218,10 @@ public class InitDB {
             Guest guest = new Guest("guest" + i, "guest" + i);
             guestRepository.save(guest);
         }
-        for (int i = 1; i <= 100; i++) {
-            Reservation reservation = new Reservation(LocalDateTime.now(), LocalDateTime.now());
+        for (int i = 10; i <= 100; i++) {
+            Reservation reservation = (i % 2 == 0)
+            ? new Reservation(LocalDateTime.now(),Period.MORNING, null, null, this.nfcCardRepository.findById((long) (i / 10.0)).get(), this.slotRepository.findById((long) (i / 10)).get())
+            : new Reservation(LocalDateTime.now(),Period.AFTERNOON, null, null, this.nfcCardRepository.findById((long) (i / 10.0)).get(), this.slotRepository.findById((long) (i / 10)).get());
             this.reservationRepository.save(reservation);
         }
     }
