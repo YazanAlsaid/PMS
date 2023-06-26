@@ -39,10 +39,11 @@ public class NfcCard extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public NfcCard(String serialNumber, LocalDateTime nfcFrom, LocalDateTime nfcTo) {
+    public NfcCard(String serialNumber, User user, LocalDateTime nfcFrom, LocalDateTime nfcTo) {
         this.serialNumber = serialNumber;
         this.nfcFrom = nfcFrom;
         this.nfcTo = nfcTo;
+        this.user = user;
     }
 
     public NfcCard(String serialNumber, User user) {
