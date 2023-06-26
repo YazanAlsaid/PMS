@@ -119,7 +119,7 @@ public class SlotController implements BaseController<Slot> {
         if (slot.isEmpty()) {
             return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
         }
-        return this.message("Getting floor by slot id", slot.get().getFloor(), HttpStatus.OK);
+        return this.message("Getting floor by slot id", slot.get().getFloors(), HttpStatus.OK);
     }
     @PreAuthorize("hasAuthority('VIEW_TYPE')")
     @GetMapping("/{id}/type")
