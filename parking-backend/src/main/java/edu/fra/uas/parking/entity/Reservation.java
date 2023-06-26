@@ -1,5 +1,7 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,16 +19,19 @@ public class Reservation extends BaseEntity {
     private LocalDateTime reservationAt;
     @Column(name = "reservation_period", nullable = false)
     private Period reservationPeriod;
+    @JsonIgnore
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "user_id")
     private User user;
+    @JsonIgnore
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "guest_id")
     private Guest guest;
+    @JsonIgnore
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "nfc_card_id")
     private NfcCard nfcCard;
-
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "slot_id")
     private Slot slot;
