@@ -19,7 +19,8 @@ export class AddBuildingDialogComponent implements OnInit {
     private formBuilder: FormBuilder,
     private clientPark: ClientParkService) {
     this.dialogForm = this.formBuilder.group({
-      name: ['', Validators.required],
+      park: ['', Validators.required],
+      name: ['', Validators.compose([Validators.required, Validators.minLength(3)])]
     });
   }
 
@@ -33,9 +34,9 @@ export class AddBuildingDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.parkingName) {
+    if (this.dialogForm.valid) {
       // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      console.log(this.parkingName.name);
+      console.log(this.dialogForm.get('park')?.value);
 
       // Schließe den Dialog
       this.dialogRef.close();
