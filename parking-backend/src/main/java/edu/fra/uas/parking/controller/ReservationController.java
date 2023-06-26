@@ -10,6 +10,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,7 +31,7 @@ public class ReservationController implements BaseController<Reservation> {
     public ReservationController(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
     }
-
+    @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -44,7 +45,7 @@ public class ReservationController implements BaseController<Reservation> {
         return this.message("Indexing reservation", this.reservationRepository.findAll(), HttpStatus.OK);
 
     }
-
+    @PreAuthorize("hasAuthority('VIEW_RESERVATION')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
@@ -57,7 +58,7 @@ public class ReservationController implements BaseController<Reservation> {
         Reservation reservation = this.addLinks(opetionalReservation.get());
         return this.message("Getting reservation by id", reservation, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('ADD_RESERVATION')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Reservation reservation) {
@@ -74,7 +75,7 @@ public class ReservationController implements BaseController<Reservation> {
         return this.message("Creating reservation", reservationCreated, HttpStatus.CREATED);
 
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_RESERVATION')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Reservation reservation) {
@@ -88,7 +89,7 @@ public class ReservationController implements BaseController<Reservation> {
         }
         return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("hasAuthority('DELETE_RESERVATION')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {

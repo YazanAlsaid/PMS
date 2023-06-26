@@ -3,6 +3,13 @@ import {RouterModule, Routes} from '@angular/router';
 import {AdminAppComponent} from './components/admin-app/admin-app.component';
 import {DashboardComponent} from './components/dashboard/dashboard.component';
 import {ParksComponent} from "./components/parks/parks.component";
+import {FloorsComponent} from "./components/floors/floors.component";
+import {BuildingsComponent} from "./components/buildings/buildings.component";
+import {SlotsComponent} from "./components/slots/slots.component";
+import {UsersComponent} from "./components/users/users.component";
+import {RolesComponent} from "./components/roles/roles.component";
+import {ReservationsComponent} from "./components/reservations/reservations.component";
+import {NfcCardsComponent} from "./components/nfc-cards/nfc-cards.component";
 
 const routes: Routes = [
   {
@@ -10,48 +17,14 @@ const routes: Routes = [
     component: AdminAppComponent,
     children: [
       {path: '', component: DashboardComponent, pathMatch: 'full'},
-      {
-        path: 'building',
-        component: DashboardComponent,
-        pathMatch: 'full',
-        data: {title: 'Building'},
-      },
-      {
-        path: 'floor',
-        component: DashboardComponent,
-        pathMatch: 'full',
-        data: {title: 'Floor'},
-      },
-      {
-        path: 'slot',
-        component: DashboardComponent,
-        pathMatch: 'full',
-        data: {title: 'Slot'},
-      },
-      {
-        path: 'park',
-        component: ParksComponent,
-        pathMatch: 'full',
-        data: {title: 'Park'},
-      },
-      {
-        path: 'user',
-        component: DashboardComponent,
-        pathMatch: 'full',
-        data: {title: 'User'},
-      },
-      {
-        path: 'role',
-        component: DashboardComponent,
-        pathMatch: 'full',
-        data: {title: 'Role'},
-      },
-      {
-        path: 'reservations',
-        component: DashboardComponent,
-        pathMatch: 'full',
-        data: {title: 'Reservation'},
-      },
+      {path: 'buildings', component: BuildingsComponent, pathMatch: 'full', data: {title: 'Building'},},
+      {path: 'floors', component: FloorsComponent, pathMatch: 'full', data: {title: 'Floor'},},
+      {path: 'slots', component: SlotsComponent, pathMatch: 'full', data: {title: 'Slot'},},
+      {path: 'parks', component: ParksComponent, pathMatch: 'full', data: {title: 'Park'},},
+      {path: 'users', component: UsersComponent, pathMatch: 'full', data: {title: 'User'},},
+      {path: 'roles', component: RolesComponent, pathMatch: 'full', data: {title: 'Role'},},
+      {path: 'reservations', component: ReservationsComponent, pathMatch: 'full', data: {title: 'Reservation'},},
+      {path: 'nfc-cards', component: NfcCardsComponent, pathMatch: 'full'}
     ],
   },
 ];
@@ -65,6 +38,13 @@ export class AdminRoutingModule {
 
 export const RoutedComponent = [
   AdminAppComponent,
+  BuildingsComponent,
   DashboardComponent,
-  ParksComponent
+  FloorsComponent,
+  NfcCardsComponent,
+  ParksComponent,
+  ReservationsComponent,
+  RolesComponent,
+  SlotsComponent,
+  UsersComponent,
 ];

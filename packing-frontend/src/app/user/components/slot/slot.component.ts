@@ -75,6 +75,8 @@ export class SlotComponent implements OnInit {
       data: {
         parking: parking,
       },
+      width: '850px',
+      height: '100%'
     });
   }
 }

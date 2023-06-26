@@ -3,6 +3,7 @@ package edu.fra.uas.parking.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -26,7 +27,7 @@ public class Reservation extends BaseEntity {
     @JoinColumn(name = "nfc_card_id")
     private NfcCard nfcCard;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "slot_id")
     private Slot slot;
 
@@ -56,6 +57,7 @@ public class Reservation extends BaseEntity {
     @SuppressWarnings("unused")
     public void setReservationFrom(LocalDateTime reservationFrom) {
         this.reservationFrom = reservationFrom;
+        this.reservationFrom.getMonth();
     }
 
     @SuppressWarnings("unused")
@@ -111,14 +113,15 @@ public class Reservation extends BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Reservation that)) return false;
-        return Objects.equals(reservationFrom, that.reservationFrom) &&
-                Objects.equals(reservationTo, that.reservationTo);
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Reservation that = (Reservation) o;
+        return Objects.equals(reservationFrom, that.reservationFrom) && Objects.equals(reservationTo, that.reservationTo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(reservationFrom, reservationTo);
+        return Objects.hash(super.hashCode(), reservationFrom, reservationTo);
     }
 
     @Override

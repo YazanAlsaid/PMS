@@ -10,6 +10,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -30,7 +31,7 @@ public class RoleController implements BaseController<Role> {
     public RoleController(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
     }
-
+    @PreAuthorize("hasAuthority('VIEW_ROLES')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -45,7 +46,7 @@ public class RoleController implements BaseController<Role> {
 
         return this.message("Indexing role", this.roleRepository.findAll(), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('VIEW_ROLE')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
@@ -57,7 +58,7 @@ public class RoleController implements BaseController<Role> {
         Role role = this.addLinks(optionalRole.get());
         return this.message("Getting role by id", role, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAuthority('ADD_SLOT')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Role role) {
@@ -72,7 +73,7 @@ public class RoleController implements BaseController<Role> {
 
         return this.message("Creating role", roleCreated, HttpStatus.CREATED);
     }
-
+    @PreAuthorize("hasAuthority('UPDATE_SLOT')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody Role role) {
@@ -86,7 +87,7 @@ public class RoleController implements BaseController<Role> {
         }
         return this.message("Role not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("hasAuthority('DELETE_SLOT')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
@@ -98,7 +99,7 @@ public class RoleController implements BaseController<Role> {
         }
         return this.message("Role not found", null, HttpStatus.NOT_FOUND);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_USERS')")
     @GetMapping("/{id}/users")
     public ResponseEntity<ResponseMessage> getUsersByRoleId(@PathVariable("id") Long id) {
         logger.debug("Getting users by role id: {}", id);
@@ -108,7 +109,7 @@ public class RoleController implements BaseController<Role> {
         }
         return this.message("Getting users by role id", role.get().getUsers(), HttpStatus.OK);
     }
-
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_PRIVILIGES')")
     @GetMapping("/{id}/privileges")
     public ResponseEntity<ResponseMessage> getPrivilegesByRoleId(@PathVariable("id") Long id) {
         logger.debug("Getting privileges by role id: {}", id);
