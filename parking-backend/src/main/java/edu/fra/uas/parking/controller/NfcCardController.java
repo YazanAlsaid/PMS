@@ -1,6 +1,5 @@
 package edu.fra.uas.parking.controller;
 
-import java.util.Set;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -41,10 +40,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         logger.debug("Indexing nfcCard: {}", this.nfcCardRepository.count());
         CollectionModel<NfcCard> nfcCards = CollectionModel.of(this.nfcCardRepository.findAll());
         nfcCards.add(linkTo(methodOn(ParkController.class).index()).withSelfRel());
-        for (NfcCard p : nfcCards){
-            p = this.addLinks(p);
-        }
-
+        nfcCards.forEach(this::addLinks);
         return  this.message("Indexing nfcCard", this.nfcCardRepository.findAll(), HttpStatus.OK);
 
     }
@@ -72,7 +68,7 @@ public class NfcCardController implements BaseController<NfcCard> {
 
         }
         NfcCard buildingCreated = this.nfcCardRepository.save(nfcCard);
-        buildingCreated = this.addLinks(buildingCreated);
+        this.addLinks(buildingCreated);
 
         return this.message("Creating nfcCard", buildingCreated, HttpStatus.CREATED);
     }
@@ -84,7 +80,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         Optional<NfcCard> optionalBuilding = this.nfcCardRepository.findById(id);
         if (optionalBuilding.isPresent() && optionalBuilding.get().getId().equals(nfcCard.getId())) {
             nfcCard = this.nfcCardRepository.save(nfcCard);
-            nfcCard = this.addLinks(nfcCard);
+            this.addLinks(nfcCard);
 
             return this.message("Updating nfcCard by id", nfcCard, HttpStatus.ACCEPTED);
         }
@@ -102,38 +98,34 @@ public class NfcCardController implements BaseController<NfcCard> {
         }
         return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
     }
-    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_RESERVATIONS')")
+    @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
     @GetMapping("/{id}/reservations")
     public ResponseEntity<ResponseMessage> getReservationsByNfcCardId(@PathVariable("id") Long id) {
         logger.debug("Getting reservations by nfcCard id: {}", id);
         Optional<NfcCard> nfcCard = this.nfcCardRepository.findById(id);
-        if (nfcCard.isEmpty()) {
-            return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
-        }
-        return this.message("Getting reservations by nfcCard id", nfcCard.get().getReservations(), HttpStatus.OK);
+        return nfcCard.map(card ->
+                this.message("Getting reservations by nfcCard id", card.getReservations(), HttpStatus.OK))
+                .orElseGet(() -> this.message("NfcCard not found", null, HttpStatus.NOT_FOUND));
     }
-    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_USER')")
+
+    @PreAuthorize("hasAuthority('VIEW_USER')")
     @GetMapping("/{id}/user")
     public ResponseEntity<ResponseMessage> getUserByNfcCardId(@PathVariable("id") Long id) {
         logger.debug("Getting user by nfcCard id: {}", id);
         Optional<NfcCard> nfcCard = this.nfcCardRepository.findById(id);
-        if (nfcCard.isEmpty()) {
-            return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
-        }
-        return this.message("Getting user by nfcCard id", nfcCard.get().getUser(), HttpStatus.OK);
+        return nfcCard.map(card ->
+                this.message("Getting user by nfcCard id", card.getUser(), HttpStatus.OK))
+                .orElseGet(() -> this.message("NfcCard not found", null, HttpStatus.NOT_FOUND));
     }
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
 
-
-
     private NfcCard addLinks(NfcCard nfcCard){
         nfcCard.add(linkTo(methodOn(NfcCardController.class).getById(nfcCard.getId())).withSelfRel());
         nfcCard.add(linkTo(methodOn(NfcCardController.class).index()).withRel(IanaLinkRelations.COLLECTION));
         nfcCard.add(linkTo(methodOn(NfcCardController.class).getReservationsByNfcCardId(nfcCard.getId())).withRel("reservations"));
-
         return nfcCard;
     }
 }

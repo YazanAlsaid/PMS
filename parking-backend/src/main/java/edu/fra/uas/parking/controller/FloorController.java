@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Set;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -30,6 +29,7 @@ public class FloorController implements BaseController<Floor> {
     public FloorController(FloorRepository floorRepository) {
         this.floorRepository = floorRepository;
     }
+
     @PreAuthorize("hasAuthority('VIEW_FLOORS')")
     @GetMapping()
     @Override
@@ -37,12 +37,10 @@ public class FloorController implements BaseController<Floor> {
         logger.debug("Indexing floor: {}", this.floorRepository.count());
         CollectionModel<Floor> floors = CollectionModel.of(this.floorRepository.findAll());
         floors.add(linkTo(methodOn(FloorController.class).index()).withSelfRel());
-        for (Floor p : floors){
-            p = this.addLinks(p);
-        }
-
-        return  this.message("Indexing floor", this.floorRepository.findAll(), HttpStatus.OK);
+        floors.forEach(this::addLinks);
+        return this.message("Indexing floor", this.floorRepository.findAll(), HttpStatus.OK);
     }
+
     @PreAuthorize("hasAuthority('VIEW_FLOOR')")
     @GetMapping("/{id}")
     @Override
@@ -56,9 +54,10 @@ public class FloorController implements BaseController<Floor> {
 
         Floor floor = this.addLinks(optionalFloor.get());
 
-        return  this.message("Getting floor by id", floor, HttpStatus.OK);
+        return this.message("Getting floor by id", floor, HttpStatus.OK);
 
     }
+
     @PreAuthorize("hasAuthority('CREATE_FLOOR')")
     @PostMapping
     @Override
@@ -66,14 +65,15 @@ public class FloorController implements BaseController<Floor> {
         logger.debug("Creating floor: {}", floor);
         Optional<Floor> optionalFloor = (floor.getId() != null) ? this.floorRepository.findById(floor.getId()) : Optional.empty();
         if (optionalFloor.isPresent()) {
-            return  this.message("Floor is already exists", null, HttpStatus.CONFLICT);
+            return this.message("Floor is already exists", null, HttpStatus.CONFLICT);
 
         }
         Floor floorCreated = this.floorRepository.save(floor);
-        floorCreated = this.addLinks(floorCreated);
+        this.addLinks(floorCreated);
 
-        return  this.message("Creating floor", floorCreated, HttpStatus.CREATED);
+        return this.message("Creating floor", floorCreated, HttpStatus.CREATED);
     }
+
     @PreAuthorize("hasAuthority('UPDATE_FLOOR')")
     @PutMapping("/{id}")
     @Override
@@ -83,12 +83,13 @@ public class FloorController implements BaseController<Floor> {
 
         if (floorUpdated.isPresent() && floorUpdated.get().getId().equals(floor.getId())) {
             floor = this.floorRepository.save(floor);
-            floor = this.addLinks(floor);
+            this.addLinks(floor);
 
             return this.message("Updating floor by id", floor, HttpStatus.ACCEPTED);
         }
         return this.message("floor not found", null, HttpStatus.NOT_FOUND);
     }
+
     @PreAuthorize("hasAuthority('DELETE_FLOOR')")
     @DeleteMapping("/{id}")
     @Override
@@ -102,32 +103,32 @@ public class FloorController implements BaseController<Floor> {
         }
         return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
     }
-    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_SLOTS')")
+
+    @PreAuthorize("hasAuthority('VIEW_SLOTS')")
     @GetMapping("/{id}/slots")
     public ResponseEntity<ResponseMessage> getSlotsByFloorId(@PathVariable("id") Long id) {
         logger.debug("Getting slots by floor id: {}", id);
         Optional<Floor> optionalFloor = this.floorRepository.findById(id);
-        if (optionalFloor.isPresent()) {
-            return this.message("Get Slot by Floor", optionalFloor.get().getSlots(), HttpStatus.OK);
-        }
-        return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
+        return optionalFloor.map(floor ->
+                this.message("Get Slot by Floor", floor.getSlots(), HttpStatus.OK))
+                .orElseGet(() -> this.message("Floor not found", null, HttpStatus.NOT_FOUND));
     }
-    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_BUILDING')")
+
+    @PreAuthorize("hasAuthority('VIEW_BUILDING')")
     @GetMapping("/{id}/building")
     public ResponseEntity<ResponseMessage> getBuildingByFloorId(@PathVariable("id") Long id) {
         logger.debug("Getting building by floor id: {}", id);
         Optional<Floor> optionalFloor = this.floorRepository.findById(id);
-        if (optionalFloor.isPresent()) {
-            return this.message("Get Building by Floor", optionalFloor.get().getBuilding(), HttpStatus.OK);
-        }
-        return this.message("Floor not found", null, HttpStatus.NOT_FOUND);
+        return optionalFloor.map(floor ->
+                this.message("Get Building by Floor", floor.getBuilding(), HttpStatus.OK))
+                .orElseGet(() -> this.message("Floor not found", null, HttpStatus.NOT_FOUND));
     }
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
 
-    private Floor addLinks(Floor floor){
+    private Floor addLinks(Floor floor) {
         floor.add(linkTo(methodOn(FloorController.class).getById(floor.getId())).withSelfRel());
         floor.add(linkTo(methodOn(FloorController.class).index()).withRel(IanaLinkRelations.COLLECTION));
         floor.add(linkTo(methodOn(FloorController.class).getSlotsByFloorId(floor.getId())).withRel("slots"));
