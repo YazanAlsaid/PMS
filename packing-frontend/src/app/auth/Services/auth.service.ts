@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { StorageService } from './storage.service';
 
 const AUTH_API = 'http://127.0.0.1:8080/api/v1/web/authenticate';
 
@@ -12,7 +13,20 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class AuthService {
-  constructor(private http: HttpClient) {}
+
+  constructor(private http: HttpClient, private storageService: StorageService) { }
+
+  isLoggedIn(): boolean {
+    return this.storageService.isLoggedIn();
+  }
+
+  hasRoles(requiredRoles: string[]): boolean {
+    if (!requiredRoles || requiredRoles.length === 0) {
+      return false;
+    }
+    const userRoles = this.storageService.getUser().roles;
+    return userRoles.every((role: any) => requiredRoles.includes(role['name'].toLowerCase()));
+  }
 
   login(email: string, password: string): Observable<any> {
     return this.http.post(
@@ -24,20 +38,13 @@ export class AuthService {
       httpOptions
     );
   }
-  // Check if the token is expired
-  isTokenExpired(): boolean {
-    const token = sessionStorage.getItem('token');
-    if (!token) {
-      return true;
-    }
 
-    const expiry = JSON.parse(atob(token.split('.')[1])).exp * 1000;
-    return Date.now() > expiry; // Return the boolean value here
+  isTokenExpired(): boolean {
+    return this.storageService.isTokenExpired();
   }
 
-
-
   logout(): Observable<any> {
-    return this.http.post(AUTH_API + 'signout', { }, httpOptions);
+    this.storageService.clearSession();
+    return this.http.post(AUTH_API + 'signout', {}, httpOptions);
   }
 }
