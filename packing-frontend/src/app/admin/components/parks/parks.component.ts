@@ -5,6 +5,8 @@ import {MatPaginator} from "@angular/material/paginator";
 import {ResponseMessage} from "../../../shared/model/response-message";
 import {Park} from "../../../shared/model/park";
 import {MatSort} from "@angular/material/sort";
+import {MatDialog} from "@angular/material/dialog";
+import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 
 @Component({
   selector: 'app-parks',
@@ -17,7 +19,9 @@ export class ParksComponent implements AfterViewInit, OnInit {
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public dataSource!: MatTableDataSource<Park>;
 
-  constructor(private parksService: ClientParkService) {
+  constructor(
+    public dialog: MatDialog,
+    private parksService: ClientParkService) {
   }
 
   ngOnInit(): void {
@@ -40,7 +44,14 @@ export class ParksComponent implements AfterViewInit, OnInit {
   }
 
   create() {
+    const dialogRef = this.dialog.open(AddParkDialogComponent, {
+      width: '400px'
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle any actions after the dialog is closed
+      console.log('Dialog closed', result);
+    });
   }
 
   show(element: any) {
