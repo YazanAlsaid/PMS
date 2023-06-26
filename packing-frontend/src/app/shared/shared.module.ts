@@ -12,6 +12,7 @@ import { AddReservationComponent } from './components/add-reservation/add-reserv
 import { MatDialogModule } from '@angular/material/dialog';
 import { CalendarComponent } from './components/calendar/calendar.component';
 import { CalendarModule } from 'angular-calendar';
+import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { CalendarModule } from 'angular-calendar';
     SidebarComponent,
     AddReservationComponent,
     CalendarComponent,
+    ForbiddenComponent,
   ],
   imports: [
     CommonModule,
