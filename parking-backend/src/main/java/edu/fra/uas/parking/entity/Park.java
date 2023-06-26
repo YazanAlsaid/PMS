@@ -18,7 +18,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "parks")
 public class Park extends BaseEntity {
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
