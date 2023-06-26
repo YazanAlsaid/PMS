@@ -34,7 +34,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         this.nfcCardRepository = nfcCardRepository;
     }
 
-    @PreAuthorize("hasAuthority('VIEW_NFCCARDS')")
+    @PreAuthorize("hasAuthority('VIEW_NFC_CARDS')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -48,7 +48,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         return  this.message("Indexing nfcCard", this.nfcCardRepository.findAll(), HttpStatus.OK);
 
     }
-    @PreAuthorize("hasAuthority('VIEW_NFCCARDS')")
+    @PreAuthorize("hasAuthority('VIEW_NFC_CARDS')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
@@ -61,7 +61,7 @@ public class NfcCardController implements BaseController<NfcCard> {
          NfcCard nfcCard = this.addLinks(optionalNfcCard.get());
         return  this.message("Getting nfcCard by id", nfcCard, HttpStatus.OK);
     }
-    @PreAuthorize("hasAuthority('ADD_NFCCARD')")
+    @PreAuthorize("hasAuthority('ADD_NFC_CARD')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody NfcCard nfcCard) {
@@ -76,7 +76,7 @@ public class NfcCardController implements BaseController<NfcCard> {
 
         return this.message("Creating nfcCard", buildingCreated, HttpStatus.CREATED);
     }
-    @PreAuthorize("hasAuthority('UPDATE_NFCCARD')")
+    @PreAuthorize("hasAuthority('UPDATE_NFC_CARD')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody NfcCard nfcCard) {
@@ -90,7 +90,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         }
         return this.message("NfcCard not found", null, HttpStatus.NOT_FOUND);
     }
-    @PreAuthorize("hasAuthority('DELETE_NFCCARD')")
+    @PreAuthorize("hasAuthority('DELETE_NFC_CARD')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
