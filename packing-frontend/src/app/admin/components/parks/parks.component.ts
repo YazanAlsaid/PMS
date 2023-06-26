@@ -14,10 +14,10 @@ import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.compone
   styleUrls: ['./parks.component.scss']
 })
 export class ParksComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
+  @ViewChild("paginator") paginator!: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource!: MatTableDataSource<Park>;
+  public dataSource: MatTableDataSource<Park> = new MatTableDataSource<Park>();
 
   constructor(
     public dialog: MatDialog,
@@ -32,11 +32,10 @@ export class ParksComponent implements AfterViewInit, OnInit {
       },
       (err: any) => console.log(err)
     );
-    setTimeout(() => this.dataSource.paginator = this.paginator);
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    // this.dataSource.paginator = this.paginator;
   }
 
   edit(element: any) {
