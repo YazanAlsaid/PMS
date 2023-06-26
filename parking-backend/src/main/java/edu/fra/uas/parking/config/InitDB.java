@@ -6,13 +6,10 @@ import edu.fra.uas.parking.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
-
 
 @Component
 public class InitDB {
@@ -189,10 +186,10 @@ public class InitDB {
         Role roleUser = new Role("USER");
         roleUser = this.roleRepository.save(roleUser);
 
-        for (Privilege privilege : this.privilegeRepository.findAll()){
-           if(privilege.getName().contains("VIEW")){
-               roleUser.setPrivilege(privilege);
-           }
+        for (Privilege privilege : this.privilegeRepository.findAll()) {
+            if (privilege.getName().contains("VIEW")) {
+                roleUser.setPrivilege(privilege);
+            }
             roleAdmin.setPrivilege(privilege);
 
         }
@@ -219,8 +216,8 @@ public class InitDB {
         }
         for (int i = 10; i <= 100; i++) {
             Reservation reservation = (i % 2 == 0)
-            ? new Reservation(LocalDateTime.now(),Period.MORNING, null, null, this.nfcCardRepository.findById((long) (i / 10.0)).get(), this.slotRepository.findById((long) (i / 10)).get())
-            : new Reservation(LocalDateTime.now(),Period.AFTERNOON, null, null, this.nfcCardRepository.findById((long) (i / 10.0)).get(), this.slotRepository.findById((long) (i / 10)).get());
+                    ? new Reservation(LocalDateTime.now(), Period.MORNING, null, null, this.nfcCardRepository.findById((long) (i / 10.0)).get(), this.slotRepository.findById((long) (i / 10)).get())
+                    : new Reservation(LocalDateTime.now(), Period.AFTERNOON, null, null, this.nfcCardRepository.findById((long) (i / 10.0)).get(), this.slotRepository.findById((long) (i / 10)).get());
             this.reservationRepository.save(reservation);
         }
     }
