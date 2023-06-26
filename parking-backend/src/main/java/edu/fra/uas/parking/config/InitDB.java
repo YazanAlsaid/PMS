@@ -6,6 +6,7 @@ import edu.fra.uas.parking.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -51,7 +52,7 @@ public class InitDB {
         this.guestRepository = guestRepository;
     }
 
-    //@PostConstruct
+    @PostConstruct
     public void init() {
 
         LOGGER.debug("Init Databases started...");
