@@ -115,12 +115,12 @@ public class FloorController implements BaseController<Floor> {
     }
 
     @PreAuthorize("hasAuthority('VIEW_BUILDING')")
-    @GetMapping("/{id}/building")
+    @GetMapping("/{id}/buildings")
     public ResponseEntity<ResponseMessage> getBuildingByFloorId(@PathVariable("id") Long id) {
         logger.debug("Getting building by floor id: {}", id);
         Optional<Floor> optionalFloor = this.floorRepository.findById(id);
         return optionalFloor.map(floor ->
-                this.message("Get Building by Floor", floor.getBuilding(), HttpStatus.OK))
+                this.message("Get Building by Floor", floor.getBuildings(), HttpStatus.OK))
                 .orElseGet(() -> this.message("Floor not found", null, HttpStatus.NOT_FOUND));
     }
 
