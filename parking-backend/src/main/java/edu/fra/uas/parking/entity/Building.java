@@ -10,8 +10,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -27,14 +27,14 @@ public class Building extends BaseEntity {
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "park_id")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "park_id", nullable = false)
     private Park park;
     @JsonIgnore
-    @OneToMany(mappedBy = "building", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "buildings",  cascade = CascadeType.MERGE)
     private Set<Floor> floors = new HashSet<>();
     @JsonManagedReference("address-building")
-    @OneToOne(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToOne(mappedBy = "building", cascade = CascadeType.MERGE)
     @PrimaryKeyJoinColumn
     private Address address;
 
