@@ -20,20 +20,20 @@ public class Reservation extends BaseEntity {
     @Column(name = "reservation_period", nullable = false)
     private Period reservationPeriod;
     @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "user_id")
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
     @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "guest_id")
     private Guest guest;
     @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "nfc_card_id")
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "nfc_card_id", nullable = false)
     private NfcCard nfcCard;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "slot_id")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "slot_id", nullable = false)
     private Slot slot;
 
     public Reservation() {
@@ -120,5 +120,13 @@ public class Reservation extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), reservationAt, reservationPeriod);
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "reservationAt=" + reservationAt +
+                ", reservationPeriod=" + reservationPeriod +
+                '}';
     }
 }

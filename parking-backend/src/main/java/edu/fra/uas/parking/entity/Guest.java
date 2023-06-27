@@ -20,7 +20,7 @@ public class Guest extends BaseEntity {
     @Column(name = "last_name", nullable = false)
     private String lastName;
     @JsonIgnore
-    @OneToMany(mappedBy = "guest", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "guest", cascade = CascadeType.MERGE)
     private Set<Reservation> reservations = new HashSet<>();
 
     public Guest() {

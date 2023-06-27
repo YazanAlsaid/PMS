@@ -28,10 +28,10 @@ public class NfcCard extends BaseEntity {
     @Column(name = "nfc_to")
     private LocalDateTime nfcTo;
     @JsonIgnore
-    @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "nfcCard", cascade = CascadeType.MERGE)
     private Set<Reservation> reservations = new HashSet<>();
     @JsonIgnore
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
