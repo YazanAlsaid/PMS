@@ -1,25 +1,21 @@
-<mat-grid-list cols="4" rowHeight="200px">
-  <mat-grid-tile
-    class="slot-container"
-    *ngFor="let parking of parkings"
-    (click)="onSelect(parking)"
-  >
-    <mat-card
-      class="card card-green mat-elevation-z8"
-      [class.reserved-morning]="isReservedMorning(parking.reservations[0])"
-      [class.reserved-afternoon]="isReservedAfternoon(parking.reservations[0])"
-    >
-      <mat-card-header class="card-header">
-        <div class="header-element">
-          <mat-icon class="header-icon">local_parking</mat-icon>
-        </div>
-        <div class="header-element">
-          <mat-card-title>{{ parking.name }}</mat-card-title>
-        </div>
-        <div class="header-element">
-          <mat-card-subtitle>{{ parking.type }}</mat-card-subtitle>
-        </div>
-      </mat-card-header>
-    </mat-card>
-  </mat-grid-tile>
-</mat-grid-list>
+<mat-card>
+  <mat-card-title class="text-center mt-3">Slots</mat-card-title>
+  <mat-card-content>
+    <mat-grid-list [cols]="myBreakPoint" gutterSize="30px" cols="4" rowHeight="150px"
+                   (window:resize)="handleSize($event)">
+      <ng-container *ngIf="slots.length > 0; else noItemsTemplate">
+        <mat-grid-tile *ngFor="let item of slots">
+          <div class="card" (click)="onSelect(item)">
+            <h5 class="card-title text-center">{{item.name}}</h5>
+            <div class="card-content text-center">
+              <div *ngIf="item.type.name != 'Normal'">{{ item.type.name }}</div>
+            </div>
+          </div>
+        </mat-grid-tile>
+      </ng-container>
+      <ng-template #noItemsTemplate>
+        <h2 class="card-title text-center">No Slots to display.</h2>
+      </ng-template>
+    </mat-grid-list>
+  </mat-card-content>
+</mat-card>

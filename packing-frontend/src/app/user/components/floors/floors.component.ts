@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {ClientFloorService} from "../../../shared/services/client-floor.service";
+import {Floor} from "../../../shared/model/floor";
 
 export interface Tile {
   color: string;
@@ -10,21 +12,44 @@ export interface Tile {
   eAuto: number;
   disability: number;
 }
+
 @Component({
   selector: 'app-floors',
   templateUrl: './floors.component.html',
   styleUrls: ['./floors.component.scss']
 })
-export class FloorsComponent {
+export class FloorsComponent implements OnInit {
 
-  tiles: Tile[] = [
-    {text: 'Floor 1', cols: 1, rows: 1, color: '#DDBDF1', free: 50, eAuto: 10 ,frauen: 5, disability:5},
-    {text: 'Floor 2', cols: 2, rows: 1, color: '#DDBDF1', free: 50, eAuto: 10 ,frauen: 5, disability:5 },
-    {text: 'Floor 3', cols: 1, rows: 1, color: '#DDBDF1', free: 50, eAuto: 10 ,frauen: 5, disability:5 },
-    {text: 'Floor 4', cols: 2, rows: 1, color: '#DDBDF1', free: 50, eAuto: 10 ,frauen: 5, disability:5 },
-    {text: 'Floor 5', cols: 1, rows: 2, color: '#DDBDF1', free: 50, eAuto: 10 ,frauen: 5, disability:5 },
-    {text: 'Floor 6', cols: 2, rows: 2, color: '#DDBDF1', free: 50, eAuto: 10 ,frauen: 5, disability:5 },
-    {text: 'Floor 7', cols: 1, rows: 2, color: '#DDBDF1', free: 50, eAuto: 10 ,frauen: 5, disability:5 },
-    {text: 'Floor 8', cols: 2, rows: 2, color: '#DDBDF1', free: 50, eAuto: 10 ,frauen: 5, disability:5 },
-  ];
+  public floors: Floor[] = [];
+  public myBreakPoint: number = 4;
+
+  constructor(private clientFloor: ClientFloorService) {
+  }
+
+  ngOnInit(): void {
+    this.clientFloor.getFloors().subscribe(
+      (res: any) => this.floors = res.data,
+      (err: any) => console.log(err)
+    )
+    this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
+    if (window.innerWidth > 950)
+      this.myBreakPoint = 4;
+    else if (window.innerWidth >= 750 && window.innerWidth <= 950)
+      this.myBreakPoint = 3;
+    else if (window.innerWidth >= 550 && window.innerWidth <= 750)
+      this.myBreakPoint = 2;
+    else if (window.innerWidth <= 550)
+      this.myBreakPoint = 1;
+  }
+
+  handleSize(event: any): void {
+    if (event.target.innerWidth > 950)
+      this.myBreakPoint = 4;
+    else if (event.target.innerWidth >= 750 && event.target.innerWidth <= 950)
+      this.myBreakPoint = 3;
+    else if (event.target.innerWidth >= 550 && event.target.innerWidth <= 750)
+      this.myBreakPoint = 2;
+    else if (event.target.innerWidth <= 550)
+      this.myBreakPoint = 1;
+  }
 }

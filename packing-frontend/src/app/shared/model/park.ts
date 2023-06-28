@@ -7,6 +7,7 @@ export class Park {
   public buildings : Building[];
   public createdAt : Date;
   public updatedAt : Date;
+  public buildingCount!: number;
 
 
   constructor(id: number, name: string, buildings: Building[], createdAt: Date, updatedAt: Date) {
