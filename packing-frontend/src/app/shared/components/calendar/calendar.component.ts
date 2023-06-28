@@ -177,6 +177,11 @@ export class CalendarComponent {
     // this.modal.open(this.modalContent, { size: 'lg' });
   }
 
+  setView(e: any) {
+    console.log({ e });
+  }
+  closeOpenMonthViewDay() {}
+
   addEvent(): void {
     this.events = [
       ...this.events,
