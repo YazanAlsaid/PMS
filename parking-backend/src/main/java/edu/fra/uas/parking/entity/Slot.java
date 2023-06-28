@@ -12,24 +12,28 @@ import java.util.Objects;
 @Entity
 @Table(name = "slots")
 public class Slot extends BaseEntity {
-    @Column(name = "Name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @ManyToMany(mappedBy = "slots", cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    private Set<Floor> floors  = new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "floor_slot",
+            joinColumns = @JoinColumn(name = "slot_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "floor_id", referencedColumnName = "id"))
+    private Set<Floor> floors = new HashSet<>();
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "type_id")
     private Type type;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "slot", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "slot", cascade = CascadeType.MERGE)
     private Set<Reservation> reservations = new HashSet<>();
 
-    public Slot(String name,Type type) {
+    public Slot(String name, Type type, Floor floor) {
         this.name = name;
         this.type = type;
+        this.floors.add(floor);
     }
 
     public Slot() {
@@ -65,6 +69,10 @@ public class Slot extends BaseEntity {
 
     public Set<Floor> getFloors() {
         return floors;
+    }
+
+    public void setFloor(Floor floor) {
+        this.floors.add(floor);
     }
 
     public void setFloors(Set<Floor> floors) {

@@ -3,7 +3,6 @@ package edu.fra.uas.parking.controller;
 import edu.fra.uas.parking.common.ResponseMessage;
 import edu.fra.uas.parking.entity.Building;
 import edu.fra.uas.parking.repository.BuildingRepository;
-import org.aspectj.bridge.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +29,17 @@ public class BuildingController {
     public BuildingController(BuildingRepository buildingRepository) {
         this.buildingRepository = buildingRepository;
     }
+
     @PreAuthorize("hasAuthority('VIEW_BUILDINGS')")
     @GetMapping
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing building: {}", this.buildingRepository.count());
         CollectionModel<Building> buildings = CollectionModel.of(this.buildingRepository.findAll());
         buildings.add(linkTo(methodOn(BuildingController.class).index()).withSelfRel());
-
-        for (Building p : buildings){
-            p = this.addLinks(p);
-        }
+        buildings.forEach(this::addLinks);
         return this.message("Indexing building", this.buildingRepository.findAll(), HttpStatus.OK);
     }
+
     @PreAuthorize("hasAuthority('VIEW_BUILDING')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
@@ -51,8 +49,9 @@ public class BuildingController {
             return this.message("Building not found", null, HttpStatus.NOT_FOUND);
         }
         Building building = this.addLinks(optionalBuilding.get());
-        return this.message("Getting building by id",building, HttpStatus.OK);
+        return this.message("Getting building by id", building, HttpStatus.OK);
     }
+
     @PreAuthorize("hasAuthority('ADD_BUILDING')")
     @PostMapping
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Building building) {
@@ -63,10 +62,11 @@ public class BuildingController {
 
         }
         Building buildingCreated = this.buildingRepository.save(building);
-        buildingCreated = this.addLinks(buildingCreated);
+        this.addLinks(buildingCreated);
 
         return this.message("Creating building", buildingCreated, HttpStatus.CREATED);
     }
+
     @PreAuthorize("hasAuthority('UPDATE_BUILDING')")
     @PutMapping("/{id}")
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Building building) {
@@ -74,12 +74,13 @@ public class BuildingController {
         Optional<Building> optionalBuilding = this.buildingRepository.findById(id);
         if (optionalBuilding.isPresent() && optionalBuilding.get().getId().equals(building.getId())) {
             building = this.buildingRepository.save(building);
-            building = this.addLinks(building);
+            this.addLinks(building);
 
             return this.message("Updating building by id", building, HttpStatus.ACCEPTED);
         }
         return this.message("Building not found", null, HttpStatus.NOT_FOUND);
     }
+
     @PreAuthorize("hasAuthority('DELETE_BUILDING')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
@@ -91,32 +92,32 @@ public class BuildingController {
         }
         return this.message("Building not found", null, HttpStatus.NOT_FOUND);
     }
-    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_FLOORS')")
+
+    @PreAuthorize("hasAuthority('VIEW_FLOORS')")
     @GetMapping("/{id}/floors")
     public ResponseEntity<ResponseMessage> getFloors(@PathVariable("id") Long id) {
         logger.debug("getFloors by id Building: {}", id);
         Optional<Building> optionalBuilding = this.buildingRepository.findById(id);
-        if (optionalBuilding.isPresent()) {
-            return this.message("Get Floor by building", optionalBuilding.get().getFloors(), HttpStatus.OK);
-        }
-        return this.message("Building not found", null, HttpStatus.NOT_FOUND);
+        return optionalBuilding.map(building ->
+                this.message("Get Floor by building", building.getFloors(), HttpStatus.OK))
+                .orElseGet(() -> this.message("Building not found", null, HttpStatus.NOT_FOUND));
     }
-    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_PARK')")
+
+    @PreAuthorize("hasAuthority('VIEW_PARK')")
     @GetMapping("/{id}/park")
     public ResponseEntity<ResponseMessage> getPark(@PathVariable("id") Long id) {
         logger.debug("getPark by Building id: {}", id);
         Optional<Building> optionalBuilding = this.buildingRepository.findById(id);
-        if (optionalBuilding.isPresent()) {
-            return this.message("Get Park by building", optionalBuilding.get().getPark(), HttpStatus.OK);
-        }
-        return this.message("Building not found", null, HttpStatus.NO_CONTENT);
+        return optionalBuilding.map(building ->
+                this.message("Get Park by building", building.getPark(), HttpStatus.OK))
+                .orElseGet(() -> this.message("Building not found", null, HttpStatus.NO_CONTENT));
     }
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
 
-    private Building addLinks(Building building){
+    private Building addLinks(Building building) {
         building.add(linkTo(methodOn(BuildingController.class).getById(building.getId())).withSelfRel());
         building.add(linkTo(methodOn(BuildingController.class).index()).withRel(IanaLinkRelations.COLLECTION));
         building.add(linkTo(methodOn(BuildingController.class).getFloors(building.getId())).withRel("floors"));

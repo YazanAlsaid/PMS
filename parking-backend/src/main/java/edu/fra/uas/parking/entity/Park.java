@@ -18,11 +18,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "parks")
 public class Park extends BaseEntity {
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @OneToMany(mappedBy = "park", fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "park", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     private Set<Building> buildings = new HashSet<>();
 
     public Park() {
@@ -75,7 +75,7 @@ public class Park extends BaseEntity {
     @Override
     public String toString() {
         return "Park{" +
-                "buildings=" + buildings +
+                "name='" + name + '\'' +
                 '}';
     }
 }

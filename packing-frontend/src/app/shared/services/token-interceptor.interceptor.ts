@@ -39,8 +39,9 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
         if (error.status === 401) {
           // Token is not valid, redirect to login page
           sessionStorage.removeItem('token');
-          sessionStorage.setItem('redirectUrl', this.router.url); // Store the current URL
-          this.router.navigate(['/auth']);
+           // Create a redirect URL from the current URL and store it as a query parameter
+          const redirectUrl = `${window.location.pathname}?redirect=${encodeURIComponent(window.location.href)}`;
+          this.router.navigateByUrl(`/auth?${redirectUrl}`);
         }
         return throwError(error);
       })

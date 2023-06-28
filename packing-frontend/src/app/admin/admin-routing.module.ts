@@ -10,21 +10,24 @@ import {UsersComponent} from "./components/users/users.component";
 import {RolesComponent} from "./components/roles/roles.component";
 import {ReservationsComponent} from "./components/reservations/reservations.component";
 import {NfcCardsComponent} from "./components/nfc-cards/nfc-cards.component";
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { ForbiddenComponent } from '../shared/components/forbidden/forbidden.component';
 
 const routes: Routes = [
   {
     path: '',
     component: AdminAppComponent,
     children: [
-      {path: '', component: DashboardComponent, pathMatch: 'full'},
-      {path: 'buildings', component: BuildingsComponent, pathMatch: 'full', data: {title: 'Building'},},
-      {path: 'floors', component: FloorsComponent, pathMatch: 'full', data: {title: 'Floor'},},
-      {path: 'slots', component: SlotsComponent, pathMatch: 'full', data: {title: 'Slot'},},
-      {path: 'parks', component: ParksComponent, pathMatch: 'full', data: {title: 'Park'},},
-      {path: 'users', component: UsersComponent, pathMatch: 'full', data: {title: 'User'},},
-      {path: 'roles', component: RolesComponent, pathMatch: 'full', data: {title: 'Role'},},
-      {path: 'reservations', component: ReservationsComponent, pathMatch: 'full', data: {title: 'Reservation'},},
-      {path: 'nfc-cards', component: NfcCardsComponent, pathMatch: 'full'}
+      {path: '', component: DashboardComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'dashboard', roles: ['admin'] }},
+      {path: 'buildings', component: BuildingsComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Buildings', roles: ['admin'] }},
+      {path: 'floors', component: FloorsComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'floors', roles: ['admin'] }},
+      {path: 'slots', component: SlotsComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'slots', roles: ['admin'] }},
+      {path: 'parks', component: ParksComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'parks', roles: ['admin'] }},
+      {path: 'users', component: UsersComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'users', roles: ['admin'] }},
+      {path: 'roles', component: RolesComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'roles', roles: ['admin'] }},
+      {path: 'reservations', component: ReservationsComponent, pathMatch: 'full',canActivate: [AuthGuard], data: { title: 'reservations', roles: ['admin'] }},
+      {path: 'nfc-cards', component: NfcCardsComponent, pathMatch: 'full',canActivate: [AuthGuard], data: { title: 'nfc-cards', roles: ['admin'] }},
+      {path: 'forbidden', component: ForbiddenComponent, pathMatch: 'full',canActivate: [AuthGuard], data: { title: 'forbidden', roles: ['user'] }}
     ],
   },
 ];

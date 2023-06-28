@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
-const USER_KEY = 'auth-user';
+const USER_KEY = 'user';
+const TOKEN_KEY = 'token';
 
 @Injectable({
   providedIn: 'root'
@@ -8,17 +9,16 @@ const USER_KEY = 'auth-user';
 export class StorageService {
   constructor() {}
 
-  clean(): void {
+  clearSession(): void {
     window.sessionStorage.clear();
   }
 
-  public saveUser(user: any): void {
-    window.sessionStorage.removeItem(USER_KEY);
-    window.sessionStorage.setItem(USER_KEY, JSON.stringify(user));
+  saveUser(user: any): void {
+    sessionStorage.setItem(USER_KEY, JSON.stringify(user));
   }
 
-  public getUser(): any {
-    const user = window.sessionStorage.getItem(USER_KEY);
+  getUser(): any {
+    const user = sessionStorage.getItem(USER_KEY);
     if (user) {
       return JSON.parse(user);
     }
@@ -26,12 +26,25 @@ export class StorageService {
     return null;
   }
 
-  public isLoggedIn(): boolean {
-    const user = window.sessionStorage.getItem(USER_KEY);
-    if (user) {
+  saveToken(token: string): void {
+    sessionStorage.setItem(TOKEN_KEY, token);
+  }
+
+  getToken(): string | null {
+    return sessionStorage.getItem(TOKEN_KEY);
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken() && !this.isTokenExpired();
+  }
+
+  isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) {
       return true;
     }
 
-    return false;
+    const expiry = JSON.parse(atob(token.split('.')[1])).exp * 1000;
+    return Date.now() > expiry;
   }
 }

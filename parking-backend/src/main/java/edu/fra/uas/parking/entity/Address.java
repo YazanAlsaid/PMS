@@ -2,18 +2,14 @@ package edu.fra.uas.parking.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
 @Table(name = "addresses")
 public class Address extends BaseEntity {
+
     @Size(min = 3, max = 50)
     @Column(name = "street_name", nullable = false)
     private String streetName;
@@ -25,7 +21,7 @@ public class Address extends BaseEntity {
     @Column(name = "city", nullable = false)
     private String city;
     @JsonBackReference("address-building")
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "building_id", referencedColumnName = "id")
     private Building building;
 

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../Services/auth.service';
 import { StorageService } from '../../Services/storage.service';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -24,7 +24,8 @@ export class LoginComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     private storageService: StorageService,
-    private router: Router
+    private router: Router,
+    private activeRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -34,7 +35,7 @@ export class LoginComponent implements OnInit {
 
       // Check if the token is expired
       if (this.authService.isTokenExpired()) {
-        sessionStorage.removeItem('token'); // Delete the token
+        this.storageService.clearSession(); // Clear the session
         this.isLoggedIn = false; // Update login status
         this.roles = []; // Reset roles
 
@@ -50,23 +51,30 @@ export class LoginComponent implements OnInit {
       this.authService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe(
         (res: any) => {
           console.log(res);
-          sessionStorage.setItem('token', res.token);
+          this.storageService.saveToken(res.token);
+          this.storageService.saveUser(res.user);
 
-          // After successful login, retrieve the stored URL and navigate back
-          const redirectUrl = sessionStorage.getItem('redirectUrl');
+          // Get the value of the 'redirect' parameter from the query string
+          let redirectUrl;
+          // Parse the current URL to get the query parameters
+          this.activeRoute.queryParams.subscribe(params => redirectUrl = params['returnUrl']);
+
+          console.log('redirectUrl: ', redirectUrl);
+
           if (redirectUrl) {
-            sessionStorage.removeItem('redirectUrl'); // Clear the stored URL
+            // If a redirect URL is specified, clear the stored URL and navigate to it
             this.router.navigateByUrl(redirectUrl);
           } else {
-            // No stored URL, navigate to a default page
+            // Otherwise, navigate to a default page
             this.router.navigate(['/user/dashboard']);
           }
+
         },
         (err: any) => {
           console.log(err.error);
-          if (err.error.status === 401) {
-            console.log(err.error.status);
-            sessionStorage.removeItem('token');
+          if (err.status === 401) {
+            console.log(err.status);
+            this.storageService.clearSession(); // Clear the session
             this.isLoggedIn = false; // Update login status
             this.roles = []; // Reset roles
 
@@ -77,5 +85,9 @@ export class LoginComponent implements OnInit {
         }
       );
     }
+  }
+
+  public getMessageError(): void {
+    // Handle error message display if needed
   }
 }

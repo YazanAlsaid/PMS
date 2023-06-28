@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Set;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -31,6 +30,7 @@ public class ReservationController implements BaseController<Reservation> {
     public ReservationController(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
     }
+
     @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
     @GetMapping()
     @Override
@@ -38,26 +38,24 @@ public class ReservationController implements BaseController<Reservation> {
         logger.debug("Indexing reservation: {}", this.reservationRepository.count());
         CollectionModel<Reservation> reservations = CollectionModel.of(this.reservationRepository.findAll());
         reservations.add(linkTo(methodOn(ReservationController.class).index()).withSelfRel());
-        for (Reservation p : reservations){
-            p = this.addLinks(p);
-        }
-
+        reservations.forEach(this::addLinks);
         return this.message("Indexing reservation", this.reservationRepository.findAll(), HttpStatus.OK);
 
     }
+
     @PreAuthorize("hasAuthority('VIEW_RESERVATION')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
         logger.debug("Getting reservation by id: {}", id);
-        Optional<Reservation> opetionalReservation = this.reservationRepository.findById(id);
-        if (opetionalReservation.isEmpty()) {
+        Optional<Reservation> optionalReservation = this.reservationRepository.findById(id);
+        if (optionalReservation.isEmpty()) {
             return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
         }
-
-        Reservation reservation = this.addLinks(opetionalReservation.get());
+        Reservation reservation = this.addLinks(optionalReservation.get());
         return this.message("Getting reservation by id", reservation, HttpStatus.OK);
     }
+
     @PreAuthorize("hasAuthority('ADD_RESERVATION')")
     @PostMapping
     @Override
@@ -70,11 +68,12 @@ public class ReservationController implements BaseController<Reservation> {
 
         }
         Reservation reservationCreated = this.reservationRepository.save(reservation);
-        reservationCreated = this.addLinks(reservationCreated);
+        this.addLinks(reservationCreated);
 
         return this.message("Creating reservation", reservationCreated, HttpStatus.CREATED);
 
     }
+
     @PreAuthorize("hasAuthority('UPDATE_RESERVATION')")
     @PutMapping("/{id}")
     @Override
@@ -83,12 +82,13 @@ public class ReservationController implements BaseController<Reservation> {
         Optional<Reservation> optionalReservation = this.reservationRepository.findById(id);
         if (optionalReservation.isPresent() && optionalReservation.get().getId().equals(reservation.getId())) {
             reservation = this.reservationRepository.save(reservation);
-            reservation = this.addLinks(reservation);
+            this.addLinks(reservation);
 
             return this.message("Updating reservation by id", reservation, HttpStatus.ACCEPTED);
         }
         return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
     }
+
     @PreAuthorize("hasAuthority('DELETE_RESERVATION')")
     @DeleteMapping("/{id}")
     @Override
@@ -107,7 +107,7 @@ public class ReservationController implements BaseController<Reservation> {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
 
-    private Reservation addLinks(Reservation reservation){
+    private Reservation addLinks(Reservation reservation) {
         reservation.add(linkTo(methodOn(ReservationController.class).getById(reservation.getId())).withSelfRel());
         reservation.add(linkTo(methodOn(ReservationController.class).index()).withRel(IanaLinkRelations.COLLECTION));
         return reservation;

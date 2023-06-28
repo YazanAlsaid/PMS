@@ -12,23 +12,23 @@ import java.util.Objects;
 @Entity
 @Table(name = "floors")
 public class Floor extends BaseEntity {
-    @Column(name = "Name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "building_id")
-    private Building building;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "building_floor",
+            joinColumns = @JoinColumn(name = "building_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "floor_id", referencedColumnName = "id")
+    )
+    private Set<Building> buildings = new HashSet<>();
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinTable(name = "floor_slot",
-            joinColumns = @JoinColumn(name = "slot_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "floor_id", referencedColumnName = "id"))
+    @ManyToMany(mappedBy = "floors", cascade = CascadeType.MERGE)
     private Set<Slot> slots = new HashSet<>();
 
     public Floor(String name, Building building) {
         this.name = name;
-        this.building = building;
+        this.buildings.add(building);
     }
 
     public Floor() {
@@ -45,13 +45,13 @@ public class Floor extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public Building getBuilding() {
-        return building;
+    public Set<Building> getBuildings() {
+        return buildings;
     }
 
     @SuppressWarnings("unused")
     public void setBuilding(Building building) {
-        this.building = building;
+        this.buildings.add(building);
     }
 
     @SuppressWarnings("unused")
@@ -64,6 +64,7 @@ public class Floor extends BaseEntity {
         this.slots = slots;
     }
 
+    @SuppressWarnings("unused")
     public Integer getSlotsCount() {
         return this.slots.size();
     }
@@ -85,8 +86,7 @@ public class Floor extends BaseEntity {
     @Override
     public String toString() {
         return "Floor{" +
-                "building=" + building +
-                ", slots=" + slots +
+                "name='" + name + '\'' +
                 '}';
     }
 }

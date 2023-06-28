@@ -15,11 +15,11 @@ import java.util.Set;
 @Entity
 @Table(name = "types")
 public class Type extends BaseEntity {
-    @Column(name = "Name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @OneToMany(mappedBy = "type", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "type", cascade = CascadeType.MERGE)
     private Set<Slot> slots = new HashSet<>();
 
     public Type() {

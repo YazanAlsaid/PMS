@@ -1,12 +1,11 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
-import {Floor} from "../../../shared/model/floor";
 import {User} from "../../../shared/model/user";
 import {Nfc} from "../../../shared/model/nfc";
-import {da} from "date-fns/locale";
 import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {ClientUserService} from "../../../shared/services/client-user.service";
 
 @Component({
   selector: 'app-users',
@@ -19,7 +18,9 @@ export class UsersComponent implements AfterViewInit, OnInit {
   public readonly displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
 
-  constructor(public dialog: MatDialog) {
+  constructor(
+    public dialog: MatDialog,
+    private clientUser: ClientUserService) {
   }
 
   ngAfterViewInit(): void {
@@ -27,12 +28,13 @@ export class UsersComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    for (let i = 0; i < 15; i++) {
-      this.dataSource.data.push(new User(
-        i + 1, `test${i + 1}`, `test${i + 1}`, `test${i + 1}@pms.de`, '',
-        [], [], new Nfc(i, "asd-334-2", new Date(), new Date(), [], new Date(), new Date())
-        , new Date, new Date))
-    }
+    this.clientUser.getUsers().subscribe(
+      (res: any) => {
+        this.dataSource.data = res.data;
+        this.dataSource.paginator = this.paginator;
+      },
+      (err: any) => console.log(err)
+    )
   }
 
   edit(element: any) {
@@ -50,7 +52,12 @@ export class UsersComponent implements AfterViewInit, OnInit {
     });
   }
 
-  show(element:any) {
+  show(element: any) {
 
+  }
+
+  applyFilter(event: KeyboardEvent) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 }
