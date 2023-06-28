@@ -21,7 +21,6 @@ public class Slot extends BaseEntity {
             joinColumns = @JoinColumn(name = "slot_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "floor_id", referencedColumnName = "id"))
     private Set<Floor> floors = new HashSet<>();
-    @JsonIgnore
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "type_id")
     private Type type;

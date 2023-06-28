@@ -1,26 +1,25 @@
-<!--mat-grid-list gutterSize="10px" cols="4" rowHeight="100px" class="mt-5" >
-  <mat-grid-tile class=" my-grid-tile m-2" *ngFor="let item of tiles">
-    <div class="card">
-      <div class="card-content">
-        <h5 class="card-title text-center">{{item.text}}</h5>
-        <p class="card-text">Address: {{item.address}}</p>
-      </div>
-    </div>
-  </mat-grid-tile>
-</mat-grid-list>
--->
-<mat-grid-list gutterSize="10px" cols="4" rowHeight="150px" class="mt-5">
-  <ng-container *ngIf="tiles.length > 0; else noItemsTemplate">
-    <mat-grid-tile *ngFor="let item of tiles">
-      <div class="card">
-        <h5 class="card-title text-center">{{item.text}}</h5>
-        <p class="card-text text-center">Address: {{item.address}}</p>
-      </div>
-    </mat-grid-tile>
-  </ng-container>
-  <ng-template #noItemsTemplate>
-    <h2 class="card-title text-center">No Buildings to display.</h2>
-  </ng-template>
-</mat-grid-list>
+<mat-card>
+  <mat-card-title class="text-center mt-3">Buildings</mat-card-title>
+  <mat-card-content>
+    <mat-grid-list gutterSize="25px" rowHeight="180px" [cols]="myBreakPoint" (window:resize)="handleSize($event)">
+      <ng-container *ngIf="buildings.length > 0; else noItemsTemplate">
+        <mat-grid-tile *ngFor="let item of buildings">
+          <div class="card">
+            <h5 class="card-title text-center">{{item.name}}</h5>
+            <p class="card-text text-center">Address:
+              {{item['address']['streetName']}}
+              {{item['address']['buildingNumber']}},
+              {{item['address']['postCode']}}
+              {{item['address']['city']}}
+            </p>
+          </div>
+        </mat-grid-tile>
+      </ng-container>
+      <ng-template #noItemsTemplate>
+        <h2 class="card-title text-center">No Buildings to display.</h2>
+      </ng-template>
+    </mat-grid-list>
+  </mat-card-content>
+</mat-card>
 
 
