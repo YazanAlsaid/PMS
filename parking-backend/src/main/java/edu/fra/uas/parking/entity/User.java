@@ -38,16 +38,16 @@ public class User extends BaseEntity {
     @Column(name = "password", nullable = false)
     private String password;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "user")
     private Set<Reservation> reservations = new HashSet<>();
     @JsonIgnore
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
     private NfcCard nfcCard;
 
     public User() {

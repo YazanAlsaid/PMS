@@ -1,5 +1,7 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,18 +19,21 @@ public class Reservation extends BaseEntity {
     private LocalDateTime reservationAt;
     @Column(name = "reservation_period", nullable = false)
     private Period reservationPeriod;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "guest_id")
     private Guest guest;
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "nfc_card_id")
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "nfc_card_id", nullable = false)
     private NfcCard nfcCard;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "slot_id")
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "slot_id", nullable = false)
     private Slot slot;
 
     public Reservation() {
@@ -115,5 +120,13 @@ public class Reservation extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), reservationAt, reservationPeriod);
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "reservationAt=" + reservationAt +
+                ", reservationPeriod=" + reservationPeriod +
+                '}';
     }
 }

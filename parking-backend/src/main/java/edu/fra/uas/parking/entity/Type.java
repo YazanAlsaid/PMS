@@ -19,7 +19,7 @@ public class Type extends BaseEntity {
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @OneToMany(mappedBy = "type", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "type", cascade = CascadeType.MERGE)
     private Set<Slot> slots = new HashSet<>();
 
     public Type() {

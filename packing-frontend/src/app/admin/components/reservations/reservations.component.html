@@ -12,14 +12,14 @@
         <td mat-cell *matCellDef="let element">{{ element.id }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="from">
-        <th mat-header-cell *matHeaderCellDef>From</th>
-        <td mat-cell *matCellDef="let element">{{ element['reservationFrom'] | date:'yyyy.MM.dd hh:mm:ss'}}</td>
+      <ng-container matColumnDef="reservationAt">
+        <th mat-header-cell *matHeaderCellDef>Reservation At</th>
+        <td mat-cell *matCellDef="let element">{{ element['reservationAt'] | date:'yyyy.MM.dd hh:mm:ss'}}</td>
       </ng-container>
 
-      <ng-container matColumnDef="to">
-        <th mat-header-cell *matHeaderCellDef>To</th>
-        <td mat-cell *matCellDef="let element">{{ element['reservationTo']| date:'yyyy.MM.dd hh:mm:ss' }}</td>
+      <ng-container matColumnDef="reservationPeriod">
+        <th mat-header-cell *matHeaderCellDef>reservationPeriod</th>
+        <td mat-cell *matCellDef="let element">{{ element['reservationPeriod'] }}</td>
       </ng-container>
 
       <ng-container matColumnDef="createdAt">

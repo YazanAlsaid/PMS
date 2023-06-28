@@ -1,7 +1,9 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
-import {Floor} from "../../../shared/model/floor";
+import {ClientFloorService} from "../../../shared/services/client-floor.service";
+import {AddFloorDialogComponent} from "../add-floor-dialog/add-floor-dialog.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-floors',
@@ -14,14 +16,22 @@ export class FloorsComponent implements AfterViewInit, OnInit {
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
 
+  constructor(
+    private dialog: MatDialog,
+    private clientFloors: ClientFloorService) {
+  }
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
   }
 
   ngOnInit(): void {
-    for (let i = 0; i < 15; i++) {
-      this.dataSource.data.push(new Floor(i + 1, "Floor" + (i + 1), [], new Date, new Date))
-    }
+    this.clientFloors.getFloors().subscribe(
+      (res: any) => {
+        this.dataSource.data = res.data;
+        this.dataSource.paginator = this.paginator;
+      },
+      (err: any) => console.log(err)
+    )
   }
 
   edit(element: any) {
@@ -29,7 +39,14 @@ export class FloorsComponent implements AfterViewInit, OnInit {
   }
 
   create() {
+    const dialogRef = this.dialog.open(AddFloorDialogComponent, {
+      width: '400px'
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle any actions after the dialog is closed
+      console.log('Dialog closed', result);
+    });
   }
 
   show(element: any) {
