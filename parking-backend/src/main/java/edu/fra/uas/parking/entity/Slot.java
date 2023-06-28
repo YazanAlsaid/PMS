@@ -3,13 +3,7 @@ package edu.fra.uas.parking.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,26 +12,28 @@ import java.util.Objects;
 @Entity
 @Table(name = "slots")
 public class Slot extends BaseEntity {
-    @Column(name = "Name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "floor_id")
-    private Floor floor;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "floor_slot",
+            joinColumns = @JoinColumn(name = "slot_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "floor_id", referencedColumnName = "id"))
+    private Set<Floor> floors = new HashSet<>();
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.REFRESH)
     @JoinColumn(name = "type_id")
     private Type type;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "slot", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "slot", cascade = CascadeType.MERGE)
     private Set<Reservation> reservations = new HashSet<>();
 
-    public Slot(String name, Floor floor, Type type) {
+    public Slot(String name, Type type, Floor floor) {
         this.name = name;
-        this.floor = floor;
         this.type = type;
+        this.floors.add(floor);
     }
 
     public Slot() {
@@ -49,16 +45,6 @@ public class Slot extends BaseEntity {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @SuppressWarnings("unused")
-    public Floor getFloor() {
-        return floor;
-    }
-
-    @SuppressWarnings("unused")
-    public void setFloor(Floor floor) {
-        this.floor = floor;
     }
 
     @SuppressWarnings("unused")
@@ -81,6 +67,18 @@ public class Slot extends BaseEntity {
         this.reservations = reservations;
     }
 
+    public Set<Floor> getFloors() {
+        return floors;
+    }
+
+    public void setFloor(Floor floor) {
+        this.floors.add(floor);
+    }
+
+    public void setFloors(Set<Floor> floors) {
+        this.floors = floors;
+    }
+
     @JsonProperty("reservationCount")
     public Integer getReservationsCount() {
         return this.reservations.size();
@@ -90,20 +88,20 @@ public class Slot extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Slot slot = (Slot) o;
-        return Objects.equals(floor, slot.floor) && Objects.equals(reservations, slot.reservations);
+        return Objects.equals(name, slot.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(floor, reservations);
+        return Objects.hash(super.hashCode(), name);
     }
 
     @Override
     public String toString() {
         return "Slot{" +
-                "floor=" + floor +
-                ", reservations=" + reservations +
+                "name='" + name + '\'' +
                 '}';
     }
 }

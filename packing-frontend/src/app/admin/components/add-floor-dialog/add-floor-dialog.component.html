@@ -1,0 +1,30 @@
+<h2 mat-dialog-title>Create Floor</h2>
+<mat-dialog-content>
+  <form [formGroup]="dialogForm" (ngSubmit)="onSubmit()" #formDir="ngForm" novalidate>
+    <mat-form-field>
+      <mat-label>Parking Name</mat-label>
+      <mat-select formControlName="park" name="park" (selectionChange)="onSelectPark()">
+        <mat-option *ngFor="let parking of parkingOptions" [value]="parking">{{ parking['name'] }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="dialogForm.controls['park'].invalid">Park is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Building Name</mat-label>
+      <mat-select formControlName="building" name="building">
+        <mat-option *ngFor="let building of buildingOptions" [value]="building">{{ building['name'] }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="dialogForm.controls['building'].invalid">Building is required</mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field>
+      <input matInput formControlName="name" placeholder="Name of Floor" required>
+      <mat-error *ngIf="dialogForm.controls['name'].invalid">Name is required</mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="dialogForm.invalid" (click)="onSubmit()">Submit</button>
+</mat-dialog-actions>

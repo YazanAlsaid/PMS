@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -17,11 +18,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "parks")
 public class Park extends BaseEntity {
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @OneToMany(mappedBy = "park", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "park", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE})
     private Set<Building> buildings = new HashSet<>();
 
     public Park() {
@@ -61,19 +62,20 @@ public class Park extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Park park = (Park) o;
-        return Objects.equals(buildings, park.buildings);
+        return Objects.equals(name, park.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(buildings);
+        return Objects.hash(super.hashCode(), name);
     }
 
     @Override
     public String toString() {
         return "Park{" +
-                "buildings=" + buildings +
+                "name='" + name + '\'' +
                 '}';
     }
 }

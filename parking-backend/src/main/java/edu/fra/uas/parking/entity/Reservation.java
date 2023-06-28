@@ -1,8 +1,11 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -12,36 +15,33 @@ import java.util.Objects;
 @Entity
 @Table(name = "reservations")
 public class Reservation extends BaseEntity {
-    @Column(name = "reservation_from", nullable = false)
-    private LocalDateTime reservationFrom;
-    @Column(name = "reservation_to", nullable = false)
-    private LocalDateTime reservationTo;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "user_id")
+    @Column(name = "reservation_at", nullable = false)
+    private LocalDateTime reservationAt;
+    @Column(name = "reservation_period", nullable = false)
+    private Period reservationPeriod;
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "guest_id")
     private Guest guest;
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "nfc_card_id")
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "nfc_card_id", nullable = false)
     private NfcCard nfcCard;
-
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "slot_id")
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "slot_id", nullable = false)
     private Slot slot;
 
     public Reservation() {
     }
 
-    public Reservation(LocalDateTime reservationFrom, LocalDateTime reservationTo) {
-        this.reservationFrom = reservationFrom;
-        this.reservationTo = reservationTo;
-    }
-
-    @SuppressWarnings("unused")
-    public Reservation(LocalDateTime reservationFrom, LocalDateTime reservationTo, User user, Guest guest, NfcCard nfcCard, Slot slot) {
-        this.reservationFrom = reservationFrom;
-        this.reservationTo = reservationTo;
+    public Reservation(LocalDateTime reservationAt, Period reservationPeriod, User user, Guest guest, NfcCard nfcCard, Slot slot) {
+        this.reservationAt = reservationAt;
+        this.reservationPeriod = reservationPeriod;
         this.user = user;
         this.guest = guest;
         this.nfcCard = nfcCard;
@@ -49,23 +49,23 @@ public class Reservation extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public LocalDateTime getReservationFrom() {
-        return reservationFrom;
+    public LocalDateTime getReservationAt() {
+        return reservationAt;
     }
 
     @SuppressWarnings("unused")
     public void setReservationFrom(LocalDateTime reservationFrom) {
-        this.reservationFrom = reservationFrom;
+        this.reservationAt = reservationFrom;
     }
 
     @SuppressWarnings("unused")
-    public LocalDateTime getReservationTo() {
-        return reservationTo;
+    public Period getReservationPeriod() {
+        return reservationPeriod;
     }
 
     @SuppressWarnings("unused")
-    public void setReservationTo(LocalDateTime reservationTo) {
-        this.reservationTo = reservationTo;
+    public void setReservationPeriod(Period reservationPeriod) {
+        this.reservationPeriod = reservationPeriod;
     }
 
     @SuppressWarnings("unused")
@@ -111,21 +111,22 @@ public class Reservation extends BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Reservation that)) return false;
-        return Objects.equals(reservationFrom, that.reservationFrom) &&
-                Objects.equals(reservationTo, that.reservationTo);
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Reservation that = (Reservation) o;
+        return Objects.equals(reservationAt, that.reservationAt) && reservationPeriod == that.reservationPeriod;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(reservationFrom, reservationTo);
+        return Objects.hash(super.hashCode(), reservationAt, reservationPeriod);
     }
 
     @Override
     public String toString() {
         return "Reservation{" +
-                "reservationFrom=" + reservationFrom +
-                ", reservationTo=" + reservationTo +
+                "reservationAt=" + reservationAt +
+                ", reservationPeriod=" + reservationPeriod +
                 '}';
     }
 }

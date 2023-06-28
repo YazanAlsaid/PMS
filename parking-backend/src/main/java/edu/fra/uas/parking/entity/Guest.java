@@ -20,7 +20,7 @@ public class Guest extends BaseEntity {
     @Column(name = "last_name", nullable = false)
     private String lastName;
     @JsonIgnore
-    @OneToMany(mappedBy = "guest", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "guest", cascade = CascadeType.MERGE)
     private Set<Reservation> reservations = new HashSet<>();
 
     public Guest() {
@@ -70,13 +70,14 @@ public class Guest extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Guest guest = (Guest) o;
         return Objects.equals(firstName, guest.firstName) && Objects.equals(lastName, guest.lastName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName);
+        return Objects.hash(super.hashCode(), firstName, lastName);
     }
 
     @Override

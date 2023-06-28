@@ -15,11 +15,11 @@ import java.util.Set;
 @Entity
 @Table(name = "types")
 public class Type extends BaseEntity {
-    @Column(name = "Name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @OneToMany(mappedBy = "type", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "type", cascade = CascadeType.MERGE)
     private Set<Slot> slots = new HashSet<>();
 
     public Type() {
@@ -59,13 +59,14 @@ public class Type extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Type type = (Type) o;
         return Objects.equals(name, type.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(super.hashCode(), name);
     }
 
     @Override

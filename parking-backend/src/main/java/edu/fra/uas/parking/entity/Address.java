@@ -1,17 +1,15 @@
 package edu.fra.uas.parking.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
 @Entity
 @Table(name = "addresses")
 public class Address extends BaseEntity {
+
     @Size(min = 3, max = 50)
     @Column(name = "street_name", nullable = false)
     private String streetName;
@@ -22,7 +20,8 @@ public class Address extends BaseEntity {
     @Size(min = 3, max = 50)
     @Column(name = "city", nullable = false)
     private String city;
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @JsonBackReference("address-building")
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "building_id", referencedColumnName = "id")
     private Building building;
 
@@ -91,13 +90,14 @@ public class Address extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Address address = (Address) o;
-        return Objects.equals(streetName, address.streetName) && Objects.equals(buildingNumber, address.buildingNumber) && Objects.equals(postCode, address.postCode) && Objects.equals(city, address.city) && Objects.equals(building, address.building);
+        return Objects.equals(streetName, address.streetName) && Objects.equals(buildingNumber, address.buildingNumber) && Objects.equals(postCode, address.postCode) && Objects.equals(city, address.city);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(streetName, buildingNumber, postCode, city, building);
+        return Objects.hash(super.hashCode(), streetName, buildingNumber, postCode, city);
     }
 
     @Override

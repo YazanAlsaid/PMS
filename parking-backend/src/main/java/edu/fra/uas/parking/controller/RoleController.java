@@ -10,10 +10,10 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Set;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -31,21 +31,18 @@ public class RoleController implements BaseController<Role> {
         this.roleRepository = roleRepository;
     }
 
+    @PreAuthorize("hasAuthority('VIEW_ROLES')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing role: {}", this.roleRepository.count());
         CollectionModel<Role> roles = CollectionModel.of(this.roleRepository.findAll());
         roles.add(linkTo(methodOn(RoleController.class).index()).withSelfRel());
-
-        for (Role p : roles){
-            p = this.addLinks(p);
-        }
-
-
+        roles.forEach(this::addLinks);
         return this.message("Indexing role", this.roleRepository.findAll(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('VIEW_ROLE')")
     @GetMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> getById(@PathVariable Long id) {
@@ -58,6 +55,7 @@ public class RoleController implements BaseController<Role> {
         return this.message("Getting role by id", role, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('ADD_SLOT')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Role role) {
@@ -68,11 +66,12 @@ public class RoleController implements BaseController<Role> {
 
         }
         Role roleCreated = this.roleRepository.save(role);
-        roleCreated = this.addLinks(roleCreated);
+        this.addLinks(roleCreated);
 
         return this.message("Creating role", roleCreated, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_SLOT')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody Role role) {
@@ -80,13 +79,14 @@ public class RoleController implements BaseController<Role> {
         Optional<Role> optionalRole = this.roleRepository.findById(id);
         if (optionalRole.isPresent() && optionalRole.get().getId().equals(role.getId())) {
             role = this.roleRepository.save(role);
-            role = this.addLinks(role);
+            this.addLinks(role);
 
             return this.message("Updating role by id", role, HttpStatus.ACCEPTED);
         }
         return this.message("Role not found", null, HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasAuthority('DELETE_SLOT')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
@@ -99,31 +99,31 @@ public class RoleController implements BaseController<Role> {
         return this.message("Role not found", null, HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasAuthority('VIEW_USERS')")
     @GetMapping("/{id}/users")
     public ResponseEntity<ResponseMessage> getUsersByRoleId(@PathVariable("id") Long id) {
         logger.debug("Getting users by role id: {}", id);
         Optional<Role> role = this.roleRepository.findById(id);
-        if (role.isEmpty()) {
-            return this.message("Role not found", null, HttpStatus.NOT_FOUND);
-        }
-        return this.message("Getting users by role id", role.get().getUsers(), HttpStatus.OK);
+        return role.map(value
+                        -> this.message("Getting users by role id", value.getUsers(), HttpStatus.OK))
+                .orElseGet(() -> this.message("Role not found", null, HttpStatus.NOT_FOUND));
     }
 
+    @PreAuthorize("hasAuthority('VIEW_PRIVILIGES')")
     @GetMapping("/{id}/privileges")
     public ResponseEntity<ResponseMessage> getPrivilegesByRoleId(@PathVariable("id") Long id) {
         logger.debug("Getting privileges by role id: {}", id);
         Optional<Role> role = this.roleRepository.findById(id);
-        if (role.isEmpty()) {
-            return this.message("Role not found", null, HttpStatus.NOT_FOUND);
-        }
-        return this.message("Getting privileges by role id", role.get().getPrivileges(), HttpStatus.OK);
+        return role.map(value ->
+                        this.message("Getting privileges by role id", value.getPrivileges(), HttpStatus.OK))
+                .orElseGet(() -> this.message("Role not found", null, HttpStatus.NOT_FOUND));
     }
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
 
-    private Role addLinks(Role role){
+    private Role addLinks(Role role) {
         role.add(linkTo(methodOn(RoleController.class).getById(role.getId())).withSelfRel());
         role.add(linkTo(methodOn(RoleController.class).index()).withRel(IanaLinkRelations.COLLECTION));
         role.add(linkTo(methodOn(RoleController.class).getUsersByRoleId(role.getId())).withRel("users"));

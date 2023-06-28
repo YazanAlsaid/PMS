@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,12 +35,14 @@ public class AddressController implements BaseController<Address> {
         this.addressRepository = addressRepository;
     }
 
+    @PreAuthorize("hasAuthority('VIEW_ADRESSES')")
     @GetMapping
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing building: {}", this.addressRepository.count());
         return this.message("Indexing Address", this.addressRepository.findAll(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAuthority('VIEW_ADRESSE')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
         logger.debug("Getting address by id: {}", id);
@@ -50,7 +53,7 @@ public class AddressController implements BaseController<Address> {
         return this.message("Getting address by id", this.addressRepository.findById(id), HttpStatus.OK);
     }
 
-
+    @PreAuthorize("hasAuthority('ADD_ADRESSE')")
     @PostMapping
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Address address) {
         logger.debug("Creating address: {}", address);
@@ -62,6 +65,7 @@ public class AddressController implements BaseController<Address> {
         return this.message("Creating address", addressCreated, HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_ADRESSE')")
     @PutMapping("/{id}")
     public ResponseEntity<ResponseMessage> updateById(@PathVariable Long id, Address address) {
         logger.debug("Updating address by id: {}", id);
@@ -73,6 +77,7 @@ public class AddressController implements BaseController<Address> {
         return this.message("address not found", null, HttpStatus.NOT_FOUND);
     }
 
+    @PreAuthorize("hasAuthority('DELETE_ADRESSE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable Long id) {
         logger.debug("Deleting address by id: {}", id);

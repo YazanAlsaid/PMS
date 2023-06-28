@@ -12,7 +12,7 @@ export class ClientNfcService {
   constructor(private httpService : HttpService) {}
 
   public getNfcs() : Observable<ResponseMessage> {
-    return this.httpService.getAll("nfcs");
+    return this.httpService.getAll("nfc-cards");
   }
   public getNfc(id : number) : Observable<ResponseMessage> {
     return this.httpService.getById("nfcs",id);
