@@ -1,12 +1,6 @@
-import {Component} from '@angular/core';
-
-export interface Tile {
-  color: string;
-  cols: number;
-  rows: number;
-  text: string;
-  address: string;
-}
+import {Component, OnInit} from '@angular/core';
+import {ClientBuildingService} from "../../../shared/services/client-building.service";
+import {Building} from "../../../shared/model/building";
 
 @Component({
   selector: 'app-building',
@@ -15,20 +9,40 @@ export interface Tile {
 })
 
 
-export class BuildingComponent {
+export class BuildingComponent implements OnInit {
 
-  tiles: Tile[] = [
-    {text: 'Building 1', cols: 1, rows: 1, color: '#DDBDF1', address: ",Windeckstraße 33 , 60314 Frankfurt am Main"},
-    {text: 'Building 2', cols: 2, rows: 1, color: '#DDBDF1', address: ",Windeckstraße 33 , 60314 Frankfurt am Main"},
-    {text: 'Building 3', cols: 1, rows: 1, color: '#DDBDF1', address: ",Windeckstraße 33 , 60314 Frankfurt am Main"},
-    {text: 'Building 4', cols: 2, rows: 1, color: '#DDBDF1', address: ",Windeckstraße 33 , 60314 Frankfurt am Main"},
-    {text: 'Building 5', cols: 1, rows: 2, color: '#DDBDF1', address: ",Windeckstraße 33 , 60314 Frankfurt am Main"},
-    {text: 'Building 6', cols: 2, rows: 2, color: '#DDBDF1', address: ",Windeckstraße 33 , 60314 Frankfurt am Main"},
-    {text: 'Building 7', cols: 1, rows: 2, color: '#DDBDF1', address: ",Windeckstraße 33 , 60314 Frankfurt am Main"},
-    {text: 'Building 8', cols: 2, rows: 2, color: '#DDBDF1', address: ",Windeckstraße 33 , 60314 Frankfurt am Main"},
-    {text: 'Building 9', cols: 1, rows: 3, color: '#DDBDF1', address: ",Windeckstraße 33 , 60314 Frankfurt am Main"},
-    {text: 'Building 10', cols: 2, rows: 3, color: '#DDBDF1', address: ",Windeckstraße 33 , 60314 Frankfurt am Main"},
-  ];
+  public myBreakPoint: number = 0
+  public buildings: Building[] = [];
+
+  constructor(private clientBuilding: ClientBuildingService) {
+  }
+
+  ngOnInit(): void {
+    this.clientBuilding.getBuildings().subscribe(
+      (res: any) => this.buildings = res.data,
+      (err: any) => console.log(err)
+    )
+
+    this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
+    if (window.innerWidth > 950)
+      this.myBreakPoint = 4;
+    else if (window.innerWidth >= 750 && window.innerWidth <= 950)
+      this.myBreakPoint = 3;
+    else if (window.innerWidth >= 550 && window.innerWidth <= 750)
+      this.myBreakPoint = 2;
+    else if (window.innerWidth <= 550)
+      this.myBreakPoint = 1;
+  }
 
 
+  handleSize(event: any) {
+    if (event.target.innerWidth > 950)
+      this.myBreakPoint = 4;
+    else if (event.target.innerWidth >= 750 && event.target.innerWidth <= 950)
+      this.myBreakPoint = 3;
+    else if (event.target.innerWidth >= 550 && event.target.innerWidth <= 750)
+      this.myBreakPoint = 2;
+    else if (event.target.innerWidth <= 550)
+      this.myBreakPoint = 1;
+  }
 }
