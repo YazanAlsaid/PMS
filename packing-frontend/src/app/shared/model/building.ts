@@ -8,6 +8,7 @@ export class Building {
   public floors: Floor[];
   public createdAt: Date;
   public updatedAt: Date;
+  public address!: any;
 
 
   constructor(id: number, name: string, floors: Floor[], createdAt: Date, updatedAt: Date) {
