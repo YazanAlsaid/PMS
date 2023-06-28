@@ -38,16 +38,16 @@ public class User extends BaseEntity {
     @Column(name = "password", nullable = false)
     private String password;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "user")
     private Set<Reservation> reservations = new HashSet<>();
     @JsonIgnore
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
     private NfcCard nfcCard;
 
     public User() {
@@ -155,16 +155,15 @@ public class User extends BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User user)) return false;
-        return Objects.equals(firstName, user.firstName) &&
-                Objects.equals(lastName, user.lastName) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(password, user.password);
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        User user = (User) o;
+        return Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, email, password);
+        return Objects.hash(super.hashCode(), firstName, lastName, email, password);
     }
 
     @Override

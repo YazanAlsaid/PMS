@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Set;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -31,7 +30,7 @@ public class UserController implements BaseController<User> {
     public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-    @PreAuthorize("hasAuthority('VIEW_ALL_USERS')")
+    @PreAuthorize("hasAuthority('VIEW_USERS')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -39,11 +38,7 @@ public class UserController implements BaseController<User> {
         CollectionModel<User> users = CollectionModel.of(this.userRepository.findAll());
         users.add(linkTo(methodOn(ParkController.class).index()).withSelfRel());
         users.add(linkTo(methodOn(UserController.class).index()).withSelfRel());
-
-        for (User p : users){
-            p = this.addLinks(p);
-        }
-
+        users.forEach(this::addLinks);
         return this.message("Indexing user", this.userRepository.findAll(), HttpStatus.OK);
     }
     @PreAuthorize("hasAuthority('VIEW_USER')")
@@ -70,7 +65,7 @@ public class UserController implements BaseController<User> {
 
         }
         User userCreated = this.userRepository.save(user);
-        userCreated = this.addLinks(userCreated);
+        this.addLinks(userCreated);
 
         return this.message("Creating building", userCreated, HttpStatus.CREATED);
     }
@@ -82,7 +77,7 @@ public class UserController implements BaseController<User> {
         Optional<User> optionalUser = this.userRepository.findById(id);
         if (optionalUser.isPresent() && optionalUser.get().getId().equals(user.getId())) {
             user = this.userRepository.save(user);
-            user = this.addLinks(user);
+            this.addLinks(user);
 
             return this.message("Updating building by id", user, HttpStatus.ACCEPTED);
         }
@@ -105,30 +100,27 @@ public class UserController implements BaseController<User> {
     public ResponseEntity<ResponseMessage> getRolesByUserId(@PathVariable("id") Long id) {
         logger.debug("Getting roles by user id: {}", id);
         Optional<User> user = this.userRepository.findById(id);
-        if (user.isEmpty()) {
-            return this.message("User not found", null, HttpStatus.NOT_FOUND);
-        }
-        return this.message("Getting roles by user id", user.get().getRoles(), HttpStatus.OK);
+        return user.map(value ->
+                this.message("Getting roles by user id", value.getRoles(), HttpStatus.OK))
+                .orElseGet(() -> this.message("User not found", null, HttpStatus.NOT_FOUND));
     }
     @PreAuthorize("#id == principal.id and hasAuthority('VIEW_RESERVATIONS')")
     @GetMapping("/{id}/reservations")
     public ResponseEntity<ResponseMessage> getReservationsByUserId(@PathVariable("id") Long id) {
         logger.debug("Getting reservations by user id: {}", id);
         Optional<User> user = this.userRepository.findById(id);
-        if (user.isEmpty()) {
-            return this.message("User not found", null, HttpStatus.NOT_FOUND);
-        }
-        return this.message("Getting reservations by user id", user.get().getReservations(), HttpStatus.OK);
+        return user.map(value ->
+                this.message("Getting reservations by user id", value.getReservations(), HttpStatus.OK))
+                .orElseGet(() -> this.message("User not found", null, HttpStatus.NOT_FOUND));
     }
-    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_NFCCARD')")
+    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_NFC_CARD')")
     @GetMapping("/{id}/nfc-card")
     public ResponseEntity<ResponseMessage> getNfcCardByUserId(@PathVariable("id") Long id) {
         logger.debug("Getting nfc card by user id: {}", id);
         Optional<User> user = this.userRepository.findById(id);
-        if (user.isEmpty()) {
-            return this.message("User not found", null, HttpStatus.NOT_FOUND);
-        }
-        return this.message("Getting nfc card by user id", user.get().getNfcCard(), HttpStatus.OK);
+        return user.map(value ->
+                this.message("Getting nfc card by user id", value.getNfcCard(), HttpStatus.OK))
+                .orElseGet(() -> this.message("User not found", null, HttpStatus.NOT_FOUND));
     }
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {

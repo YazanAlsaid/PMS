@@ -34,12 +34,14 @@ public class AddressController implements BaseController<Address> {
     public AddressController(AddressRepository addressRepository) {
         this.addressRepository = addressRepository;
     }
+
     @PreAuthorize("hasAuthority('VIEW_ADRESSES')")
     @GetMapping
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing building: {}", this.addressRepository.count());
         return this.message("Indexing Address", this.addressRepository.findAll(), HttpStatus.OK);
     }
+
     @PreAuthorize("hasAuthority('VIEW_ADRESSE')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
@@ -62,6 +64,7 @@ public class AddressController implements BaseController<Address> {
         Address addressCreated = this.addressRepository.save(address);
         return this.message("Creating address", addressCreated, HttpStatus.CREATED);
     }
+
     @PreAuthorize("hasAuthority('UPDATE_ADRESSE')")
     @PutMapping("/{id}")
     public ResponseEntity<ResponseMessage> updateById(@PathVariable Long id, Address address) {
@@ -73,6 +76,7 @@ public class AddressController implements BaseController<Address> {
         }
         return this.message("address not found", null, HttpStatus.NOT_FOUND);
     }
+
     @PreAuthorize("hasAuthority('DELETE_ADRESSE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable Long id) {

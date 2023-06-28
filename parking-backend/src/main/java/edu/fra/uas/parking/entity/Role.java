@@ -19,14 +19,14 @@ import java.util.Objects;
 @Entity
 @Table(name = "roles")
 public class Role extends BaseEntity implements Serializable {
-    @Column(name = "Name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @ManyToMany(mappedBy = "roles", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.MERGE)
     private Set<User> users = new HashSet<>();
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "privilege_role",
             joinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "privilege_id", referencedColumnName = "id"))
@@ -80,7 +80,7 @@ public class Role extends BaseEntity implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Role role = (Role) o;
-        return name.equals(role.name);
+        return Objects.equals(name, role.name);
     }
 
     @Override

@@ -2,15 +2,18 @@ package edu.fra.uas.parking.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 import java.util.HashSet;
@@ -20,17 +23,19 @@ import java.util.Objects;
 @Entity
 @Table(name = "buildings")
 public class Building extends BaseEntity {
-    @Column(name = "Name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
     @JsonIgnore
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "park_id")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "park_id", nullable = false)
     private Park park;
     @JsonIgnore
-    @OneToMany(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "buildings", cascade = CascadeType.MERGE)
     private Set<Floor> floors = new HashSet<>();
-    @OneToOne(mappedBy = "building", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @JsonManagedReference("address-building")
+    @OneToOne(mappedBy = "building", fetch = FetchType.<EAGER>, cascade = CascadeType.MERGE)
+    @PrimaryKeyJoinColumn
     private Address address;
 
     public Building(String name, Park park) {
@@ -88,13 +93,14 @@ public class Building extends BaseEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         Building building = (Building) o;
-        return Objects.equals(park, building.park) && Objects.equals(floors, building.floors);
+        return Objects.equals(name, building.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(park, floors);
+        return Objects.hash(super.hashCode(), name);
     }
 
     @Override

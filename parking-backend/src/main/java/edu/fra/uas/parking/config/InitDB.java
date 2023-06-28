@@ -2,21 +2,34 @@ package edu.fra.uas.parking.config;
 
 
 import edu.fra.uas.parking.entity.*;
-import edu.fra.uas.parking.repository.*;
+
+import edu.fra.uas.parking.repository.AddressRepository;
+import edu.fra.uas.parking.repository.BuildingRepository;
+import edu.fra.uas.parking.repository.FloorRepository;
+import edu.fra.uas.parking.repository.GuestRepository;
+import edu.fra.uas.parking.repository.NfcCardRepository;
+import edu.fra.uas.parking.repository.ParkRepository;
+import edu.fra.uas.parking.repository.PrivilegeRepository;
+import edu.fra.uas.parking.repository.ReservationRepository;
+import edu.fra.uas.parking.repository.RoleRepository;
+import edu.fra.uas.parking.repository.SlotRepository;
+import edu.fra.uas.parking.repository.TypeRepository;
+import edu.fra.uas.parking.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
-import java.util.*;
-
-import static org.hibernate.tool.schema.SchemaToolingLogging.LOGGER;
-
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
 public class InitDB {
 
+    private final Logger logger = LoggerFactory.getLogger(InitDB.class);
     private final ParkRepository parkRepository;
     private final BuildingRepository buildingRepository;
     private final FloorRepository floorRepository;
@@ -25,13 +38,10 @@ public class InitDB {
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    final
-    PrivilegeRepository privilegeRepository;
+    private final PrivilegeRepository privilegeRepository;
     private final NfcCardRepository nfcCardRepository;
     private final GuestRepository guestRepository;
     private final AddressRepository addressRepository;
-    private int count = 1;
-    private int type = 1;
 
     @Autowired
     public InitDB(ParkRepository parkRepository, BuildingRepository buildingRepository,
@@ -57,132 +67,80 @@ public class InitDB {
     @PostConstruct
     public void init() {
 
-        LOGGER.debug("Init Databases started...");
+        logger.debug("Init Databases started...");
 
-        for (int i = 1; i <= 10; i++) {
-            Park park = new Park();
-            park.setName("park" + i);
-            this.parkRepository.save(park);
+
+        // Create Parks
+        Park parkFrankfurt = this.parkRepository.save(new Park("Frankfurt"));
+        logger.debug(parkFrankfurt.toString());
+        Park parkWiesbaden = this.parkRepository.save(new Park("Wiesbaden"));
+        logger.debug(parkWiesbaden.toString());
+        Park parkCologne = this.parkRepository.save(new Park("Köln"));
+        logger.debug(parkCologne.toString());
+        Park parkBerlin = this.parkRepository.save(new Park("Berlin"));
+        logger.debug(parkBerlin.toString());
+
+        // create buildings foreach park
+        this.createBuilding(parkFrankfurt);
+        this.createBuilding(parkWiesbaden);
+        this.createBuilding(parkCologne);
+        this.createBuilding(parkBerlin);
+
+        // create address foreach building
+        for (Building building : this.buildingRepository.findAll()) {
+            Address address = new Address(
+                    building.getPark().getName() + "er Straße",
+                    Integer.valueOf(building.getId().toString()),
+                    60450 + Integer.parseInt(building.getId().toString()),
+                    building.getPark().getName(),
+                    building
+            );
+            this.addressRepository.save(address);
         }
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0 && i != 0) {
-                count++;
-            }
-            Building building = new Building("building" + (i + 1), this.parkRepository.getById((long) count));
-            this.buildingRepository.save(building);
+
+        // create Floors foreach Building
+        for (Building building : this.buildingRepository.findAll()) {
+            logger.debug(String.valueOf(building.getId()));
+            this.createFloors(building);
         }
-        for (int i = 0; i < 10; i++) {
-            Address address = new Address("street" + (i + 1),
-                    100 + i,
-                    (i + 1) + 60400,
-                    "city" + i,
-                    this.buildingRepository.getById((long) (i + 1)));
-            addressRepository.save(address);
+
+
+        Type typeNormal = this.typeRepository.save(new Type("Normal"));
+        logger.debug(typeNormal.toString());
+        Type typeECar = this.typeRepository.save(new Type("E-Car"));
+        logger.debug(typeECar.toString());
+        Type typeHandicap = this.typeRepository.save(new Type("Handicap"));
+        logger.debug(typeHandicap.toString());
+        Type typeWomen = this.typeRepository.save(new Type("Women"));
+        logger.debug(typeWomen.toString());
+
+        for (Floor floor : this.floorRepository.findAll()) {
+            this.createSlotsNormal(floor, typeNormal);
+            this.createSlotsECar(floor, typeECar);
+            this.createSlotsHandicap(floor, typeHandicap);
+            this.createSlotsWoman(floor, typeWomen);
         }
-        this.count = 1;
-        for (int i = 0; i < 20; i++) {
-            if (i % 2 == 0 && i != 0) {
-                count++;
-            }
-            Floor floor = new Floor("floor" + (i + 1), this.buildingRepository.getById((long) count));
-            this.floorRepository.save(floor);
-        }
-        for (int i = 1; i <= 5; i++) {
-            Type type = new Type();
-            type.setName("type" + i);
-            this.typeRepository.save(type);
-        }
-        this.count = 1;
-        for (int i = 0; i < 200; i++) {
-            if (i % 10 == 0 && i != 0) {
-                count++;
-            }
-            if (type <= 4 && (i % 5 == 0 && i != 0)) {
-                type++;
-            }
-            Slot slot = new Slot("slot" + (i + 1),
-                    this.floorRepository.getById((long) count),
-                    this.typeRepository.getById((long) type));
-            if (type == 4) {
-                type = 1;
-            }
-            this.slotRepository.save(slot);
-        }
+
         Set<Privilege> privileges = new HashSet<>();
-
         privileges.add(new Privilege("VIEW_ADDRESSES"));
         privileges.add(new Privilege("VIEW_ADDRESS"));
         privileges.add(new Privilege("ADD_ADDRESSES"));
         privileges.add(new Privilege("UPDATE_ADDRESS"));
         privileges.add(new Privilege("DELETE_ADDRESSES"));
-
-        privileges.add(new Privilege("VIEW_BUILDINGS"));
-        privileges.add(new Privilege("VIEW_BUILDING"));
-        privileges.add(new Privilege("ADD_BUILDING"));
-        privileges.add(new Privilege("UPDATE_BUILDING"));
-        privileges.add(new Privilege("DELETE_BUILDING"));
-
-        privileges.add(new Privilege("VIEW_FLOORS"));
-        privileges.add(new Privilege("VIEW_FLOOR"));
-        privileges.add(new Privilege("ADD_FLOOR"));
-        privileges.add(new Privilege("UPDATE_FLOOR"));
-        privileges.add(new Privilege("DELETE_FLOOR"));
-
-        privileges.add(new Privilege("VIEW_GUESTS"));
-        privileges.add(new Privilege("VIEW_GUEST"));
-        privileges.add(new Privilege("ADD_GUEST"));
-        privileges.add(new Privilege("UPDATE_GUEST"));
-        privileges.add(new Privilege("DELETE_GUEST"));
-
-        privileges.add(new Privilege("VIEW_NFCCARDS"));
-        privileges.add(new Privilege("VIEW_NFCCARD"));
-        privileges.add(new Privilege("ADD_NFCCARD"));
-        privileges.add(new Privilege("UPDATE_NFCCARD"));
-        privileges.add(new Privilege("DELETE_NFCCARD"));
-
-        privileges.add(new Privilege("VIEW_PARKS"));
-        privileges.add(new Privilege("VIEW_PARK"));
-        privileges.add(new Privilege("ADD_PARK"));
-        privileges.add(new Privilege("UPDATE_PARK"));
-        privileges.add(new Privilege("DELETE_PARK"));
-
-        privileges.add(new Privilege("VIEW_PRIVILEGES"));
-        privileges.add(new Privilege("VIEW_PRIVILEGE"));
-        privileges.add(new Privilege("ADD_PRIVILEGE"));
-        privileges.add(new Privilege("UPDATE_PRIVILEGE"));
-        privileges.add(new Privilege("DELETE_PRIVILEGE"));
-
-        privileges.add(new Privilege("VIEW_RESERVATIONS"));
-        privileges.add(new Privilege("VIEW_RESERVATION"));
-        privileges.add(new Privilege("ADD_RESERVATION"));
-        privileges.add(new Privilege("UPDATE_RESERVATION"));
-        privileges.add(new Privilege("DELETE_RESERVATION"));
-
-        privileges.add(new Privilege("VIEW_ROLES"));
-        privileges.add(new Privilege("VIEW_ROLE"));
-        privileges.add(new Privilege("ADD_ROLE"));
-        privileges.add(new Privilege("UPDATE_ROLE"));
-        privileges.add(new Privilege("DELETE_ROLE"));
-
-        privileges.add(new Privilege("VIEW_SLOTS"));
-        privileges.add(new Privilege("VIEW_SLOT"));
-        privileges.add(new Privilege("ADD_SLOT"));
-        privileges.add(new Privilege("UPDATE_SLOT"));
-        privileges.add(new Privilege("DELETE_SLOT"));
-
-        privileges.add(new Privilege("VIEW_TYPES"));
-        privileges.add(new Privilege("VIEW_TYPE"));
-        privileges.add(new Privilege("ADD_TYPE"));
-        privileges.add(new Privilege("UPDATE_TYPE"));
-        privileges.add(new Privilege("DELETE_TYPE"));
-
-        privileges.add(new Privilege("VIEW_USERS"));
-        privileges.add(new Privilege("VIEW_USER"));
-        privileges.add(new Privilege("ADD_USER"));
-        privileges.add(new Privilege("UPDATE_USER"));
-        privileges.add(new Privilege("DELETE_USER"));
-
         privilegeRepository.saveAll(privileges);
+
+        this.createPrivileges("BUILDING");
+        this.createPrivileges("FLOOR");
+        this.createPrivileges("GUEST");
+        this.createPrivileges("NFC_CARD");
+        this.createPrivileges("PARK");
+        this.createPrivileges("PRIVILEGE");
+        this.createPrivileges("RESERVATION");
+        this.createPrivileges("ROLE");
+        this.createPrivileges("SLOT");
+        this.createPrivileges("TYPE");
+        this.createPrivileges("USER");
+
 
         // roles
         Role roleAdmin = new Role("ADMIN");
@@ -190,12 +148,11 @@ public class InitDB {
         Role roleUser = new Role("USER");
         roleUser = this.roleRepository.save(roleUser);
 
-        for (Privilege privilege : this.privilegeRepository.findAll()){
-           if(privilege.getName().contains("VIEW")){
-               roleUser.setPrivilege(privilege);
-           }
+        for (Privilege privilege : this.privilegeRepository.findAll()) {
+            if (privilege.getName().contains("VIEW")) {
+                roleUser.setPrivilege(privilege);
+            }
             roleAdmin.setPrivilege(privilege);
-
         }
 
         roleAdmin = roleRepository.save(roleAdmin);
@@ -203,23 +160,112 @@ public class InitDB {
 
         for (int i = 1; i <= 100; i++) {
             User user = new User("user" + i, "user" + i, "user" + i + "@user.com", "user" + i);
-            if (i == 100) {
+            if (i == 1) {
                 user.setRole(roleAdmin);
             } else {
                 user.setRole(roleUser);
             }
             this.userRepository.save(user);
         }
+
         for (int i = 1; i <= 100; i++) {
-            NfcCard nfcCard = new NfcCard("nfc" + i, this.userRepository.getById((long) i));
+            NfcCard nfcCard = new NfcCard("d3r5-47ef-12" + i, this.userRepository.getById((long) i), LocalDateTime.now(), LocalDateTime.now().plusMonths(12));
             nfcCardRepository.save(nfcCard);
         }
+
         for (int i = 1; i <= 30; i++) {
             Guest guest = new Guest("guest" + i, "guest" + i);
             guestRepository.save(guest);
         }
+
         for (int i = 1; i <= 100; i++) {
-            Reservation reservation = new Reservation(LocalDateTime.now(), LocalDateTime.now());
+            if (i % 2 == 0) {
+                this.createReservation(i, Period.MORNING);
+            } else {
+                this.createReservation(i, Period.AFTERNOON);
+            }
+        }
+
+    }
+
+    private void createBuilding(Park park) {
+        logger.debug(this.buildingRepository.save(new Building(park.getName() + " Parking " + 1, park)).toString());
+        logger.debug(this.buildingRepository.save(new Building(park.getName() + " Parking " + 2, park)).toString());
+        logger.debug(this.buildingRepository.save(new Building(park.getName() + " Parking " + 3, park)).toString());
+        logger.debug(this.buildingRepository.save(new Building(park.getName() + " Parking " + 4, park)).toString());
+    }
+
+    private void createPrivileges(String name) {
+        Set<Privilege> privileges = new HashSet<>();
+        privileges.add(new Privilege("VIEW_" + name + "S"));
+        privileges.add(new Privilege("VIEW_" + name));
+        privileges.add(new Privilege("ADD_" + name));
+        privileges.add(new Privilege("UPDATE_" + name));
+        privileges.add(new Privilege("DELETE_" + name));
+        logger.debug(this.privilegeRepository.saveAll(privileges).toString());
+    }
+
+    private void createFloors(Building building) {
+        for (int i = 1; i <= 5; i++) {
+            this.createFloor(i, building);
+        }
+    }
+
+    private void createFloor(int floorId, Building building) {
+        Optional<Floor> optionalFloor = this.floorRepository.findByName("EG " + floorId);
+        if (optionalFloor.isPresent()) {
+            Floor floor = optionalFloor.get();
+            floor.setBuilding(building);
+            logger.debug(floor.toString());
+            logger.debug(building.getName());
+            this.floorRepository.save(floor);
+        } else {
+            logger.debug(this.floorRepository.save(new Floor("EG " + floorId, building)).toString());
+        }
+    }
+
+    private void createSlotsNormal(Floor floor, Type type) {
+        for (int i = 1; i <= 10; i++) {
+            this.createSlot(floor, type, i);
+        }
+    }
+
+    private void createSlotsECar(Floor floor, Type type) {
+        for (int i = 11; i <= 15; i++) {
+            this.createSlot(floor, type, i);
+        }
+    }
+
+    private void createSlotsHandicap(Floor floor, Type type) {
+        for (int i = 16; i <= 17; i++) {
+            this.createSlot(floor, type, i);
+        }
+    }
+
+    private void createSlotsWoman(Floor floor, Type type) {
+        for (int i = 18; i <= 20; i++) {
+            this.createSlot(floor, type, i);
+        }
+    }
+
+    private void createSlot(Floor floor, Type type, int slotId) {
+        int floorId = Math.toIntExact(floor.getId());
+        String slotName = (slotId < 10) ? "P-" + floorId + "0" + slotId : "P-" + floorId + slotId;
+        Optional<Slot> optionalSlot = this.slotRepository.findByName(slotName);
+        if (optionalSlot.isPresent()) {
+            optionalSlot.get().setFloor(floor);
+            this.slotRepository.save(optionalSlot.get());
+        } else {
+            this.slotRepository.save(new Slot(slotName, type, floor));
+        }
+    }
+
+    private void createReservation(int id, Period period) {
+        Optional<User> optionalUser = this.userRepository.findById((long) id);
+        Optional<NfcCard> optionalNfcCard = this.nfcCardRepository.findById((long) id);
+        Optional<Slot> optionalSlot = this.slotRepository.findById((long) id);
+        if (optionalUser.isPresent() && optionalNfcCard.isPresent() && optionalSlot.isPresent()) {
+            Reservation reservation = new Reservation(LocalDateTime.now(), period, optionalUser.get(), null, optionalNfcCard.get(), optionalSlot.get());
             this.reservationRepository.save(reservation);
         }
     }

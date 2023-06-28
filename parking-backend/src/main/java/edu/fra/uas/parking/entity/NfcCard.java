@@ -28,10 +28,10 @@ public class NfcCard extends BaseEntity {
     @Column(name = "nfc_to")
     private LocalDateTime nfcTo;
     @JsonIgnore
-    @OneToMany(mappedBy = "nfcCard", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "nfcCard", cascade = CascadeType.MERGE)
     private Set<Reservation> reservations = new HashSet<>();
     @JsonIgnore
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
@@ -39,10 +39,11 @@ public class NfcCard extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public NfcCard(String serialNumber, LocalDateTime nfcFrom, LocalDateTime nfcTo) {
+    public NfcCard(String serialNumber, User user, LocalDateTime nfcFrom, LocalDateTime nfcTo) {
         this.serialNumber = serialNumber;
         this.nfcFrom = nfcFrom;
         this.nfcTo = nfcTo;
+        this.user = user;
     }
 
     public NfcCard(String serialNumber, User user) {
@@ -103,13 +104,15 @@ public class NfcCard extends BaseEntity {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof NfcCard nfcCard)) return false;
-        return Objects.equals(nfcFrom, nfcCard.nfcFrom) && Objects.equals(nfcTo, nfcCard.nfcTo);
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        NfcCard nfcCard = (NfcCard) o;
+        return Objects.equals(serialNumber, nfcCard.serialNumber) && Objects.equals(nfcFrom, nfcCard.nfcFrom) && Objects.equals(nfcTo, nfcCard.nfcTo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nfcFrom, nfcTo);
+        return Objects.hash(super.hashCode(), serialNumber, nfcFrom, nfcTo);
     }
 
     @Override

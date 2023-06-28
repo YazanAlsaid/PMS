@@ -5,6 +5,7 @@ import {Slot} from "../../../shared/model/slot";
 import {Type} from "../../../shared/model/type";
 import {AddSlotDialogComponent} from "../add-slot-dialog/add-slot-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
+import {ClientSlotService} from "../../../shared/services/client-slot.service";
 
 @Component({
   selector: 'app-slots',
@@ -17,7 +18,9 @@ export class SlotsComponent implements AfterViewInit, OnInit {
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
 
-  constructor(public dialog: MatDialog) {
+  constructor(
+    public dialog: MatDialog,
+    private clientSlots: ClientSlotService) {
   }
 
   ngAfterViewInit(): void {
@@ -25,9 +28,13 @@ export class SlotsComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    for (let i = 0; i < 15; i++) {
-      this.dataSource.data.push(new Slot(i + 1, "Slot" + (i + 1), new Type(1, "Park", []), [], new Date, new Date))
-    }
+    this.clientSlots.getSlots().subscribe(
+      (res: any) => {
+        this.dataSource.data = res.data;
+        this.dataSource.paginator = this.paginator;
+      },
+      (err: any) => console.log(err)
+    )
   }
 
   edit(element: any) {

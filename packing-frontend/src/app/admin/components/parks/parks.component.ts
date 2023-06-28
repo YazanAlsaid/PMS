@@ -4,6 +4,9 @@ import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {ResponseMessage} from "../../../shared/model/response-message";
 import {Park} from "../../../shared/model/park";
+import {MatSort} from "@angular/material/sort";
+import {MatDialog} from "@angular/material/dialog";
+import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 
 @Component({
   selector: 'app-parks',
@@ -11,30 +14,28 @@ import {Park} from "../../../shared/model/park";
   styleUrls: ['./parks.component.scss']
 })
 export class ParksComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator)
-  public paginator!: MatPaginator;
+  @ViewChild("paginator") paginator!: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort!: MatSort;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource = new MatTableDataSource();
+  public dataSource: MatTableDataSource<Park> = new MatTableDataSource<Park>();
 
-  constructor(private parksService: ClientParkService) {
+  constructor(
+    public dialog: MatDialog,
+    private parksService: ClientParkService) {
   }
 
   ngOnInit(): void {
-    for (let i = 0; i < 15; i++) {
-      this.dataSource.data.push(new Park(i+1, "park" + (i+1), [], new Date(), new Date()));
-    }
-
-    /*this.parksService.getParks().subscribe(
+    this.parksService.getParks().subscribe(
       (res: ResponseMessage) => {
-        console.log(res.message)
-        this.dataSource = res.data.content
+        this.dataSource = new MatTableDataSource<Park>(res.data.content)
+        this.dataSource.paginator = this.paginator;
       },
       (err: any) => console.log(err)
-    );*/
+    );
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    // this.dataSource.paginator = this.paginator;
   }
 
   edit(element: any) {
@@ -42,10 +43,22 @@ export class ParksComponent implements AfterViewInit, OnInit {
   }
 
   create() {
+    const dialogRef = this.dialog.open(AddParkDialogComponent, {
+      width: '400px'
+    });
 
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle any actions after the dialog is closed
+      console.log('Dialog closed', result);
+    });
   }
 
   show(element: any) {
 
+  }
+
+  applyFilter(event: KeyboardEvent) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 }
