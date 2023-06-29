@@ -67,8 +67,7 @@ export class CalendarComponent {
     //   },
     // });
   }
-  // morning reservation sgarts at 8:00 and ends at 12:00
-  // afternoon reservation starts at 12:00 and ends at 16:00
+
   getEventStart(reservation: Reservation): Date {
     const date = new Date(reservation.reservationAt);
     if (reservation.reservationPeriod === 'MORNING') {
@@ -106,13 +105,11 @@ export class CalendarComponent {
           start: this.getEventStart(reservation),
           end: this.getEventEnd(reservation),
           title: reservation.reservationPeriod,
-          color: colors['blue'],
+          color:
+            reservation.reservationPeriod === 'MORNING'
+              ? colors['red']
+              : colors['blue'],
           actions: this.actions,
-          resizable: {
-            beforeStart: true,
-            afterEnd: true,
-          },
-          draggable: true,
         }));
       });
   }
