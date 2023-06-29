@@ -265,7 +265,7 @@ public class InitDB {
         Optional<NfcCard> optionalNfcCard = this.nfcCardRepository.findById((long) id);
         Optional<Slot> optionalSlot = this.slotRepository.findById((long) id);
         if (optionalUser.isPresent() && optionalNfcCard.isPresent() && optionalSlot.isPresent()) {
-            Reservation reservation = new Reservation(LocalDate.now(), period, optionalUser.get(), null, optionalNfcCard.get(), optionalSlot.get());
+            Reservation reservation = new Reservation(LocalDateTime.now(), period, optionalUser.get(), null, optionalNfcCard.get(), optionalSlot.get());
             this.reservationRepository.save(reservation);
         }
     }
