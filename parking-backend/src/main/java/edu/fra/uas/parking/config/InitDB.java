@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 @Component
@@ -69,7 +70,6 @@ public class InitDB {
     public void init() {
 
         logger.debug("Init Databases started...");
-
 
         // Create Parks
         Park parkFrankfurt = this.parkRepository.save(new Park("Frankfurt"));
@@ -159,7 +159,7 @@ public class InitDB {
         roleAdmin = roleRepository.save(roleAdmin);
         roleUser = roleRepository.save(roleUser);
         this.createUsers(roleUser);
-        User admin = new User("PMS","PMS",Gender.MALE, "pms@alnaasan.de","pms123456");
+        User admin = new User("PMS", "PMS", Gender.MALE, "pms@alnaasan.de", "pms123456");
         admin.setRole(roleAdmin);
         this.userRepository.save(admin);
 
@@ -173,14 +173,9 @@ public class InitDB {
             guestRepository.save(guest);
         }
 
-        for (int i = 1; i <= 100; i++) {
-            if (i % 2 == 0) {
-                this.createReservation(i, Period.MORNING);
-            } else {
-                this.createReservation(i, Period.AFTERNOON);
-            }
+        for (int i = 1; i <= 1000; i++) {
+            this.createReservation(i);
         }
-
     }
 
     private void createBuilding(Park park) {
@@ -255,17 +250,19 @@ public class InitDB {
         }
     }
 
-    private void createReservation(int id, Period period) {
-        Optional<User> optionalUser = this.userRepository.findById((long) id);
-        Optional<NfcCard> optionalNfcCard = this.nfcCardRepository.findById((long) id);
-        Optional<Slot> optionalSlot = this.slotRepository.findById((long) id);
+    private void createReservation(int id) {
+        LocalDate date = this.randomLocalDate();
+        Period period = (id % 2 == 0) ? Period.MORNING : Period.AFTERNOON;
+        Optional<User> optionalUser = this.userRepository.findById((long) ((id / 10 == 0) ? 1 : id / 10));
+        Optional<NfcCard> optionalNfcCard = this.nfcCardRepository.findById((long) ((id / 10 == 0) ? 1 : id / 10));
+        Optional<Slot> optionalSlot = this.slotRepository.findById((long) ((id / 10 == 0) ? 1 : id / 10));
         if (optionalUser.isPresent() && optionalNfcCard.isPresent() && optionalSlot.isPresent()) {
-            Reservation reservation = new Reservation(LocalDate.now(), period, optionalUser.get(), null, optionalNfcCard.get(), optionalSlot.get());
-            this.reservationRepository.save(reservation);
+            Reservation reservation = new Reservation(date, period, optionalUser.get(), null, optionalNfcCard.get(), optionalSlot.get());
+            logger.debug(this.reservationRepository.save(reservation).toString());
         }
     }
 
-    private void createUsers(Role role){
+    private void createUsers(Role role) {
         Set<User> users = new HashSet<>();
         users.add(new User("Davenport", "Dennis", Gender.MALE, "davenportdennis@pms.de", "pms123456"));
         users.add(new User("Bryant", "Cantu", Gender.MALE, "bryantcantu@pms.de", "pms123456"));
@@ -414,12 +411,19 @@ public class InitDB {
         users.add(new User("Ginger", "Vaughan", Gender.FEMALE, "gingervaughan@pms.de", "pms123456"));
         users.add(new User("Stevenson", "Owens", Gender.MALE, "stevensonowens@pms.de", "pms123456"));
         users.add(new User("Soto", "Hood", Gender.MALE, "sotohood@pms.de", "pms123456"));
-        users.add(new User( "Monica",  "Bean",  Gender.FEMALE,  "monicabean@pms.de",  "pms123456"));
-        users.add(new User( "Fulton",  "Randall",  Gender.MALE,  "fultonrandall@pms.de",  "pms123456"));
-        users.add(new User( "Lessie",  "Holmes",  Gender.FEMALE,  "lessieholmes@pms.de",  "pms123456"));
+        users.add(new User("Monica", "Bean", Gender.FEMALE, "monicabean@pms.de", "pms123456"));
+        users.add(new User("Fulton", "Randall", Gender.MALE, "fultonrandall@pms.de", "pms123456"));
+        users.add(new User("Lessie", "Holmes", Gender.FEMALE, "lessieholmes@pms.de", "pms123456"));
         for (User user : users) {
             user.setRole(role);
         }
         this.userRepository.saveAll(users);
+    }
+
+    private LocalDate randomLocalDate() {
+        int year = LocalDate.now().getYear();
+        int month = new Random().nextInt(12 - 1 + 1) + 1;
+        int day = new Random().nextInt(28 - 1 + 1) + 1;
+        return LocalDate.of(year, month, day);
     }
 }
