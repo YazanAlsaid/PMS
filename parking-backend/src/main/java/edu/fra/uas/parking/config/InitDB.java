@@ -207,6 +207,9 @@ public class InitDB {
             }
             this.userRepository.save(user);
         }
+        User user = new User("pms", "pms", "pms@alnaasan.de", "pms");
+        this.userRepository.save(user);
+
         for (int i = 1; i <= 100; i++) {
             NfcCard nfcCard = new NfcCard("nfc" + i, this.userRepository.getById((long) i));
             nfcCardRepository.save(nfcCard);
