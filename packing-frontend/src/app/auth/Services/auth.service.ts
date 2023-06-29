@@ -3,8 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { StorageService } from './storage.service';
 
-const AUTH_API = 'http://127.0.0.1:8080/api/v1/web/authenticate';
-
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
@@ -13,8 +11,25 @@ const httpOptions = {
   providedIn: 'root',
 })
 export class AuthService {
+  readonly AUTH_API: string = '';
+  readonly RESET_API: string = '';
+  private readonly hostname: string = window.location.hostname;
+  private readonly port: string = window.location.port;
+  private readonly protocol: string = window.location.protocol;
+  private readonly url: string = '';
 
-  constructor(private http: HttpClient, private storageService: StorageService) { }
+  constructor(private http: HttpClient, private storageService: StorageService) {
+    if (this.hostname === '127.0.0.1' || this.hostname === 'localhost') {
+      this.url = `${this.protocol}//${this.hostname}:8080`;
+    } else if (this.port === '80' || this.port === '443') {
+      this.url = `${this.protocol}//${this.hostname}`;
+    } else {
+      this.url = `${this.protocol}//${this.hostname}:${this.port}`;
+    }
+
+    this.AUTH_API = `${this.url}/api/v1/web/authenticate`;
+    this.RESET_API = `${this.url}/api/v1/web/reset/reset-password`;
+  }
 
   isLoggedIn(): boolean {
     return this.storageService.isLoggedIn();
@@ -25,12 +40,14 @@ export class AuthService {
       return false;
     }
     const userRoles = this.storageService.getUser().roles;
-    return userRoles.every((role: any) => requiredRoles.includes(role['name'].toLowerCase()));
+    return userRoles.every((role: any) =>
+      requiredRoles.includes(role['name'].toLowerCase())
+    );
   }
 
   login(email: string, password: string): Observable<any> {
     return this.http.post(
-      AUTH_API,
+      this.AUTH_API,
       {
         email,
         password,
@@ -39,12 +56,18 @@ export class AuthService {
     );
   }
 
+  resetPassword(email: string): Observable<any> {
+    console.log(this.RESET_API);
+
+    return this.http.post<any>(this.RESET_API, email , httpOptions);
+  }
+
   isTokenExpired(): boolean {
     return this.storageService.isTokenExpired();
   }
 
   logout(): Observable<any> {
     this.storageService.clearSession();
-    return this.http.post(AUTH_API + 'signout', {}, httpOptions);
+    return this.http.post<any>(`${this.AUTH_API}/signout`, {}, httpOptions);
   }
 }
