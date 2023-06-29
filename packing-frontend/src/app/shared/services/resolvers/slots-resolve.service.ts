@@ -1,20 +1,21 @@
 import { Injectable } from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from "@angular/router";
-import {ClientRoleService} from "../../client-role.service";
 import {Observable, of} from "rxjs";
 import {catchError} from "rxjs/operators";
-import {ResponseMessage} from "../../../model/response-message";
+import {ClientNfcService} from "../client-nfc.service";
+import {ClientSlotService} from "../client-slot.service";
+import {ResponseMessage} from "../../model/response-message";
 
 @Injectable({
   providedIn: 'root'
 })
-export class RolesResolveService implements Resolve<ResponseMessage> {
+export class SlotsResolveService implements Resolve<ResponseMessage>{
 
-  constructor(private roles : ClientRoleService) { }
+  constructor(private slots : ClientSlotService) { }
+
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ResponseMessage> {
-    return this.roles.getRoles()
+    return this.slots.getSlots()
       .pipe(
         catchError((err: any) => of(err.error as ResponseMessage)))
   }
-
 }

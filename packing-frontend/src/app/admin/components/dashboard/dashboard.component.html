@@ -7,7 +7,7 @@
         <mat-grid-tile>
           <div class="card" (click)="onClickCard('parks')">
             <h5 class="card-title text-center">Parks</h5>
-            <p class="card-text text-center">5</p>
+            <p class="card-text text-center">{{counterData['numberOfParks']}}</p>
           </div>
         </mat-grid-tile>
       </ng-container>
@@ -15,7 +15,7 @@
         <mat-grid-tile>
           <div class="card" (click)="onClickCard('buildings')">
             <h5 class="card-title text-center">Buildings</h5>
-            <p class="card-text text-center">10</p>
+            <p class="card-text text-center">{{counterData['numberOfBuildings']}}</p>
           </div>
         </mat-grid-tile>
       </ng-container>
@@ -23,7 +23,7 @@
         <mat-grid-tile>
           <div class="card" (click)="onClickCard('slots')">
             <h5 class="card-title text-center">Slots</h5>
-            <p class="card-text text-center">1000</p>
+            <p class="card-text text-center">{{counterData['numberOfSlots']}}</p>
           </div>
         </mat-grid-tile>
       </ng-container>
@@ -31,7 +31,7 @@
         <mat-grid-tile>
           <div class="card" (click)="onClickCard('users')">
             <h5 class="card-title text-center">Users</h5>
-            <p class="card-text text-center">600</p>
+            <p class="card-text text-center">{{counterData['numberOFUsers']}}</p>
           </div>
         </mat-grid-tile>
       </ng-container>

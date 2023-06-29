@@ -31,10 +31,10 @@ public class Building extends BaseEntity {
     @JoinColumn(name = "park_id", nullable = false)
     private Park park;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.LAZY,mappedBy = "buildings",  cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "buildings", cascade = CascadeType.MERGE)
     private Set<Floor> floors = new HashSet<>();
     @JsonManagedReference("address-building")
-    @OneToOne(mappedBy = "building", cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "building", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @PrimaryKeyJoinColumn
     private Address address;
 
