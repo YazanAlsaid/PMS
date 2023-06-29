@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from "@angular/router";
-import {ClientBuildingService} from "../../client-building.service";
+import {ClientBuildingService} from "../client-building.service";
 import {Observable, of} from "rxjs";
 import {catchError} from "rxjs/operators";
-import {ClientFloorService} from "../../client-floor.service";
-import {ResponseMessage} from "../../../model/response-message";
+import {ClientFloorService} from "../client-floor.service";
+import {ResponseMessage} from "../../model/response-message";
 
 @Injectable({
   providedIn: 'root'
