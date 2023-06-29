@@ -67,6 +67,28 @@ export class CalendarComponent {
     //   },
     // });
   }
+  // morning reservation sgarts at 8:00 and ends at 12:00
+  // afternoon reservation starts at 12:00 and ends at 16:00
+  getEventStart(reservation: Reservation): any {
+    const start = startOfDay(new Date(reservation.reservationAt));
+    if (reservation.reservationPeriod === 'MORNING') {
+      start.setHours(8);
+      return start;
+    } else {
+      start.setHours(12);
+      return start;
+    }
+  }
+  getEventEnd(reservation: Reservation): any {
+    const end = startOfDay(new Date(reservation.reservationAt));
+    if (reservation.reservationPeriod === 'MORNING') {
+      end.setHours(12);
+      return end;
+    } else {
+      end.setHours(16);
+      return end;
+    }
+  }
 
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
@@ -83,8 +105,8 @@ export class CalendarComponent {
       .subscribe((reservations) => {
         this.reservations = reservations;
         this.events = reservations.data.map((reservation) => ({
-          start: new Date(reservation.reservationAt),
-          end: new Date(reservation.reservationAt),
+          start: this.getEventStart(reservation),
+          end: this.getEventEnd(reservation),
           title: reservation.reservationPeriod,
           color: colors['blue'],
           actions: this.actions,
