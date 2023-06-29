@@ -38,4 +38,5 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "ORDER BY MONTH(2) ASC")
     List<Object[]> getReservationCountByMonth();
 )
+)
 }
