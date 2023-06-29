@@ -11,7 +11,7 @@ import {ClientReservationService} from "../../../shared/services/client-reservat
 export class ReservationsComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator)
   public paginator!: MatPaginator;
-  public readonly displayedColumns: string[] = ['id', 'reservationAt', 'reservationPeriod', 'createdAt', 'updatedAt', 'action'];
+  public readonly displayedColumns: string[] = ['id','user', 'reservationAt', 'reservationPeriod', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
 
   constructor(private clientReservations: ClientReservationService) {
