@@ -30,7 +30,6 @@ public class NfcCard extends BaseEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "nfcCard", cascade = CascadeType.MERGE)
     private Set<Reservation> reservations = new HashSet<>();
-    @JsonIgnore
     @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
