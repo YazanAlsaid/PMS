@@ -1,21 +1,20 @@
 import { Injectable } from '@angular/core';
-import {ClientParkService} from "../../client-park.service";
 import {ActivatedRouteSnapshot, Resolve, RouterStateSnapshot} from "@angular/router";
+import {ClientRoleService} from "../client-role.service";
 import {Observable, of} from "rxjs";
 import {catchError} from "rxjs/operators";
-import {ResponseMessage} from "../../../model/response-message";
+import {ResponseMessage} from "../../model/response-message";
 
 @Injectable({
   providedIn: 'root'
 })
-export class ParksResolveService implements Resolve<ResponseMessage> {
+export class RolesResolveService implements Resolve<ResponseMessage> {
 
-  constructor(private parks: ClientParkService) {
-  }
-
+  constructor(private roles : ClientRoleService) { }
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<ResponseMessage> {
-    return this.parks.getParks()
+    return this.roles.getRoles()
       .pipe(
         catchError((err: any) => of(err.error as ResponseMessage)))
   }
+
 }
