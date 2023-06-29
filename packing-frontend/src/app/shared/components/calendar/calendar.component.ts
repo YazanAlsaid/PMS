@@ -1,14 +1,20 @@
-// import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClient } from '@angular/common/http';
 import {
   Component,
-  Optional,
-  TemplateRef,
-  Inject,
+  ChangeDetectionStrategy,
   ViewChild,
+  TemplateRef,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import {
+  startOfDay,
+  endOfDay,
+  subDays,
+  addDays,
+  endOfMonth,
+  isSameDay,
+  isSameMonth,
+  addHours,
+} from 'date-fns';
+import { Subject } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import {
   CalendarEvent,
@@ -17,8 +23,6 @@ import {
   CalendarView,
 } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
-import { endOfDay, isSameDay, isSameMonth, startOfDay } from 'date-fns';
-import { Subject } from 'rxjs';
 
 const colors: Record<string, EventColor> = {
   red: {
@@ -35,14 +39,6 @@ const colors: Record<string, EventColor> = {
   },
 };
 
-export type Reservation = {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-  reservationAt: string;
-  reservationPeriod: 'MORNING' | 'AFTERNOON';
-};
-
 @Component({
   selector: 'app-calendar',
   templateUrl: './calendar.component.html',
@@ -50,53 +46,12 @@ export type Reservation = {
 })
 export class CalendarComponent {
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
-  constructor(
-    private router: Router,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<CalendarComponent>, // private modal: NgbModal
-    private modal: NgbModal,
-    private http: HttpClient
-  ) {}
-  dateSelected(date: any) {
-    console.log({ date });
-    // this.dialogRef.close();
-    // this.router.navigate([`dashboard/slots`], {
-    //   queryParams: {
-    //     slotId: this.data.parking.id,
-    //     date: new Date(date.date).toISOString(),
-    //   },
-    // });
-  }
 
   view: CalendarView = CalendarView.Month;
-  CalendarView = CalendarView;
-  viewDate: Date = new Date();
-  refresh = new Subject<void>();
-  activeDayIsOpen: boolean = true;
-  base = 'http://localhost:8080/api/v1/web';
-  reservations: { data: Reservation[] } = { data: [] };
-  events: CalendarEvent[] = [];
 
-  ngOnInit() {
-    this.http
-      .get<{ data: Reservation[] }>(`${this.base}/reservations`)
-      .subscribe((reservations) => {
-        this.reservations = reservations;
-        this.events = reservations.data.map((reservation) => ({
-          start: new Date(reservation.reservationAt),
-          end: new Date(reservation.reservationAt),
-          title: reservation.reservationPeriod,
-          color: colors['blue'],
-          actions: this.actions,
-          allDay: true,
-          resizable: {
-            beforeStart: true,
-            afterEnd: true,
-          },
-          draggable: true,
-        }));
-      });
-  }
+  CalendarView = CalendarView;
+
+  viewDate: Date = new Date();
 
   modalData!: {
     action: string;
@@ -121,6 +76,53 @@ export class CalendarComponent {
     },
   ];
 
+  refresh = new Subject<void>();
+
+  events: CalendarEvent[] = [
+    {
+      start: subDays(startOfDay(new Date()), 1),
+      end: addDays(new Date(), 1),
+      title: 'A 3 day event',
+      color: { ...colors['red'] },
+      actions: this.actions,
+      allDay: true,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true,
+      },
+      draggable: true,
+    },
+    {
+      start: startOfDay(new Date()),
+      title: 'An event with no end date',
+      color: { ...colors['yellow'] },
+      actions: this.actions,
+    },
+    {
+      start: subDays(endOfMonth(new Date()), 3),
+      end: addDays(endOfMonth(new Date()), 3),
+      title: 'A long event that spans 2 months',
+      color: { ...colors['blue'] },
+      allDay: true,
+    },
+    {
+      start: addHours(startOfDay(new Date()), 2),
+      end: addHours(new Date(), 2),
+      title: 'A draggable and resizable event',
+      color: { ...colors['yellow'] },
+      actions: this.actions,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true,
+      },
+      draggable: true,
+    },
+  ];
+
+  activeDayIsOpen: boolean = true;
+
+  constructor(private modal: NgbModal) {}
+
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
       if (
@@ -136,10 +138,10 @@ export class CalendarComponent {
   }
 
   eventTimesChanged({
-    event,
-    newStart,
-    newEnd,
-  }: CalendarEventTimesChangedEvent): void {
+                      event,
+                      newStart,
+                      newEnd,
+                    }: CalendarEventTimesChangedEvent): void {
     this.events = this.events.map((iEvent) => {
       if (iEvent === event) {
         return {
