@@ -16,7 +16,7 @@ import java.util.Objects;
 @Table(name = "reservations")
 public class Reservation extends BaseEntity {
     @Column(name = "reservation_at", nullable = false)
-    private LocalDate reservationAt;
+    private LocalDateTime reservationAt;
     @Column(name = "reservation_period", nullable = false)
     private Period reservationPeriod;
     @ManyToOne(cascade = CascadeType.MERGE)
@@ -38,7 +38,7 @@ public class Reservation extends BaseEntity {
     public Reservation() {
     }
 
-    public Reservation(LocalDate reservationAt, Period reservationPeriod, User user, Guest guest, NfcCard nfcCard, Slot slot) {
+    public Reservation(LocalDateTime reservationAt, Period reservationPeriod, User user, Guest guest, NfcCard nfcCard, Slot slot) {
         this.reservationAt = reservationAt;
         this.reservationPeriod = reservationPeriod;
         this.user = user;
@@ -48,12 +48,12 @@ public class Reservation extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public LocalDate getReservationAt() {
+    public LocalDateTime getReservationAt() {
         return reservationAt;
     }
 
     @SuppressWarnings("unused")
-    public void setReservationFrom(LocalDate reservationFrom) {
+    public void setReservationFrom(LocalDateTime reservationFrom) {
         this.reservationAt = reservationFrom;
     }
 
