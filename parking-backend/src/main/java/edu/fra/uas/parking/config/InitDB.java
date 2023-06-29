@@ -258,6 +258,7 @@ public class InitDB {
         if (optionalUser.isPresent() && optionalNfcCard.isPresent() && optionalSlot.isPresent()) {
             Reservation reservation = new Reservation(date, period, optionalUser.get(), null, optionalNfcCard.get(), optionalSlot.get());
             logger.debug(this.reservationRepository.save(reservation).toString());
+)
         }
     }
 
