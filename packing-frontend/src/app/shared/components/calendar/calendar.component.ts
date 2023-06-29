@@ -83,22 +83,25 @@ export class CalendarComponent {
       .subscribe((reservations) => {
         this.reservations = reservations;
         this.events = reservations.data.map((reservation) => ({
-          start: this.getEventStart(reservation),
-          end: this.getEventEnd(reservation),
+          start: new Date(reservation.reservationAt),
+          end: new Date(reservation.reservationAt),
           title: reservation.reservationPeriod,
-          color:
-            reservation.reservationPeriod === 'MORNING'
-              ? colors['red']
-              : colors['blue'],
+          color: colors['blue'],
           actions: this.actions,
+          allDay: true,
+          resizable: {
+            beforeStart: true,
+            afterEnd: true,
+          },
+          draggable: true,
         }));
       });
   }
 
-  modalData!: {
-    action: string;
-    event: CalendarEvent;
-  };
+  // modalData!: {
+  //   action: string;
+  //   event: CalendarEvent;
+  // };
 
   actions: CalendarEventAction[] = [
     {
@@ -151,15 +154,9 @@ export class CalendarComponent {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
-    console.log({ event });
-    // this.modal.open(this.modalContent, { size: 'lg' });
+    // this.modalData = { event, action };
+    this.modal.open(this.modalContent, { size: 'lg' });
   }
-
-  setView(e: any) {
-    console.log({ e });
-  }
-  closeOpenMonthViewDay() {}
 
   addEvent(): void {
     this.events = [
