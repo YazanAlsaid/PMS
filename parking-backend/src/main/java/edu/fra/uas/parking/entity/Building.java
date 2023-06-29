@@ -34,7 +34,7 @@ public class Building extends BaseEntity {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "buildings", cascade = CascadeType.MERGE)
     private Set<Floor> floors = new HashSet<>();
     @JsonManagedReference("address-building")
-    @OneToOne(mappedBy = "building", fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "building", fetch = FetchType.<EAGER>, cascade = CascadeType.MERGE)
     @PrimaryKeyJoinColumn
     private Address address;
 
