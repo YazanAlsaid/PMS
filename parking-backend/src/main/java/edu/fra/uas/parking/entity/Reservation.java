@@ -55,7 +55,7 @@ public class Reservation extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public void setReservationFrom(LocalDateTime reservationFrom) {
+    public void setReservationFrom(LocalDate reservationFrom) {
         this.reservationAt = reservationFrom;
     }
 
