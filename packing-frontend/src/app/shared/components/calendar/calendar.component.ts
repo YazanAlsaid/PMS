@@ -98,10 +98,10 @@ export class CalendarComponent {
       });
   }
 
-  // modalData!: {
-  //   action: string;
-  //   event: CalendarEvent;
-  // };
+  modalData!: {
+    action: string;
+    event: CalendarEvent;
+  };
 
   actions: CalendarEventAction[] = [
     {
@@ -154,7 +154,7 @@ export class CalendarComponent {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    // this.modalData = { event, action };
+    this.modalData = { event, action };
     this.modal.open(this.modalContent, { size: 'lg' });
   }
 
