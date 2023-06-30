@@ -67,42 +67,41 @@ export class CalendarComponent {
     //   },
     // });
   }
-  getEventStart(reservation: Reservation): Date {
-    const date = new Date(reservation.reservationAt);
+
+  getEventPeriod(reservation: Reservation): { start: Date; end: Date } {
+    const start = new Date(reservation.reservationAt);
+    const end = new Date(reservation.reservationAt);
+    start.setHours(13);
+    end.setHours(18);
     if (reservation.reservationPeriod === 'MORNING') {
-      date.setHours(8);
-    } else {
-      date.setHours(13);
+      start.setHours(8);
+      end.setHours(13);
     }
-    return date;
-  }
-  getEventEnd(reservation: Reservation): Date {
-    const date = new Date(reservation.reservationAt);
-    if (reservation.reservationPeriod === 'MORNING') {
-      date.setHours(13);
-    } else {
-      date.setHours(18);
-    }
-    return date;
+    return { start, end };
   }
 
+  slotID: string = '';
+  routeSub = this.router.routerState.root.queryParams.subscribe((params) => {
+    this.slotID = params['slotId'];
+  });
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
   refresh = new Subject<void>();
   activeDayIsOpen: boolean = true;
-  base = 'http://localhost:8080/api/v1/web';
+  baseUrl = 'http://localhost:8080/api/v1/web';
   reservations: { data: Reservation[] } = { data: [] };
   events: CalendarEvent[] = [];
 
   ngOnInit() {
     this.http
-      .get<{ data: Reservation[] }>(`${this.base}/reservations`)
+      .get<{ data: Reservation[] }>(
+        `${this.baseUrl}/slots/${this.slotID}/reservations`
+      )
       .subscribe((reservations) => {
         this.reservations = reservations;
         this.events = reservations.data.map((reservation) => ({
-          start: this.getEventStart(reservation),
-          end: this.getEventEnd(reservation),
+          ...this.getEventPeriod(reservation),
           title: reservation.reservationPeriod,
           color:
             reservation.reservationPeriod === 'MORNING'
@@ -136,18 +135,24 @@ export class CalendarComponent {
     },
   ];
 
-  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
-    if (isSameMonth(date, this.viewDate)) {
-      if (
-        (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
-        events.length === 0
-      ) {
-        this.activeDayIsOpen = false;
-      } else {
-        this.activeDayIsOpen = true;
-      }
-      this.viewDate = date;
+  dayClicked({
+    date: start,
+    events,
+  }: {
+    date: Date;
+    events: CalendarEvent[];
+  }): void {
+    if (!isSameMonth(start, this.viewDate)) {
+      return;
     }
+    this.viewDate = start;
+    if (
+      (isSameDay(this.viewDate, start) && this.activeDayIsOpen === true) ||
+      events.length === 0
+    ) {
+      this.activeDayIsOpen = false;
+    }
+    this.activeDayIsOpen = true;
   }
 
   eventTimesChanged({
@@ -156,14 +161,14 @@ export class CalendarComponent {
     newEnd,
   }: CalendarEventTimesChangedEvent): void {
     this.events = this.events.map((iEvent) => {
-      if (iEvent === event) {
-        return {
-          ...event,
-          start: newStart,
-          end: newEnd,
-        };
+      if (iEvent !== event) {
+        return iEvent;
       }
-      return iEvent;
+      return {
+        ...event,
+        start: newStart,
+        end: newEnd,
+      };
     });
     this.handleEvent('Dropped or resized', event);
   }
