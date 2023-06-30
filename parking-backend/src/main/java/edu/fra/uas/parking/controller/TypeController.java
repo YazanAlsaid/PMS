@@ -29,7 +29,7 @@ public class TypeController implements BaseController<Type> {
     public TypeController(TypeRepository typeRepository) {
         this.typeRepository = typeRepository;
     }
-    @PreAuthorize("hasAuthority('VIEW_ALL_TYPES')")
+    @PreAuthorize("hasAuthority('VIEW_TYPES')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
