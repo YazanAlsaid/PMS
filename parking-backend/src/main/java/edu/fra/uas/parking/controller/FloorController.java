@@ -58,7 +58,7 @@ public class FloorController implements BaseController<Floor> {
 
     }
 
-    @PreAuthorize("hasAuthority('CREATE_FLOOR')")
+    @PreAuthorize("hasAuthority('ADD_FLOOR')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Floor floor) {

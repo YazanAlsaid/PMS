@@ -58,10 +58,12 @@ export class ParksComponent implements AfterViewInit, OnInit {
 
     dialogRef.afterClosed().subscribe(
       (data: any) => {
-        this.parksService.createPark(data.park).subscribe(
-          (res: any) => this.ngOnInit(),
-          (err: any) => console.log(err.error.error)
-        )
+        if (data.park != null) {
+          this.parksService.createPark(data.park).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          )
+        }
       }
     );
 
