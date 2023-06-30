@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpService} from "./httpServeic";
 import {Observable} from "rxjs";
 import {Floor} from "../model/floor";
@@ -25,5 +25,9 @@ export class ClientFloorService {
   }
   public deleteFloor(id : number) : Observable<ResponseMessage> {
     return this.httpService.delete("floors", id);
+  }
+
+  getSlots(id: number): Observable<any> {
+    return this.httpService.getSubList("floors", id, 'slots');
   }
 }
