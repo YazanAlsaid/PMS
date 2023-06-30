@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../Services/auth.service';
 
 @Component({
@@ -9,25 +8,24 @@ import { AuthService } from '../../Services/auth.service';
   styleUrls: ['./reset-password.component.scss']
 })
 export class ResetPasswordComponent implements OnInit {
-  isResetFailed: boolean = false;
-  resetForm: FormGroup;
+  resetForm: FormGroup = new FormGroup({});
   successMessage: string = '';
   errorMessage: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
-    private httpClient: HttpClient,
     private authService: AuthService
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     this.resetForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email, Validators.maxLength(200)]]
     });
   }
 
-  ngOnInit(): void {}
-
   onSubmit(): void {
     if (this.resetForm.invalid) {
+      this.errorMessage = 'Please enter a valid email';
       return;
     }
 
@@ -39,6 +37,10 @@ export class ResetPasswordComponent implements OnInit {
         this.resetForm.reset();
         console.log('Password reset request successful');
         console.log(res);
+
+        setTimeout(() => {
+          this.successMessage = ''; // Clear the success message after 3 seconds
+        }, 3000);
       },
       (error) => {
         this.errorMessage = error.error.error;
