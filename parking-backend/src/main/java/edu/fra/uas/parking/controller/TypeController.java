@@ -29,7 +29,7 @@ public class TypeController implements BaseController<Type> {
     public TypeController(TypeRepository typeRepository) {
         this.typeRepository = typeRepository;
     }
-    @PreAuthorize("hasAuthority('VIEW_ALL_TYPES')")
+    @PreAuthorize("hasAuthority('VIEW_TYPES')")
     @GetMapping()
     @Override
     public ResponseEntity<ResponseMessage> index() {
@@ -59,7 +59,7 @@ public class TypeController implements BaseController<Type> {
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Type type) {
         logger.debug("Creating type: {}", type);
         Optional<Type> optionalType = (type.getId() != null) ? this.typeRepository.findById(type.getId()) : Optional.empty();
-        if (optionalType.isPresent()) {
+        if (optionalType.isPresent() && typeRepository.findByName(type.getName()).isPresent()) {
             return this.message("Type is already exists", null, HttpStatus.CONFLICT);
 
         }

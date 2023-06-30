@@ -60,14 +60,14 @@ public class UserController implements BaseController<User> {
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody User user) {
         logger.debug("Creating user: {}", user);
         Optional<User> optionalUser = (user.getId() != null) ? this.userRepository.findById(user.getId()) : Optional.empty();
-        if (optionalUser.isPresent()) {
-            return this.message("Building is already exists", null, HttpStatus.CONFLICT);
+        if (optionalUser.isPresent() && userRepository.existsByEmail(user.getEmail())) {
+            return this.message("user or email is already exists", null, HttpStatus.CONFLICT);
 
         }
         User userCreated = this.userRepository.save(user);
         this.addLinks(userCreated);
 
-        return this.message("Creating building", userCreated, HttpStatus.CREATED);
+        return this.message("Creating User", userCreated, HttpStatus.CREATED);
     }
     @PreAuthorize("hasAuthority('UPDATE_USER')")
     @PutMapping("/{id}")
@@ -79,9 +79,9 @@ public class UserController implements BaseController<User> {
             user = this.userRepository.save(user);
             this.addLinks(user);
 
-            return this.message("Updating building by id", user, HttpStatus.ACCEPTED);
+            return this.message("Updating user by id", user, HttpStatus.ACCEPTED);
         }
-        return this.message("Building not found", null, HttpStatus.NOT_FOUND);
+        return this.message("user not found", null, HttpStatus.NOT_FOUND);
     }
     @PreAuthorize("hasAuthority('DELETE_USER')")
     @DeleteMapping("/{id}")

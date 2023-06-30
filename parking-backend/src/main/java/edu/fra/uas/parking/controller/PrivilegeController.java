@@ -63,7 +63,7 @@ public class PrivilegeController implements BaseController<Privilege> {
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Privilege privilege) {
         logger.debug("Creating Privilege: {}", privilege);
         Optional<Privilege> optionalPrivilege = (privilege.getId() != null) ? this.privilegeRepository.findById(privilege.getId()) : Optional.empty();
-        if (optionalPrivilege.isPresent()) {
+        if (optionalPrivilege.isPresent() && privilegeRepository.findByName(privilege.getName()).isPresent()) {
             return this.message("Privilege is already exists", null, HttpStatus.CONFLICT);
 
         }

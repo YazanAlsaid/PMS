@@ -1,9 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {Park} from "../../../shared/model/park";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Building} from "../../../shared/model/building";
-import {MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {ClientParkService} from "../../../shared/services/client-park.service";
+import {Floor} from "../../../shared/model/floor";
 
 @Component({
   selector: 'app-add-floor-dialog',
@@ -16,6 +17,7 @@ export class AddFloorDialogComponent implements OnInit {
   public buildingOptions!: Building[];
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any, //erste
     public dialogRef: MatDialogRef<AddFloorDialogComponent>,
     private formBuilder: FormBuilder,
     private clientPark: ClientParkService) {
@@ -38,10 +40,13 @@ export class AddFloorDialogComponent implements OnInit {
   onSubmit() {
     if (this.dialogForm.valid) {
       // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      console.log(this.dialogForm.get('park')?.value);
+      console.log(this.dialogForm.get('building')?.value);
 
+      const floor = new Floor(this.dialogForm.value.name,this.dialogForm.get('building')?.value );
+      this.data.floor=floor;
       // Schließe den Dialog
-      this.dialogRef.close();
+      this.dialogRef.close(this.data);
+
     }
   }
 
