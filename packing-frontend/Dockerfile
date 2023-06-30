@@ -14,7 +14,7 @@ ENV PATH /app/node_modules/.bin:$PATH
 # install and cache app dependencies
 COPY package.json /app/package.json
 RUN npm install
-RUN npm audit fix
+#RUN npm audit fix --force
 RUN npm install -g @angular/cli@16.0.5
 # has to be automated for future work
 
