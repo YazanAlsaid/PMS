@@ -1,5 +1,7 @@
 package edu.fra.uas.parking.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,34 +9,36 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
 @Table(name = "reservations")
 public class Reservation extends BaseEntity {
     @Column(name = "reservation_at", nullable = false)
-    private LocalDateTime reservationAt;
+    private LocalDate reservationAt;
     @Column(name = "reservation_period", nullable = false)
     private Period reservationPeriod;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "user_id")
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "guest_id")
     private Guest guest;
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "nfc_card_id")
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "nfc_card_id", nullable = false)
     private NfcCard nfcCard;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "slot_id")
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "slot_id", nullable = false)
     private Slot slot;
 
     public Reservation() {
     }
 
-    public Reservation(LocalDateTime reservationAt, Period reservationPeriod, User user, Guest guest, NfcCard nfcCard, Slot slot) {
+    public Reservation(LocalDate reservationAt, Period reservationPeriod, User user, Guest guest, NfcCard nfcCard, Slot slot) {
         this.reservationAt = reservationAt;
         this.reservationPeriod = reservationPeriod;
         this.user = user;
@@ -44,12 +48,12 @@ public class Reservation extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public LocalDateTime getReservationAt() {
+    public LocalDate getReservationAt() {
         return reservationAt;
     }
 
     @SuppressWarnings("unused")
-    public void setReservationFrom(LocalDateTime reservationFrom) {
+    public void setReservationFrom(LocalDate reservationFrom) {
         this.reservationAt = reservationFrom;
     }
 
@@ -115,5 +119,13 @@ public class Reservation extends BaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), reservationAt, reservationPeriod);
+    }
+
+    @Override
+    public String toString() {
+        return "Reservation{" +
+                "reservationAt=" + reservationAt +
+                ", reservationPeriod=" + reservationPeriod +
+                '}';
     }
 }

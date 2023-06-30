@@ -31,31 +31,35 @@ public class User extends BaseEntity {
     @Column(name = "last_name", nullable = false)
     @Size(min = 3, max = 50)
     private String lastName;
+    @Column(name = "gender", nullable = false)
+    private Gender gender;
     @Column(name = "email", nullable = false, unique = true)
     @Size(min = 5, max = 250)
     @Email(flags = Pattern.Flag.CASE_INSENSITIVE, message = "You should give a unique email")
     private String email;
+    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "role_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
     @JsonIgnore
-    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToMany(mappedBy = "user")
     private Set<Reservation> reservations = new HashSet<>();
     @JsonIgnore
-    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.DETACH})
+    @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
     private NfcCard nfcCard;
 
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String password) {
+    public User(String firstName, String lastName, Gender gender, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.gender = gender;
         this.email = email;
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         this.password = bCryptPasswordEncoder.encode(password);
@@ -69,6 +73,16 @@ public class User extends BaseEntity {
     @SuppressWarnings("unused")
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @SuppressWarnings("unused")
+    public Gender getGender() {
+        return gender;
+    }
+
+    @SuppressWarnings("unused")
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
     @SuppressWarnings("unused")

@@ -10,6 +10,7 @@ import {ResponseMessage} from "../../../shared/model/response-message";
 })
 export class ParksComponent implements OnInit {
 
+  public myBreakPoint: number = 4;
   public tiles: Park[] = [];
 
   constructor(private clientParking: ClientParkService) {
@@ -20,6 +21,26 @@ export class ParksComponent implements OnInit {
       (response: ResponseMessage) => this.tiles = response.data.content,
       (error: any) => console.log(error.error)
     );
+    this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
+    if (window.innerWidth > 950)
+      this.myBreakPoint = 4;
+    else if (window.innerWidth >= 750 && window.innerWidth <= 950)
+      this.myBreakPoint = 3;
+    else if (window.innerWidth >= 550 && window.innerWidth <= 750)
+      this.myBreakPoint = 2;
+    else if (window.innerWidth <= 550)
+      this.myBreakPoint = 1;
+  }
+
+  handleSize(event: any) {
+    if (event.target.innerWidth > 950)
+      this.myBreakPoint = 4;
+    else if (event.target.innerWidth >= 750 && event.target.innerWidth <= 950)
+      this.myBreakPoint = 3;
+    else if (event.target.innerWidth >= 550 && event.target.innerWidth <= 750)
+      this.myBreakPoint = 2;
+    else if (event.target.innerWidth <= 550)
+      this.myBreakPoint = 1;
   }
 
 }

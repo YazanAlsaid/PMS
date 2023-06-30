@@ -1,1 +1,16 @@
-<p>add-park-dialog works!</p>
+<h2 mat-dialog-title>Add User</h2>
+<mat-dialog-content>
+  <form [formGroup]="dialogForm" (ngSubmit)="onSubmit()" #formDir="ngForm" novalidate>
+    <mat-form-field>
+      <input matInput formControlName="name" placeholder="Name of Park" required>
+      <mat-error *ngIf="dialogForm.controls['name'].invalid">Name is required</mat-error>
+    </mat-form-field>
+
+
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="dialogForm.invalid">Submit</button>
+</mat-dialog-actions>

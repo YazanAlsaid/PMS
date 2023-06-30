@@ -40,6 +40,7 @@ public class GuestController implements BaseController<Guest> {
         logger.debug("Indexing guests: {}", this.guestRepository.count());
         return this.message("Indexing guests", this.guestRepository.findAll(), HttpStatus.OK);
     }
+
     @PreAuthorize("hasAuthority('VIEW_GUESTE')")
     @GetMapping("/{id}")
     public ResponseEntity<ResponseMessage> getById(@PathVariable("id") Long id) {
@@ -50,6 +51,7 @@ public class GuestController implements BaseController<Guest> {
         }
         return this.message("Getting guest by id", this.guestRepository.findById(id), HttpStatus.OK);
     }
+
     @PreAuthorize("hasAuthority('ADD_GUESTE')")
     @PostMapping
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Guest guest) {
@@ -61,6 +63,7 @@ public class GuestController implements BaseController<Guest> {
         Guest createdGuest = this.guestRepository.save(guest);
         return this.message("Creating guest", createdGuest, HttpStatus.CREATED);
     }
+
     @PreAuthorize("hasAuthority('UPDATE_GUESTE')")
     @PutMapping("/{id}")
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Guest guest) {
@@ -72,6 +75,7 @@ public class GuestController implements BaseController<Guest> {
         }
         return this.message("guest not found", null, HttpStatus.NOT_FOUND);
     }
+
     @PreAuthorize("hasAuthority('DELETE_GUESTE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {
