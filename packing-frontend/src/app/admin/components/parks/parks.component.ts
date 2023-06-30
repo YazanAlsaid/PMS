@@ -50,7 +50,19 @@ export class ParksComponent implements AfterViewInit, OnInit {
   }
 
   edit(element: any) {
-
+    this.dialogConfig.data.park = element;
+    this.dialogConfig.data.isUpdate = true;
+    const dialogRef = this.dialog.open(AddParkDialogComponent, this.dialogConfig);
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        if (data.park != null && data.isUpdate) {
+          this.parksService.updatePark(data.park.id, data.park).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          )
+        }
+      }
+    );
   }
 
   create() {
