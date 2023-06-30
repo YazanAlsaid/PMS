@@ -5,7 +5,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {ResponseMessage} from "../../../shared/model/response-message";
 import {Park} from "../../../shared/model/park";
 import {MatSort} from "@angular/material/sort";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 
 @Component({
@@ -17,8 +17,19 @@ export class ParksComponent implements AfterViewInit, OnInit {
   @ViewChild("paginator") paginator!: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource: MatTableDataSource<Park> = new MatTableDataSource<Park>();
+  public dataSource: Park[] = [];
+  public parks:Park[] = [];
 
+  searchQuery: any;
+  private dialogConfig: MatDialogConfig = {
+    width: '400px',
+    autoFocus: true,
+    disableClose: true,
+    data: {
+      park: null,
+      isUpdate: false,
+    }
+  };
   constructor(
     public dialog: MatDialog,
     private parksService: ClientParkService) {
@@ -27,8 +38,8 @@ export class ParksComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     this.parksService.getParks().subscribe(
       (res: ResponseMessage) => {
-        this.dataSource = new MatTableDataSource<Park>(res.data.content)
-        this.dataSource.paginator = this.paginator;
+        this.dataSource = res.data.content;
+        this.parks = this.dataSource;
       },
       (err: any) => console.log(err)
     );
@@ -43,14 +54,17 @@ export class ParksComponent implements AfterViewInit, OnInit {
   }
 
   create() {
-    const dialogRef = this.dialog.open(AddParkDialogComponent, {
-      width: '400px'
-    });
+    const dialogRef = this.dialog.open(AddParkDialogComponent, this.dialogConfig);
 
-    dialogRef.afterClosed().subscribe(result => {
-      // Handle any actions after the dialog is closed
-      console.log('Dialog closed', result);
-    });
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        this.parksService.createPark(data.park).subscribe(
+          (res: any) => this.ngOnInit(),
+          (err: any) => console.log(err.error.error)
+        )
+      }
+    );
+
   }
 
   show(element: any) {
@@ -59,6 +73,21 @@ export class ParksComponent implements AfterViewInit, OnInit {
 
   applyFilter(event: KeyboardEvent) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  exportBuildings() {
+
+  }
+
+  addBuilding() {
+
+  }
+
+  searchBuildings() {
+
+  }
+
+  clearSearch() {
+
   }
 }

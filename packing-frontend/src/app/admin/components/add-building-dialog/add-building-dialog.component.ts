@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {ClientParkService} from "../../../shared/services/client-park.service";
 import {Park} from "../../../shared/model/park";
-import {MatDialogRef} from "@angular/material/dialog";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Building} from "../../../shared/model/building";
 
 @Component({
   selector: 'app-add-building-dialog',
@@ -15,6 +16,7 @@ export class AddBuildingDialogComponent implements OnInit {
   public dialogForm: FormGroup;
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any, //erste
     public dialogRef: MatDialogRef<AddBuildingDialogComponent>,
     private formBuilder: FormBuilder,
     private clientPark: ClientParkService) {
@@ -37,9 +39,10 @@ export class AddBuildingDialogComponent implements OnInit {
     if (this.dialogForm.valid) {
       // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
       console.log(this.dialogForm.get('park')?.value);
-
+      const building = new Building(this.dialogForm.value.name,this.dialogForm.get('park')?.value);
+      this.data.building=building;
       // Schließe den Dialog
-      this.dialogRef.close();
+      this.dialogRef.close(this.data);
     }
   }
 }
