@@ -112,20 +112,6 @@ public class ReservationController implements BaseController<Reservation> {
         return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
 
     }
-    @GetMapping("slots/{id}/reservations")
-    public ResponseEntity<ResponseMessage> getReservationsByBuildingFloorAndSlot(
-            @PathVariable("id") Long slotId,
-            @RequestParam("buildingId") Long buildingId,
-            @RequestParam("floorId") Long floorId
-    ) {
-        List<Reservation> reservations = reservationRepository.findByBuildingFloorAndSlot(buildingId, floorId, slotId);
-
-        if (!reservations.isEmpty()) {
-            return this.message("Reservations found for the specified building, floor, and slot", reservations, HttpStatus.OK);
-        } else {
-            return this.message("No reservations found for the specified building, floor, and slot", null, HttpStatus.NOT_FOUND);
-        }
-    }
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
