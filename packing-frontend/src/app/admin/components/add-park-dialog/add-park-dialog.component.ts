@@ -11,6 +11,7 @@ import {Park} from "../../../shared/model/park";
 export class AddParkDialogComponent {
 
   public dialogForm: FormGroup;
+  private isUpdate: boolean = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -20,11 +21,21 @@ export class AddParkDialogComponent {
     this.dialogForm = this.formBuilder.group({
       name: ['', Validators.required],
     });
+
+    this.isUpdate = this.data.isUpdate;
+    if (this.isUpdate) {
+      console.log()
+      this.dialogForm.get('name')?.setValue(this.data.park.name);
+    }
   }
 
 
   onSubmit(): void {
-    if (this.dialogForm.valid) {
+    if (this.dialogForm.valid && this.isUpdate) {
+      this.data.park.name = this.dialogForm.value.name;
+      // Schließe den Dialog
+      this.dialogRef.close(this.data);
+    } else if (this.dialogForm.valid && !this.isUpdate ) {
       this.data.park = new Park(this.dialogForm.value.name);
       // Schließe den Dialog
       this.dialogRef.close(this.data);
