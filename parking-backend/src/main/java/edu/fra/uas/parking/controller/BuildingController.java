@@ -24,6 +24,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class BuildingController {
     private final Logger logger = LoggerFactory.getLogger(BuildingController.class);
     private final BuildingRepository buildingRepository;
+    private @Valid Building r;
 
     @Autowired
     public BuildingController(BuildingRepository buildingRepository) {
@@ -57,7 +58,8 @@ public class BuildingController {
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Building building) {
         logger.debug("Creating building: {}", building);
         Optional<Building> optionalBuilding = (building.getId() != null) ? this.buildingRepository.findById(building.getId()) : Optional.empty();
-        if (optionalBuilding.isPresent()) {
+        r = building;
+        if (optionalBuilding.isPresent() && buildingRepository.findByName(building.getName())) {
             return this.message("Building is already exists", null, HttpStatus.CONFLICT);
 
         }

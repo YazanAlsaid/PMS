@@ -61,7 +61,7 @@ public class RoleController implements BaseController<Role> {
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Role role) {
         logger.debug("Creating role: {}", role);
         Optional<Role> optionalRole = (role.getId() != null) ? this.roleRepository.findById(role.getId()) : Optional.empty();
-        if (optionalRole.isPresent()) {
+        if (optionalRole.isPresent() && roleRepository.findByName(role.getName()).isPresent()) {
             return this.message("Role is already exists", null, HttpStatus.CONFLICT);
 
         }
