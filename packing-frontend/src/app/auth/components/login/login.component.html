@@ -15,7 +15,7 @@
       </mat-form-field>
       <button type="submit" class="btn-primary">Login</button>
       <div class="forgot-password-container">
-        <a href="#" class="forgot-password-link">Forgot Your Password?</a>
+        <a href="/auth/reset-password" class="forgot-password-link">Forgot Your Password?</a>
       </div>
       <div *ngIf="isLoginFailed" class="alert alert-danger mt-3" role="alert">{{ errorMessage }}</div>
     </form>

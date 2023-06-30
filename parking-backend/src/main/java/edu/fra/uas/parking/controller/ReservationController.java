@@ -2,7 +2,11 @@ package edu.fra.uas.parking.controller;
 
 import edu.fra.uas.parking.common.ResponseMessage;
 import edu.fra.uas.parking.entity.Reservation;
+
+import edu.fra.uas.parking.repository.BuildingRepository;
+import edu.fra.uas.parking.repository.FloorRepository;
 import edu.fra.uas.parking.repository.ReservationRepository;
+import edu.fra.uas.parking.repository.SlotRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +18,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
+
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -23,12 +29,19 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/reservations")
 public class ReservationController implements BaseController<Reservation> {
 
-    private final ReservationRepository reservationRepository;
+
     private final Logger logger = LoggerFactory.getLogger(ReservationController.class);
+    private BuildingRepository buildingRepository;
+    private ReservationRepository reservationRepository;
+    private FloorRepository floorRepository;
+    private SlotRepository slotRepository;
 
     @Autowired
-    public ReservationController(ReservationRepository reservationRepository) {
+    public ReservationController(ReservationRepository reservationRepository,BuildingRepository buildingRepository,FloorRepository floorRepository,SlotRepository slotRepository) {
         this.reservationRepository = reservationRepository;
+        this.buildingRepository = buildingRepository;
+        this.floorRepository = floorRepository;
+        this.slotRepository = slotRepository;
     }
 
     @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
@@ -40,9 +53,7 @@ public class ReservationController implements BaseController<Reservation> {
         reservations.add(linkTo(methodOn(ReservationController.class).index()).withSelfRel());
         reservations.forEach(this::addLinks);
         return this.message("Indexing reservation", this.reservationRepository.findAll(), HttpStatus.OK);
-
     }
-
     @PreAuthorize("hasAuthority('VIEW_RESERVATION')")
     @GetMapping("/{id}")
     @Override
@@ -55,7 +66,6 @@ public class ReservationController implements BaseController<Reservation> {
         Reservation reservation = this.addLinks(optionalReservation.get());
         return this.message("Getting reservation by id", reservation, HttpStatus.OK);
     }
-
     @PreAuthorize("hasAuthority('ADD_RESERVATION')")
     @PostMapping
     @Override
@@ -102,11 +112,23 @@ public class ReservationController implements BaseController<Reservation> {
         return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
 
     }
+    @GetMapping("slots/{id}/reservations")
+    public ResponseEntity<ResponseMessage> getReservationsByBuildingFloorAndSlot(
+            @PathVariable("id") Long slotId,
+            @RequestParam("buildingId") Long buildingId,
+            @RequestParam("floorId") Long floorId
+    ) {
+        List<Reservation> reservations = reservationRepository.findByBuildingFloorAndSlot(buildingId, floorId, slotId);
 
+        if (!reservations.isEmpty()) {
+            return this.message("Reservations found for the specified building, floor, and slot", reservations, HttpStatus.OK);
+        } else {
+            return this.message("No reservations found for the specified building, floor, and slot", null, HttpStatus.NOT_FOUND);
+        }
+    }
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
-
     private Reservation addLinks(Reservation reservation) {
         reservation.add(linkTo(methodOn(ReservationController.class).getById(reservation.getId())).withSelfRel());
         reservation.add(linkTo(methodOn(ReservationController.class).index()).withRel(IanaLinkRelations.COLLECTION));
