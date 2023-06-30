@@ -32,4 +32,8 @@ export class ClientBuildingService {
   public deleteBuilding(id: number): Observable<ResponseMessage> {
     return this.httpService.delete("buildings", id);
   }
+
+  public getFloors(id: any): Observable<any> {
+    return this.httpService.getSubList("buildings", id,'floors');
+  }
 }

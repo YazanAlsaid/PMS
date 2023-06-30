@@ -66,7 +66,7 @@ public class ParkController implements BaseController<Park> {
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Park park) {
         logger.debug("Creating park: {}", park);
         Optional<Park> optionalPark = (park.getId() != null) ? this.parkRepository.findById(park.getId()) : Optional.empty();
-        if (optionalPark.isPresent()) {
+        if (optionalPark.isPresent() && parkRepository.findByName(park.getName())) {
             return this.message("Park is already exists", null, HttpStatus.CONFLICT);
 
         }
@@ -79,7 +79,7 @@ public class ParkController implements BaseController<Park> {
     @PreAuthorize("hasAuthority('UPDATE_PARK')")
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, Park park) {
+    public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @Valid    @RequestBody Park park) {
         logger.debug("Updating park by id: {}", id);
         Optional<Park> optionalPark = this.parkRepository.findById(id);
         if (optionalPark.isPresent() && optionalPark.get().getId().equals(park.getId())) {

@@ -3,6 +3,8 @@ import {MatDialog} from '@angular/material/dialog';
 import {CalendarComponent} from 'src/app/shared/components/calendar/calendar.component';
 import {ClientSlotService} from "../../../shared/services/client-slot.service";
 import {Slot} from "../../../shared/model/slot";
+import {ClientFloorService} from "../../../shared/services/client-floor.service";
+import {ActivatedRoute} from "@angular/router";
 
 export interface Reservation {
   id: number;
@@ -28,14 +30,30 @@ enum ReservationTime {
 export class SlotComponent implements OnInit {
   public slots: Slot[] = [];
   public myBreakPoint: number = 4;
+  private parkId!: number;
+  private buildingId!: number;
+  private floorId!: number;
 
   constructor(
+    private activatedRoute: ActivatedRoute,
     public dialog: MatDialog,
-    private clientSlots: ClientSlotService
+    private clientFloors: ClientFloorService
   ) {
+    this.activatedRoute.params.subscribe((params: any) => {
+      this.parkId = params.parkId;
+      this.buildingId = params.buildingId
+      this.floorId = params.floorId
+    });
   }
 
   ngOnInit() {
+    const resolveData = this.activatedRoute.snapshot.data['slots'];
+    if (resolveData.data){
+      this.slots = resolveData.data;
+    } else {
+      console.log(resolveData.message);
+    }
+
     this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
     if (window.innerWidth > 950)
       this.myBreakPoint = 4;
@@ -45,11 +63,6 @@ export class SlotComponent implements OnInit {
       this.myBreakPoint = 2;
     else if (window.innerWidth <= 550)
       this.myBreakPoint = 1;
-
-    this.clientSlots.getSlots().subscribe(
-      (res: any) => this.slots = res.data,
-      (err: any) => console.log(err)
-    )
   }
 
   onSelect(parking: Slot) {

@@ -1,17 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {ClientFloorService} from "../../../shared/services/client-floor.service";
 import {Floor} from "../../../shared/model/floor";
-
-export interface Tile {
-  color: string;
-  cols: number;
-  rows: number;
-  text: string;
-  free: number;
-  frauen: number;
-  eAuto: number;
-  disability: number;
-}
+import {ActivatedRoute, Router} from "@angular/router";
+import {ClientBuildingService} from "../../../shared/services/client-building.service";
 
 @Component({
   selector: 'app-floors',
@@ -22,15 +12,28 @@ export class FloorsComponent implements OnInit {
 
   public floors: Floor[] = [];
   public myBreakPoint: number = 4;
+  private parkId!: number;
+  private buildingId!: number;
 
-  constructor(private clientFloor: ClientFloorService) {
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private clientBuilding: ClientBuildingService,
+    private router: Router) {
+    this.activatedRoute.params.subscribe((params: any) => {
+      this.parkId = params.parkId;
+      this.buildingId = params.buildingId
+    });
   }
 
   ngOnInit(): void {
-    this.clientFloor.getFloors().subscribe(
-      (res: any) => this.floors = res.data,
-      (err: any) => console.log(err)
-    )
+    const resolverData = this.activatedRoute.snapshot.data['floors'];
+    console.log(resolverData.data);
+    if (resolverData.data){
+      this.floors=resolverData.data;
+    }else {
+      console.log(resolverData.message);
+    }
+
     this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
     if (window.innerWidth > 950)
       this.myBreakPoint = 4;
@@ -51,5 +54,11 @@ export class FloorsComponent implements OnInit {
       this.myBreakPoint = 2;
     else if (event.target.innerWidth <= 550)
       this.myBreakPoint = 1;
+  }
+
+  onClickFloor(id: number) {
+    console.log('/user/parks/' + this.parkId + '/buildings/' + this.buildingId + '/floors/' + id + '/slots')
+    this.router.navigateByUrl('/user/parks/' + this.parkId + '/buildings/' + this.buildingId + '/floors/' + id + '/slots').then(() => {
+    });
   }
 }

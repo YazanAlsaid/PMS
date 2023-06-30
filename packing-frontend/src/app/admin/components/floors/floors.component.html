@@ -1,49 +1,38 @@
-<mat-card class="mb-3 shadow">
-  <mat-card-title class="text-center mt-3">Floors</mat-card-title>
+<mat-card class="shadow">
+  <mat-card-title class="text-center mt-3">Floor</mat-card-title>
   <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="create()">Add Floor</button>
-    <button mat-raised-button color="primary" class="mx-3">Export Floors</button>
+    <button mat-raised-button color="primary" (click)="exportBuildings()" class="mx-3">Export Floors</button>
+    <button mat-raised-button color="primary" (click)="create()" class="mx-3">Add Floor</button>
+    <mat-form-field appearance="fill">
+      <mat-label>Search Building</mat-label>
+      <input matInput type="text" class="mr-3" [(ngModel)]="searchQuery" (ngModelChange)="searchBuildings()"/>
+      <button mat-button *ngIf="searchQuery" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
   </mat-card-actions>
   <mat-card-content>
-    <table mat-table [dataSource]="dataSource" class="table table-hover table-striped">
-      <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef>No.</th>
-        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>Name</th>
-        <td mat-cell *matCellDef="let element">{{ element.name }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="createdAt">
-        <th mat-header-cell *matHeaderCellDef>Created At</th>
-        <td mat-cell *matCellDef="let element">{{ element['createdAt'] | date:'yyyy.MM.dd hh:mm:ss'}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="updatedAt">
-        <th mat-header-cell *matHeaderCellDef>updatedAt</th>
-        <td mat-cell *matCellDef="let element">{{ element['updatedAt'] | date:'yyyy.MM.dd hh:mm:ss' }}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="action">
-        <th mat-header-cell *matHeaderCellDef>Action</th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button (click)="edit(element)" color="primary">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button (click)="show(element)" color="primary">
-            <mat-icon>remove_red_eye</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
-                   showFirstLastButtons
-                   aria-label="Select page of periodic elements">
-    </mat-paginator>
+    <mat-grid-list cols="4" rowHeight="230px" gutterSize="16px" class="building-grid">
+      <mat-grid-tile *ngFor="let floor of dataSource">
+        <mat-card class="building-card border border-primary shadow">
+          <mat-card-title class="building-title mt-3">Floor {{ floor.id }}</mat-card-title>
+          <mat-card-content>
+            <p class="building-info">Name: {{ floor.name }}</p>
+            <p class="building-info">Created At: {{ floor.createdAt | date:'yyyy.MM.dd hh:mm:ss' }}</p>
+            <p class="building-info">Updated At: {{ floor.updatedAt | date:'yyyy.MM.dd hh:mm:ss' }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-icon-button (click)="edit(floor)" color="primary">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="show(floor)" color="primary">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
   </mat-card-content>
 </mat-card>
+
+

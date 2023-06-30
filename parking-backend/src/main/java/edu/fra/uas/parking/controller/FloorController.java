@@ -58,13 +58,13 @@ public class FloorController implements BaseController<Floor> {
 
     }
 
-    @PreAuthorize("hasAuthority('CREATE_FLOOR')")
+    @PreAuthorize("hasAuthority('ADD_FLOOR')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Floor floor) {
         logger.debug("Creating floor: {}", floor);
         Optional<Floor> optionalFloor = (floor.getId() != null) ? this.floorRepository.findById(floor.getId()) : Optional.empty();
-        if (optionalFloor.isPresent()) {
+        if (optionalFloor.isPresent() && floorRepository.findByName(floor.getName()).isPresent()) {
             return this.message("Floor is already exists", null, HttpStatus.CONFLICT);
 
         }

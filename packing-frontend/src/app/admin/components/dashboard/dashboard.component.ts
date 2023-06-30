@@ -5,6 +5,8 @@ import {MatDialog} from '@angular/material/dialog';
 import {AddUserDialogComponent} from '../add-user-dialog/add-user-dialog.component';
 import {AddSlotDialogComponent} from "../add-slot-dialog/add-slot-dialog.component";
 import {Chart, registerables} from 'chart.js';
+import {ClientStatisticService} from "../../../shared/services/client-statistic.service";
+import {ResponseMessage} from "../../../shared/model/response-message";
 
 
 @Component({
@@ -13,6 +15,7 @@ import {Chart, registerables} from 'chart.js';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
+  public counterData!: any;
   sub: any;
   public myBreakPoint: number = 0;
   public chart: any = [];
@@ -20,7 +23,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    public dialog: MatDialog) {
+    public dialog: MatDialog,
+    private clientStatistic: ClientStatisticService) {
     Chart.register(...registerables);
   }
 
@@ -29,6 +33,14 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.sub = this.activatedRoute.data.subscribe((v) => (this.data = v));
+    this.clientStatistic.getCounts().subscribe(
+      (res: ResponseMessage) => {
+        this.counterData = res.data;
+        console.log(this.counterData);
+      },
+      (err: any) => console.log(err)
+    );
+
     this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
     if (window.innerWidth > 950)
       this.myBreakPoint = 4;
@@ -118,30 +130,32 @@ export class DashboardComponent implements OnInit {
       "KW24", "KW25", "KW26", "KW27", "KW28", "KW29", "KW30", "KW31", "KW32", "KW34", "KW35",
       "KW36", "KW37", "KW38", "KW39", "KW40", "KW41", "KW42", "KW43", "KW44", "KW45", "KW46",
       "KW47", "KW48", "KW49", "KW50", "KW51", "KW52"];
+
     for (let label of labels) {
       this.chart.data.labels.push(label);
     }
-    const data = [10, 25, 14, 13, 78, 45, 21, 25, 32, 24, 57, 62,
-      10, 25, 14, 13, 78, 45, 21, 25, 32, 24, 57, 62,
-      10, 25, 14, 13, 78, 45, 21, 25, 32, 24, 57, 62,
-      10, 25, 14, 13, 78, 45, 21, 25, 32, 24, 57, 62,
-      10, 25, 14, 13, 78, 45, 21, 25, 32, 24, 57, 62, 45, 12];
-    const dataset = {
-      label: '# of Reservations',
-      data: data,
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)'
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-      ],
-      borderWidth: 1
-    };
+    this.clientStatistic.getNumberOfReservationInEachWeek().subscribe(
+      (res: ResponseMessage) => {
+        const data = res.data;
+        const dataset = {
+          label: '# of Reservations',
+          data: data,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+          ],
+          borderWidth: 1
+        }
 
-    this.chart.data.datasets.push(dataset);
-    this.chart.update();
+        this.chart.data.datasets.push(dataset);
+        this.chart.update();
+      },
+      (err: any) => console.log(err)
+    );
   }
 
   onMonth() {
@@ -152,23 +166,28 @@ export class DashboardComponent implements OnInit {
       this.chart.data.labels.push(label);
     }
 
-    const data = [100, 250, 140, 130, 780, 450, 210, 250, 320, 240, 570, 620];
-    const dataset = {
-      label: '# of Reservations',
-      data: data,
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)'
-      ],
-      borderColor: [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-      ],
-      borderWidth: 1
-    }
+    this.clientStatistic.getNumberOfReservationInEachMonth().subscribe(
+      (res: ResponseMessage) => {
+        const data = res.data;
+        const dataset = {
+          label: '# of Reservations',
+          data: data,
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+          ],
+          borderWidth: 1
+        }
 
-    this.chart.data.datasets.push(dataset);
-    this.chart.update();
+        this.chart.data.datasets.push(dataset);
+        this.chart.update();
+      },
+      (err: any) => console.log(err)
+    );
   }
 
   private removeDataChart() {
