@@ -12,26 +12,24 @@ import {ClientSlotService} from "../../../shared/services/client-slot.service";
   templateUrl: './slots.component.html',
   styleUrls: ['./slots.component.scss']
 })
-export class SlotsComponent implements AfterViewInit, OnInit {
+export class SlotsComponent implements OnInit {
   @ViewChild(MatPaginator)
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource = new MatTableDataSource();
+  public dataSource: Slot[] = [];
+  public slots: Slot[] = [];
+  searchQuery: any;
 
   constructor(
     public dialog: MatDialog,
     private clientSlots: ClientSlotService) {
   }
 
-  ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-  }
-
   ngOnInit(): void {
     this.clientSlots.getSlots().subscribe(
       (res: any) => {
-        this.dataSource.data = res.data;
-        this.dataSource.paginator = this.paginator;
+        this.dataSource = res.data;
+        this.slots = res.data;
       },
       (err: any) => console.log(err)
     )
@@ -54,6 +52,22 @@ export class SlotsComponent implements AfterViewInit, OnInit {
 
 
   show(element: any) {
+
+  }
+
+  exportBuildings() {
+
+  }
+
+  addBuilding() {
+
+  }
+
+  searchBuildings() {
+
+  }
+
+  clearSearch() {
 
   }
 }
