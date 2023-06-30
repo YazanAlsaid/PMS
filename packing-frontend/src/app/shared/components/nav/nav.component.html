@@ -11,7 +11,7 @@
     <span>{{ title }}</span>
   </a>
   <span class="example-spacer"></span>
-<!--  <button
+  <!-- <button
     mat-icon-button
     class="example-icon favorite-icon"
     aria-label="Example icon-button with heart icon"
@@ -24,5 +24,13 @@
     aria-label="Example icon-button with share icon"
   >
     <mat-icon>share</mat-icon>
-  </button>-->
+  </button> -->
+  <button
+    mat-icon-button
+    class="example-icon"
+    (click)="logout()"
+    aria-label="Example icon-button with logout icon"
+  >
+    <mat-icon>exit_to_app</mat-icon>
+  </button>
 </mat-toolbar>
