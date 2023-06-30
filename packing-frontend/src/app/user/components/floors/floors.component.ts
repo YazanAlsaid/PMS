@@ -26,10 +26,13 @@ export class FloorsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.clientBuilding.getFloors(this.buildingId).subscribe(
-      (res: any) => this.floors = res.data,
-      (err: any) => console.log(err)
-    )
+    const resolverData = this.activatedRoute.snapshot.data['floors'];
+    console.log(resolverData.data);
+    if (resolverData.data){
+      this.floors=resolverData.data;
+    }else {
+      console.log(resolverData.message);
+    }
 
     this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
     if (window.innerWidth > 950)

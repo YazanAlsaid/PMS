@@ -47,6 +47,13 @@ export class SlotComponent implements OnInit {
   }
 
   ngOnInit() {
+    const resolveData = this.activatedRoute.snapshot.data['slots'];
+    if (resolveData.data){
+      this.slots = resolveData.data;
+    } else {
+      console.log(resolveData.message);
+    }
+
     this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
     if (window.innerWidth > 950)
       this.myBreakPoint = 4;
@@ -56,11 +63,6 @@ export class SlotComponent implements OnInit {
       this.myBreakPoint = 2;
     else if (window.innerWidth <= 550)
       this.myBreakPoint = 1;
-
-    this.clientFloors.getSlots(this.floorId).subscribe(
-      (res: any) => this.slots = res.data,
-      (err: any) => console.log(err)
-    )
   }
 
   onSelect(parking: Slot) {

@@ -105,16 +105,6 @@ public class SlotController implements BaseController<Slot> {
         return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
     }
 
-    @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
-    @GetMapping("/{id}/reservations")
-    public ResponseEntity<ResponseMessage> getReservationsBySlotId(@PathVariable("id") Long id) {
-        logger.debug("Getting reservations by slot id: {}", id);
-        Optional<Slot> slot = this.slotRepository.findById(id);
-        return slot.map(value ->
-                        this.message("Getting reservations by slot id", value.getReservations(), HttpStatus.OK))
-                .orElseGet(() -> this.message("Slot not found", null, HttpStatus.NOT_FOUND));
-    }
-
     @PreAuthorize("hasAuthority('VIEW_FLOOR')")
     @GetMapping("/{id}/floor")
     public ResponseEntity<ResponseMessage> getFloorBySlotId(@PathVariable("id") Long id) {
@@ -135,13 +125,14 @@ public class SlotController implements BaseController<Slot> {
                 .orElseGet(() -> this.message("Slot not found", null, HttpStatus.NOT_FOUND));
     }
 
+    @PreAuthorize("hasAuthority('VIEW_SLOTS')")
     @GetMapping("/{id}/reservations")
-    public ResponseEntity<ResponseMessage> getReservationsByBuildingFloorAndSlot(
+    public ResponseEntity<ResponseMessage> getReservationsBySlotId(
             @PathVariable("id") Long slotId,
             @RequestParam("buildingId") Long buildingId,
             @RequestParam("floorId") Long floorId
     ) {
-        List<Reservation> reservations = this.reservationRepository.findByBuildingFloorAndSlot(buildingId, floorId, slotId);
+        List<Reservation> reservations = reservationRepository.findByBuildingFloorAndSlot(buildingId, floorId, slotId);
 
         if (!reservations.isEmpty()) {
             return this.message("Reservations found for the specified building, floor, and slot", reservations, HttpStatus.OK);
@@ -157,7 +148,7 @@ public class SlotController implements BaseController<Slot> {
     private Slot addLinks(Slot slot) {
         slot.add(linkTo(methodOn(SlotController.class).getById(slot.getId())).withSelfRel());
         slot.add(linkTo(methodOn(SlotController.class).index()).withRel(IanaLinkRelations.COLLECTION));
-        slot.add(linkTo(methodOn(SlotController.class).getReservationsBySlotId(slot.getId())).withRel("reservations"));
+        slot.add(linkTo(methodOn(SlotController.class).getReservationsBySlotId(slot.getId(), null, null)).withRel("reservations"));
 
         return slot;
     }

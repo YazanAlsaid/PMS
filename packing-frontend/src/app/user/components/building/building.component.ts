@@ -26,11 +26,6 @@ export class BuildingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-   /* this.clientPark.getBuilding(this.parkId).subscribe(
-      (res: any) => this.buildings = res.data,
-      (err: any) => console.log(err)
-    )*/
-
     const resolverData = this.activatedRoute.snapshot.data['buildings'];
     if (resolverData.data){
       this.buildings=resolverData.data;
