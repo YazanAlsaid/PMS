@@ -22,13 +22,21 @@ export class BuildingComponent implements OnInit {
     private clientPark: ClientParkService,
     private router: Router) {
     this.activatedRoute.params.subscribe((params: any) => this.parkId = params.parkId);
+
   }
 
   ngOnInit(): void {
-    this.clientPark.getBuilding(this.parkId).subscribe(
+   /* this.clientPark.getBuilding(this.parkId).subscribe(
       (res: any) => this.buildings = res.data,
       (err: any) => console.log(err)
-    )
+    )*/
+
+    const resolverData = this.activatedRoute.snapshot.data['buildings'];
+    if (resolverData.data){
+      this.buildings=resolverData.data;
+    }else {
+      console.log(resolverData.message);
+    }
 
     this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
     if (window.innerWidth > 950)
