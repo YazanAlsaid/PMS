@@ -5,6 +5,7 @@ import {ClientBuildingService} from "../../../shared/services/client-building.se
 import {MatDialog} from "@angular/material/dialog";
 import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-dialog.component";
+import {Building} from "../../../shared/model/building";
 
 @Component({
   selector: 'app-buildings',
@@ -15,7 +16,9 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator)
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource = new MatTableDataSource();
+  public dataSource: Building[] = [];
+  buildings: Building[] = [];
+  searchQuery: string = '';
 
   constructor(
     private dialog: MatDialog,
@@ -23,23 +26,27 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   }
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    // this.dataSource.paginator = this.paginator;
   }
 
   ngOnInit(): void {
     this.clientBuilding.getBuildings().subscribe(
       (res: any) => {
-        this.dataSource.data = res.data;
-        this.dataSource.paginator = this.paginator;
+        this.buildings = res.data;
+        this.dataSource = this.buildings;
+        // this.dataSource.paginator = this.paginator;
       },
       (err: any) => console.log(err)
     )
   }
 
-  edit(element: any) {
-
+  edit(building: any): void {
+    // Handle edit functionality
   }
 
+  show(building: any): void {
+    // Handle view functionality
+  }
   create() {
     const dialogRef = this.dialog.open(AddBuildingDialogComponent, {
       width: '400px'
@@ -51,7 +58,38 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
     });
   }
 
-  show(element: any) {
+  getRandomColor(): string {
+    // Generate a random color code
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
 
+  exportBuildings() {
+    // Add logic to export buildings
+    // This function will be called when the "Export Buildings" button is clicked
+  }
+
+  addBuilding() {
+    // Add logic to add a new building
+    // This function will be called when the "Add Building" button is clicked
+  }
+
+  searchBuildings() {
+    if (this.searchQuery.trim() !== '') {
+      this.dataSource = this.buildings.filter(building =>
+        building.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    } else {
+      this.dataSource = this.buildings;
+    }
+  }
+
+  clearSearch() {
+    this.searchQuery = '';
+    this.dataSource = this.buildings;
   }
 }
