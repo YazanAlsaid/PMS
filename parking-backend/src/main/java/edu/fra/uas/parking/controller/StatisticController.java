@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -84,7 +85,14 @@ public class StatisticController {
         }
         return this.message("Reservation counts by month", countByMonth);
     }
-
+    @GetMapping("/reservationCountByWeek")
+    public ResponseEntity<ResponseMessage> getReservationCountByWeek() {
+        return this.message("Reservation counts by month", reservationRepository.getReservationCountByWeek());
+    }
+    @GetMapping("/reservationCountByMonth")
+    public ResponseEntity<ResponseMessage> getReservationCountByMonth() {
+        return this.message("Reservation counts by month", reservationRepository.getReservationCountByMonth());
+    }
     private ResponseEntity<ResponseMessage> message(String message, Object data) {
         return new ResponseEntity<>(new ResponseMessage(message, data), HttpStatus.OK);
     }
