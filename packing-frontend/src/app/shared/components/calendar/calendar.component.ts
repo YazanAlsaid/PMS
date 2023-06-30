@@ -25,7 +25,9 @@ export class CalendarComponent implements OnInit {
   @ViewChild('modalContent', {static: true}) modalContent!: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
+
   CalendarView = CalendarView;
+
   viewDate: Date = new Date();
   refresh = new Subject<void>();
   activeDayIsOpen: boolean = true;
