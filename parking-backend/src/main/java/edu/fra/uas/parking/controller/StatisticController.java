@@ -42,7 +42,7 @@ public class StatisticController {
         this.slotRepository = slotRepository;
     }
 
-    @GetMapping("view-numbers")
+    @GetMapping("/counts")
     public ResponseEntity<ResponseMessage> getAllAttributes() {
         long numberOFUsers = userRepository.count();
         long numberOfParks = parkRepository.count();
@@ -52,7 +52,7 @@ public class StatisticController {
         return this.message("All Counts of Attributes", statistics);
     }
 
-    @GetMapping("view-statistics-week")
+    @GetMapping("/week")
     public ResponseEntity<ResponseMessage> getNumberOfReservationInEachWeek() {
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
         int numOfWeeks = LocalDate.of(LocalDate.now().getYear(), 12, 31).get(weekFields.weekOfYear());
@@ -69,7 +69,7 @@ public class StatisticController {
         return this.message("Reservation counts by week", countByWeek);
     }
 
-    @GetMapping("view-statistics-month")
+    @GetMapping("/month")
     public ResponseEntity<ResponseMessage> getNumberOfReservationInEachMonth() {
 
         CollectionModel<Reservation> reservations = CollectionModel.of(this.reservationRepository.findAll());

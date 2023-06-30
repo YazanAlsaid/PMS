@@ -62,8 +62,8 @@ public class SlotController implements BaseController<Slot> {
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Slot slot) {
         logger.debug("Creating slot: {}", slot);
         Optional<Slot> optionalSlot = (slot.getId() != null) ? this.slotRepository.findById(slot.getId()) : Optional.empty();
-        if (optionalSlot.isPresent()) {
-            return this.message("Building is already exists", null, HttpStatus.CONFLICT);
+        if (optionalSlot.isPresent() && slotRepository.findByName(slot.getName()).isPresent()) {
+            return this.message("slot is already exists", null, HttpStatus.CONFLICT);
 
         }
         Slot slotCreated = this.slotRepository.save(slot);

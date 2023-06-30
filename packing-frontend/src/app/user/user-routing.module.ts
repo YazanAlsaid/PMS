@@ -14,10 +14,23 @@ const routes: Routes = [
     component: UserAppComponent,
     children: [
       { path: 'dashboard', component: UserDashboardComponent, pathMatch: 'full',canActivate: [AuthGuard], data: { title: 'dashboard', roles: ['user', 'admin'] } },
-      { path: 'buildings', component: BuildingComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Buildings', roles: ['user', 'admin'] } },
-      { path: 'floors', component: FloorsComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Floors', roles: ['user', 'admin'] } },
-      { path: 'slots', component: SlotComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Slots', roles: ['user', 'admin'] } },
-      { path: 'parks', component: ParksComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Parks', roles: ['user', 'admin'] } },
+      { path: 'parks',  children:[
+          { path: '', component: ParksComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Parks', roles: ['user', 'admin'] } },
+          { path: ':parkId', children:[
+              {path:'buildings', children:[
+                  { path: '', component: BuildingComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Buildings', roles: ['user', 'admin'] } },
+                  { path: ':buildingId', children:[
+                      { path: 'floors', children:[
+                          { path: '', component: FloorsComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Floors', roles: ['user', 'admin'] } },
+                          { path: ':floorId', children:[
+                              { path: 'slots', component: SlotComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Slots', roles: ['user', 'admin'] } },
+                            ] }
+                        ]},
+                    ]}
+                ] },
+            ] },
+        ] },
+
       // ... other routes
       { path: '', redirectTo: '/user/dashboard', pathMatch: 'full', },
     ],

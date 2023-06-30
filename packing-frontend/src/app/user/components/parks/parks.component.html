@@ -4,10 +4,10 @@
     <mat-grid-list [cols]="myBreakPoint" cols="4" rowHeight="120px" (window:resize)="handleSize($event)"
                    gutterSize="25px">
       <ng-container *ngIf="tiles.length > 0; else noItemsTemplate">
-        <mat-grid-tile *ngFor="let item of tiles">
+        <mat-grid-tile *ngFor="let item of tiles" (click)="onClickPark(item.id)">
           <div class="card">
             <h5 class="card-title text-center">{{item.name}}</h5>
-            <p class="card-text text-center"> {{item['buildingCount']}}</p>
+            <p class="card-text text-center">Count of Building: {{item['buildingCount']}}</p>
           </div>
         </mat-grid-tile>
       </ng-container>

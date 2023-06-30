@@ -66,7 +66,7 @@ public class ParkController implements BaseController<Park> {
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Park park) {
         logger.debug("Creating park: {}", park);
         Optional<Park> optionalPark = (park.getId() != null) ? this.parkRepository.findById(park.getId()) : Optional.empty();
-        if (optionalPark.isPresent()) {
+        if (optionalPark.isPresent() && parkRepository.findByName(park.getName())) {
             return this.message("Park is already exists", null, HttpStatus.CONFLICT);
 
         }
