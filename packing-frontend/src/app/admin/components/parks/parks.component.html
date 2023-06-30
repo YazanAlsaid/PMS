@@ -1,8 +1,8 @@
 <mat-card class="shadow">
   <mat-card-title class="text-center mt-3">Park</mat-card-title>
   <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="exportBuildings()" class="mx-3">Export Buildings</button>
-    <button mat-raised-button color="primary" (click)="addBuilding()" class="mx-3">Add Building</button>
+    <button mat-raised-button color="primary" (click)="exportBuildings()" class="mx-3">Export Parks</button>
+    <button mat-raised-button color="primary" (click)="create()" class="mx-3">Add Park</button>
     <mat-form-field appearance="fill">
       <mat-label>Search Building</mat-label>
       <input matInput type="text" class="mr-3" [(ngModel)]="searchQuery" (ngModelChange)="searchBuildings()"/>
