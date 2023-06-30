@@ -4,7 +4,7 @@ import {MatTableDataSource} from "@angular/material/table";
 import {Slot} from "../../../shared/model/slot";
 import {Type} from "../../../shared/model/type";
 import {AddSlotDialogComponent} from "../add-slot-dialog/add-slot-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientSlotService} from "../../../shared/services/client-slot.service";
 
 @Component({
@@ -19,6 +19,16 @@ export class SlotsComponent implements OnInit {
   public dataSource: Slot[] = [];
   public slots: Slot[] = [];
   searchQuery: any;
+
+  private dialogConfig: MatDialogConfig = {
+    width: '400px',
+    autoFocus: true,
+    disableClose: true,
+    data: {
+      slot: null,
+      isUpdate: false,
+    }
+  };
 
   constructor(
     public dialog: MatDialog,
@@ -40,14 +50,18 @@ export class SlotsComponent implements OnInit {
   }
 
   create() {
-    const dialogRef = this.dialog.open(AddSlotDialogComponent, {
-      width: '400px'
-    });
+    const dialogRef = this.dialog.open(AddSlotDialogComponent,this.dialogConfig);
 
-    dialogRef.afterClosed().subscribe(result => {
-      // Handle any actions after the dialog is closed
-      console.log('Dialog closed', result);
-    });
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        if (data.slot != null) {
+          this.clientSlots.createSlot(data.slot).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          )
+        }
+      }
+    );
   }
 
 
@@ -70,4 +84,6 @@ export class SlotsComponent implements OnInit {
   clearSearch() {
 
   }
+
+
 }
