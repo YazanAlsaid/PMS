@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
 import {Building} from "../../../shared/model/building";
+import {ActivatedRoute, Router} from "@angular/router";
+import {ClientParkService} from "../../../shared/services/client-park.service";
 
 @Component({
   selector: 'app-building',
@@ -10,18 +12,26 @@ import {Building} from "../../../shared/model/building";
 
 
 export class BuildingComponent implements OnInit {
-
+  private parkId!: number;
   public myBreakPoint: number = 0
   public buildings: Building[] = [];
 
-  constructor(private clientBuilding: ClientBuildingService) {
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private clientBuilding: ClientBuildingService,
+    private clientPark: ClientParkService,
+    private router: Router) {
+    this.activatedRoute.params.subscribe((params: any) => this.parkId = params.parkId);
+
   }
 
   ngOnInit(): void {
-    this.clientBuilding.getBuildings().subscribe(
-      (res: any) => this.buildings = res.data,
-      (err: any) => console.log(err)
-    )
+    const resolverData = this.activatedRoute.snapshot.data['buildings'];
+    if (resolverData.data){
+      this.buildings=resolverData.data;
+    }else {
+      console.log(resolverData.message);
+    }
 
     this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
     if (window.innerWidth > 950)
@@ -44,5 +54,10 @@ export class BuildingComponent implements OnInit {
       this.myBreakPoint = 2;
     else if (event.target.innerWidth <= 550)
       this.myBreakPoint = 1;
+  }
+
+  onClickBuilding(id: number) {
+    this.router.navigateByUrl('/user/parks/' + this.parkId + '/buildings/'+ id + '/floors').then(() => {
+    });
   }
 }

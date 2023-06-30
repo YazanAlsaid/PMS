@@ -3,10 +3,7 @@ package edu.fra.uas.parking.controller;
 import edu.fra.uas.parking.common.ResponseMessage;
 import edu.fra.uas.parking.entity.Reservation;
 
-import edu.fra.uas.parking.repository.BuildingRepository;
-import edu.fra.uas.parking.repository.FloorRepository;
 import edu.fra.uas.parking.repository.ReservationRepository;
-import edu.fra.uas.parking.repository.SlotRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,17 +28,11 @@ public class ReservationController {
 
 
     private final Logger logger = LoggerFactory.getLogger(ReservationController.class);
-    private BuildingRepository buildingRepository;
-    private ReservationRepository reservationRepository;
-    private FloorRepository floorRepository;
-    private SlotRepository slotRepository;
+    private final ReservationRepository reservationRepository;
 
     @Autowired
-    public ReservationController(ReservationRepository reservationRepository, BuildingRepository buildingRepository, FloorRepository floorRepository, SlotRepository slotRepository) {
+    public ReservationController(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
-        this.buildingRepository = buildingRepository;
-        this.floorRepository = floorRepository;
-        this.slotRepository = slotRepository;
     }
 
     @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
@@ -125,21 +116,6 @@ public class ReservationController {
         }
         return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
 
-    }
-
-    @GetMapping("slots/{id}/reservations")
-    public ResponseEntity<ResponseMessage> getReservationsByBuildingFloorAndSlot(
-            @PathVariable("id") Long slotId,
-            @RequestParam("buildingId") Long buildingId,
-            @RequestParam("floorId") Long floorId
-    ) {
-        List<Reservation> reservations = reservationRepository.findByBuildingFloorAndSlot(buildingId, floorId, slotId);
-
-        if (!reservations.isEmpty()) {
-            return this.message("Reservations found for the specified building, floor, and slot", reservations, HttpStatus.OK);
-        } else {
-            return this.message("No reservations found for the specified building, floor, and slot", null, HttpStatus.NOT_FOUND);
-        }
     }
 
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {

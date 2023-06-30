@@ -1,39 +1,46 @@
 <h2 mat-dialog-title>Add Slots</h2>
 <div mat-dialog-content>
-  <mat-form-field>
-    <mat-label>Park</mat-label>
-    <mat-select [(ngModel)]="selectedParking">
-      <mat-option *ngFor="let parking of parkings" [value]="parking">{{ parking }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+  <form [formGroup]="dialogForm" (ngSubmit)="onSubmit()" #formDir="ngForm" novalidate>
+    <mat-form-field>
+      <mat-label>Parking Name</mat-label>
+      <mat-select formControlName="park" name="park" (selectionChange)="onSelectPark()">
+        <mat-option *ngFor="let parking of parkingOptions" [value]="parking">{{ parking['name'] }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="dialogForm.controls['park'].invalid">Park is required</mat-error>
+    </mat-form-field>
 
-  <mat-form-field>
-    <mat-label>Building</mat-label>
-    <mat-select [(ngModel)]="selectedBuilding">
-      <mat-option *ngFor="let building of buildings" [value]="building">{{ building }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field>
+      <mat-label>Building Name</mat-label>
+      <mat-select formControlName="building" name="building" (selectionChange)="onSelectBuilding()">
+        <mat-option *ngFor="let building of buildingOptions" [value]="building">{{ building['name'] }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="dialogForm.controls['building'].invalid">Building is required</mat-error>
+    </mat-form-field>
 
-  <mat-form-field>
-    <mat-label>Floor</mat-label>
-    <mat-select [(ngModel)]="selectedFloor">
-      <mat-option *ngFor="let floor of floors" [value]="floor">{{ floor }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field>
+      <mat-label>Floor Name</mat-label>
+      <mat-select formControlName="floor" name="floor">
+        <mat-option *ngFor="let floor of floorOptions" [value]="floor">{{ floor['name'] }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="dialogForm.controls['floor'].invalid">Floor is required</mat-error>
+    </mat-form-field>
 
-  <mat-form-field>
-    <mat-label>Name</mat-label>
-    <input matInput [(ngModel)]="name" placeholder="Name">
-  </mat-form-field>
+    <mat-form-field>
+      <mat-label>Type Name</mat-label>
+      <mat-select formControlName="type" name="type">
+        <mat-option *ngFor="let type of typeOptions" [value]="type">{{ type['name'] }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="dialogForm.controls['type'].invalid">Type is required</mat-error>
+    </mat-form-field>
 
-  <mat-form-field>
-    <mat-label>Type</mat-label>
-    <mat-select [(ngModel)]="selectedType">
-      <mat-option *ngFor="let type of types" [value]="type">{{ type }}</mat-option>
-    </mat-select>
-  </mat-form-field>
+    <mat-form-field>
+      <input matInput formControlName="name" placeholder="Name of Floor" required>
+      <mat-error *ngIf="dialogForm.controls['name'].invalid">Name is required</mat-error>
+    </mat-form-field>
+
+  </form>
 </div>
 <div mat-dialog-actions align="end">
   <button mat-button (click)="onNoClick()">Cancel</button>
-  <button mat-button color="primary" (click)="onAddClick()">Add</button>
+  <button mat-button color="primary" (click)="onSubmit()">Add</button>
 </div>
