@@ -67,7 +67,6 @@ export class CalendarComponent {
     //   },
     // });
   }
-
   getEventStart(reservation: Reservation): Date {
     const date = new Date(reservation.reservationAt);
     if (reservation.reservationPeriod === 'MORNING') {
