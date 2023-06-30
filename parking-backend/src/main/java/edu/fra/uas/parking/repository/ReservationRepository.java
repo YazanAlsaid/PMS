@@ -37,4 +37,15 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("floorId") Long floorId,
             @Param("slotId") Long slotId
     );
+    @Query("SELECT COUNT(r) AS reservationCount, WEEK(r.reservationAt) AS weekNumber " +
+            "FROM Reservation r " +
+            "GROUP BY WEEK(r.reservationAt) " +
+            "ORDER BY WEEK(2) ASC")
+    List<Object[]> getReservationCountByWeek();
+
+    @Query("SELECT COUNT(r) AS reservationCount, MONTH(r.reservationAt) AS weekNumber " +
+            "FROM Reservation r " +
+            "GROUP BY MONTH(r.reservationAt) " +
+            "ORDER BY MONTH(2) ASC")
+    List<Object[]> getReservationCountByMonth();
 }
