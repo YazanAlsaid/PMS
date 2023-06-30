@@ -13,6 +13,7 @@ const httpOptions = {
 export class AuthService {
   readonly AUTH_API: string = '';
   readonly RESET_API: string = '';
+  readonly SET_API: string = '';
   private readonly hostname: string = window.location.hostname;
   private readonly port: string = window.location.port;
   private readonly protocol: string = window.location.protocol;
@@ -29,6 +30,7 @@ export class AuthService {
 
     this.AUTH_API = `${this.url}/api/v1/web/authenticate`;
     this.RESET_API = `${this.url}/api/v1/web/reset/reset-password`;
+    this.SET_API = `${this.url}/api/v1/web/reset/change-password`;
   }
 
   isLoggedIn(): boolean {
@@ -60,6 +62,12 @@ export class AuthService {
     console.log(this.RESET_API);
 
     return this.http.post<any>(this.RESET_API, email , httpOptions);
+  }
+
+  setNewPassword(token: string, password: string, confirmPassword: string): Observable<any> {
+    console.log(this.SET_API);
+
+    return this.http.post<any>(this.SET_API, { token, password, confirmPassword }, httpOptions);
   }
 
   isTokenExpired(): boolean {
