@@ -17,7 +17,10 @@ export class ParksComponent implements AfterViewInit, OnInit {
   @ViewChild("paginator") paginator!: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource: MatTableDataSource<Park> = new MatTableDataSource<Park>();
+  public dataSource: Park[] = [];
+  public parks:Park[] = [];
+
+  searchQuery: any;
 
   constructor(
     public dialog: MatDialog,
@@ -27,8 +30,8 @@ export class ParksComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     this.parksService.getParks().subscribe(
       (res: ResponseMessage) => {
-        this.dataSource = new MatTableDataSource<Park>(res.data.content)
-        this.dataSource.paginator = this.paginator;
+        this.dataSource = res.data.content;
+        this.parks = this.dataSource;
       },
       (err: any) => console.log(err)
     );
@@ -59,6 +62,21 @@ export class ParksComponent implements AfterViewInit, OnInit {
 
   applyFilter(event: KeyboardEvent) {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  exportBuildings() {
+
+  }
+
+  addBuilding() {
+
+  }
+
+  searchBuildings() {
+
+  }
+
+  clearSearch() {
+
   }
 }

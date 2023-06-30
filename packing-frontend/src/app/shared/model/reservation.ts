@@ -5,8 +5,8 @@ import {Slot} from "./slot";
 
 export class Reservation {
   public id: number;
-  public reservationFrom: Date;
-  public reservationTo: Date;
+  public reservationAt: Date;
+  public period!: string;
   public user !: User;
   public nfc!: Nfc;
   public slot!: Slot;
@@ -14,10 +14,9 @@ export class Reservation {
   public updatedAt: Date;
 
 
-  constructor(id: number, reservationFrom: Date, reservationTo: Date, createdAt: Date, updatedAt: Date) {
+  constructor(id: number, reservationAt: Date, period: string, createdAt: Date, updatedAt: Date) {
     this.id = id;
-    this.reservationFrom = reservationFrom;
-    this.reservationTo = reservationTo;
+    this.reservationAt = reservationAt;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
   }
