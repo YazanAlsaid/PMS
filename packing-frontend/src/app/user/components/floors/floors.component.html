@@ -3,7 +3,7 @@
   <mat-card-content>
     <mat-grid-list gutterSize="25px" rowHeight="165px" [cols]="myBreakPoint" (window:resize)="handleSize($event)">
       <ng-container *ngIf="floors.length > 0; else noItemsTemplate">
-        <mat-grid-tile *ngFor="let item of floors">
+        <mat-grid-tile *ngFor="let item of floors" (click)="onClickFloor(item.id)">
           <div class="card">
             <h5 class="card-title text-center">{{item.name}}</h5>
             <div class="card-content text-center">

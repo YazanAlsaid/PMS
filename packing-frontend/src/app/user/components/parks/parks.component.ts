@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ClientParkService} from "../../../shared/services/client-park.service";
 import {Park} from "../../../shared/model/park";
 import {ResponseMessage} from "../../../shared/model/response-message";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-parks',
@@ -13,7 +14,9 @@ export class ParksComponent implements OnInit {
   public myBreakPoint: number = 4;
   public tiles: Park[] = [];
 
-  constructor(private clientParking: ClientParkService) {
+  constructor(
+    private clientParking: ClientParkService,
+    private router: Router) {
   }
 
   ngOnInit(): void {
@@ -43,4 +46,8 @@ export class ParksComponent implements OnInit {
       this.myBreakPoint = 1;
   }
 
+  onClickPark(id: number) {
+    this.router.navigateByUrl('/user/parks/' + id + '/buildings').then(() => {
+    });
+  }
 }
