@@ -8,8 +8,11 @@ import {
   TemplateRef,
   ViewChild,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import {
   CalendarEvent,
   CalendarEventAction,
@@ -20,11 +23,12 @@ import { EventColor } from 'calendar-utils';
 import { endOfDay, isSameDay, isSameMonth, startOfDay } from 'date-fns';
 import { Subject } from 'rxjs';
 import { Reservation } from '../../model/reservation';
+import { AddReservationComponent } from '../add-reservation/add-reservation.component';
 
 const colors: Record<string, EventColor> = {
-  red: {primary: '#ad2121', secondary: '#FAE3E3',},
-  blue: {primary: '#1e90ff', secondary: '#D1E8FF',},
-  yellow: {primary: '#e3bc08', secondary: '#FDF1BA',},
+  red: { primary: '#ad2121', secondary: '#FAE3E3' },
+  blue: { primary: '#1e90ff', secondary: '#D1E8FF' },
+  yellow: { primary: '#e3bc08', secondary: '#FDF1BA' },
 };
 
 @Component({
@@ -74,7 +78,7 @@ export class CalendarComponent implements OnInit {
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<CalendarComponent>, // private modal: NgbModal
-    private modal: NgbModal,
+    private modal: MatDialog,
     private http: HttpClient
   ) {
     this.buildingId = this.data.buildingId;
@@ -145,26 +149,25 @@ export class CalendarComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = {event, action};
-    this.modal.open(this.modalContent, {size: 'lg'});
+    this.modal.open(AddReservationComponent, {});
   }
 
-  addEvent(): void {
-    this.events = [
-      ...this.events,
-      {
-        title: 'New event',
-        start: startOfDay(new Date()),
-        end: endOfDay(new Date()),
-        color: colors['red'],
-        draggable: true,
-        resizable: {
-          beforeStart: true,
-          afterEnd: true,
-        },
-      },
-    ];
-  }
+  // addEvent(): void {
+  //   this.events = [
+  //     ...this.events,
+  //     {
+  //       title: 'New event',
+  //       start: startOfDay(new Date()),
+  //       end: endOfDay(new Date()),
+  //       color: colors['red'],
+  //       draggable: true,
+  //       resizable: {
+  //         beforeStart: true,
+  //         afterEnd: true,
+  //       },
+  //     },
+  //   ];
+  // }
 
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event !== eventToDelete);
