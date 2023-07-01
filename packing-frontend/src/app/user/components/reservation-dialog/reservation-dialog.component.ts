@@ -29,7 +29,8 @@ export class ReservationDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ReservationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA)
+    public data: any,
     private http: HttpClient
   ) {
     this.http.get(`${this.baseUrl}/parks`).subscribe((res: any) => {
