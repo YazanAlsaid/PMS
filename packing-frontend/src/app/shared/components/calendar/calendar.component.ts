@@ -121,11 +121,11 @@ export class CalendarComponent implements OnInit {
   getEventPeriod(reservation: Reservation): { start: Date; end: Date } {
     const start = new Date(reservation.reservationAt);
     const end = new Date(reservation.reservationAt);
-    start.setHours(13);
-    end.setHours(18);
-    if (reservation.reservationPeriod === 'MORNING') {
-      start.setHours(8);
-      end.setHours(13);
+    start.setHours(8);
+    end.setHours(13);
+    if (reservation.reservationPeriod === 'AFTERNOON') {
+      start.setHours(13);
+      end.setHours(18);
     }
     return { start, end };
   }

@@ -6,7 +6,7 @@ import {Slot} from "./slot";
 export class Reservation {
   public id: number;
   public reservationAt: Date;
-  public reservationPeriod!: string;
+  public reservationPeriod!: 'MORNING' | 'AFTERNOON';
   public user!: User;
   public nfc!: Nfc;
   public slot!: Slot;
