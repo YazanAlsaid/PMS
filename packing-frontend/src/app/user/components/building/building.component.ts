@@ -1,8 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
 import {Building} from "../../../shared/model/building";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ClientParkService} from "../../../shared/services/client-park.service";
+import {MatPaginator} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-building',
@@ -11,10 +12,13 @@ import {ClientParkService} from "../../../shared/services/client-park.service";
 })
 
 
-export class BuildingComponent implements OnInit {
+export class BuildingComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   private parkId!: number;
   public myBreakPoint: number = 0
-  public buildings: Building[] = [];
+  private buildings: Building[] = [];
+  public pagedBuilding: Building[] = [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -27,9 +31,13 @@ export class BuildingComponent implements OnInit {
 
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['buildings'];
-    if (resolverData.data){
-      this.buildings=resolverData.data;
-    }else {
+    if (resolverData.data) {
+      this.buildings = resolverData.data;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.buildings.length;
+      this.paginateBuildings();
+    } else {
       console.log(resolverData.message);
     }
 
@@ -44,6 +52,17 @@ export class BuildingComponent implements OnInit {
       this.myBreakPoint = 1;
   }
 
+  ngAfterViewInit() {
+    this.paginator.page.subscribe(() => {
+      this.paginateBuildings();
+    });
+  }
+
+  paginateBuildings() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedBuilding = this.buildings.slice(startIndex, endIndex);
+  }
 
   handleSize(event: any) {
     if (event.target.innerWidth > 950)
@@ -57,7 +76,7 @@ export class BuildingComponent implements OnInit {
   }
 
   onClickBuilding(id: number) {
-    this.router.navigateByUrl('/user/parks/' + this.parkId + '/buildings/'+ id + '/floors').then(() => {
+    this.router.navigateByUrl('/user/parks/' + this.parkId + '/buildings/' + id + '/floors').then(() => {
     });
   }
 }
