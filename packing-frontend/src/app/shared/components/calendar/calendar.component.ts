@@ -1,46 +1,18 @@
 // import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClient } from '@angular/common/http';
-import {
-  Component,
-  Inject,
-  Optional,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {
-  CalendarEvent,
-  CalendarEventAction,
-  CalendarEventTimesChangedEvent,
-  CalendarView,
-} from 'angular-calendar';
-import { EventColor } from 'calendar-utils';
-import { endOfDay, isSameDay, isSameMonth, startOfDay } from 'date-fns';
-import { Subject } from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {Component, Inject, OnInit, Optional, TemplateRef, ViewChild} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
+import {CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView,} from 'angular-calendar';
+import {EventColor} from 'calendar-utils';
+import {endOfDay, isSameDay, isSameMonth, startOfDay} from 'date-fns';
+import {Subject} from 'rxjs';
+import {Reservation} from "../../model/reservation";
 
 const colors: Record<string, EventColor> = {
-  red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3',
-  },
-  blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF',
-  },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA',
-  },
-};
-
-export type Reservation = {
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-  reservationAt: string;
-  reservationPeriod: 'MORNING' | 'AFTERNOON';
+  red: {primary: '#ad2121', secondary: '#FAE3E3',},
+  blue: {primary: '#1e90ff', secondary: '#D1E8FF',},
+  yellow: {primary: '#e3bc08', secondary: '#FDF1BA',},
 };
 
 @Component({
@@ -48,17 +20,76 @@ export type Reservation = {
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss'],
 })
-export class CalendarComponent {
-  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
+export class CalendarComponent implements OnInit {
+
+  @ViewChild('modalContent', {static: true}) modalContent!: TemplateRef<any>;
+
+  view: CalendarView = CalendarView.Month;
+
+  CalendarView = CalendarView;
+
+  viewDate: Date = new Date();
+  refresh = new Subject<void>();
+  activeDayIsOpen: boolean = true;
+  baseUrl = 'http://localhost:8080/api/v1/web';
+  reservations: { data: Reservation[] } = {data: []};
+  events: CalendarEvent[] = [];
+  modalData!: {
+    action: string;
+    event: CalendarEvent;
+  };
+  actions: CalendarEventAction[] = [
+    {
+      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
+      a11yLabel: 'Edit',
+      onClick: ({event}: { event: CalendarEvent }): void => {
+        this.handleEvent('Edited', event);
+      },
+    },
+    {
+      label: '<i class="fas fa-fw fa-trash-alt"></i>',
+      a11yLabel: 'Delete',
+      onClick: ({event}: { event: CalendarEvent }): void => {
+        this.events = this.events.filter((iEvent) => iEvent !== event);
+        this.handleEvent('Deleted', event);
+      },
+    },
+  ];
+  private floorId: any;
+  private buildingId: any;
+  private slotID: string = '';
+
   constructor(
-    private router: Router,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<CalendarComponent>, // private modal: NgbModal
     private modal: NgbModal,
     private http: HttpClient
-  ) {}
+  ) {
+    this.buildingId = this.data.buildingId;
+    this.floorId = this.data.floorId;
+    this.slotID = this.data.slot.id;
+  }
+
+  ngOnInit() {
+    this.http.get<{ data: Reservation[] }>(`${this.baseUrl}/slots/${this.slotID}/reservations?buildingId=${this.buildingId}&floorId=${this.floorId}`)
+      .subscribe((reservations) => {
+        this.reservations = reservations;
+        this.events = reservations.data.map((reservation) => ({
+          ...this.getEventPeriod(reservation),
+          title: reservation.period,
+          color: colors['blue'],
+          actions: this.actions,
+          resizable: {
+            beforeStart: true,
+            afterEnd: true,
+          },
+          draggable: true,
+        }));
+      });
+  }
+
   dateSelected(date: any) {
-    console.log({ date });
+    console.log({date});
     // this.dialogRef.close();
     // this.router.navigate([`dashboard/slots`], {
     //   queryParams: {
@@ -73,111 +104,37 @@ export class CalendarComponent {
     const end = new Date(reservation.reservationAt);
     start.setHours(13);
     end.setHours(18);
-    if (reservation.reservationPeriod === 'MORNING') {
+    if (reservation.period === 'MORNING') {
       start.setHours(8);
       end.setHours(13);
     }
-    return { start, end };
+    return {start, end};
   }
 
-  slotID: string = '';
-  routeSub = this.router.routerState.root.queryParams.subscribe((params) => {
-    this.slotID = params['slotId'];
-  });
-  view: CalendarView = CalendarView.Month;
-  CalendarView = CalendarView;
-  viewDate: Date = new Date();
-  refresh = new Subject<void>();
-  activeDayIsOpen: boolean = true;
-  baseUrl = 'http://localhost:8080/api/v1/web';
-  reservations: { data: Reservation[] } = { data: [] };
-  events: CalendarEvent[] = [];
-
-  ngOnInit() {
-    this.http
-      .get<{ data: Reservation[] }>(
-        `${this.baseUrl}/slots/${this.slotID}/reservations`
-      )
-      .subscribe((reservations) => {
-        this.reservations = reservations;
-        this.events = reservations.data.map((reservation) => ({
-          ...this.getEventPeriod(reservation),
-          title: reservation.reservationPeriod,
-          color: colors['blue'],
-          actions: this.actions,
-          resizable: {
-            beforeStart: true,
-            afterEnd: true,
-          },
-          draggable: true,
-        }));
-      });
-  }
-
-  modalData!: {
-    action: string;
-    event: CalendarEvent;
-  };
-
-  actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
-  ];
-
-  dayClicked({
-    date: start,
-    events,
-  }: {
-    date: Date;
-    events: CalendarEvent[];
-  }): void {
+  dayClicked({date: start, events,}: { date: Date; events: CalendarEvent[]; }): void {
     if (!isSameMonth(start, this.viewDate)) {
       return;
     }
     this.viewDate = start;
-    if (
-      (isSameDay(this.viewDate, start) && this.activeDayIsOpen === true) ||
-      events.length === 0
-    ) {
+    if ((isSameDay(this.viewDate, start) && this.activeDayIsOpen) || events.length === 0) {
       this.activeDayIsOpen = false;
     }
     this.activeDayIsOpen = true;
   }
 
-  eventTimesChanged({
-    event,
-    newStart,
-    newEnd,
-  }: CalendarEventTimesChangedEvent): void {
+  eventTimesChanged({event, newStart, newEnd,}: CalendarEventTimesChangedEvent): void {
     this.events = this.events.map((iEvent) => {
       if (iEvent !== event) {
         return iEvent;
       }
-      return {
-        ...event,
-        start: newStart,
-        end: newEnd,
-      };
+      return {...event, start: newStart, end: newEnd,};
     });
     this.handleEvent('Dropped or resized', event);
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
-    this.modal.open(this.modalContent, { size: 'lg' });
+    this.modalData = {event, action};
+    this.modal.open(this.modalContent, {size: 'lg'});
   }
 
   addEvent(): void {
