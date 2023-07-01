@@ -1,6 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
 import {Building} from "../../../shared/model/building";
+import {ActivatedRoute, Router} from "@angular/router";
+import {ClientParkService} from "../../../shared/services/client-park.service";
+import {MatPaginator} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-building',
@@ -9,19 +12,34 @@ import {Building} from "../../../shared/model/building";
 })
 
 
-export class BuildingComponent implements OnInit {
+export class BuildingComponent implements OnInit, AfterViewInit {
 
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
+  private parkId!: number;
   public myBreakPoint: number = 0
-  public buildings: Building[] = [];
+  private buildings: Building[] = [];
+  public pagedBuilding: Building[] = [];
 
-  constructor(private clientBuilding: ClientBuildingService) {
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private clientBuilding: ClientBuildingService,
+    private clientPark: ClientParkService,
+    private router: Router) {
+    this.activatedRoute.params.subscribe((params: any) => this.parkId = params.parkId);
+
   }
 
   ngOnInit(): void {
-    this.clientBuilding.getBuildings().subscribe(
-      (res: any) => this.buildings = res.data,
-      (err: any) => console.log(err)
-    )
+    const resolverData = this.activatedRoute.snapshot.data['buildings'];
+    if (resolverData.data) {
+      this.buildings = resolverData.data;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.buildings.length;
+      this.paginateBuildings();
+    } else {
+      console.log(resolverData.message);
+    }
 
     this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
     if (window.innerWidth > 950)
@@ -34,6 +52,17 @@ export class BuildingComponent implements OnInit {
       this.myBreakPoint = 1;
   }
 
+  ngAfterViewInit() {
+    this.paginator.page.subscribe(() => {
+      this.paginateBuildings();
+    });
+  }
+
+  paginateBuildings() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedBuilding = this.buildings.slice(startIndex, endIndex);
+  }
 
   handleSize(event: any) {
     if (event.target.innerWidth > 950)
@@ -44,5 +73,10 @@ export class BuildingComponent implements OnInit {
       this.myBreakPoint = 2;
     else if (event.target.innerWidth <= 550)
       this.myBreakPoint = 1;
+  }
+
+  onClickBuilding(id: number) {
+    this.router.navigateByUrl('/user/parks/' + this.parkId + '/buildings/' + id + '/floors').then(() => {
+    });
   }
 }

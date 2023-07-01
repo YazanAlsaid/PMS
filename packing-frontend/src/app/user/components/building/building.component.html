@@ -2,8 +2,8 @@
   <mat-card-title class="text-center mt-3">Buildings</mat-card-title>
   <mat-card-content>
     <mat-grid-list gutterSize="25px" rowHeight="180px" [cols]="myBreakPoint" (window:resize)="handleSize($event)">
-      <ng-container *ngIf="buildings.length > 0; else noItemsTemplate">
-        <mat-grid-tile *ngFor="let item of buildings">
+      <ng-container *ngIf="pagedBuilding.length > 0; else noItemsTemplate">
+        <mat-grid-tile *ngFor="let item of pagedBuilding" (click)="onClickBuilding(item.id)">
           <div class="card">
             <h5 class="card-title text-center">{{item.name}}</h5>
             <p class="card-text text-center">Address:
@@ -19,6 +19,8 @@
         <h2 class="card-title text-center">No Buildings to display.</h2>
       </ng-template>
     </mat-grid-list>
+    <!-- Pagination -->
+    <mat-paginator [pageSizeOptions]="[8, 12, 16]" showFirstLastButtons></mat-paginator>
   </mat-card-content>
 </mat-card>
 

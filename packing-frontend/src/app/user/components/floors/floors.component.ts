@@ -1,36 +1,46 @@
-import {Component, OnInit} from '@angular/core';
-import {ClientFloorService} from "../../../shared/services/client-floor.service";
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Floor} from "../../../shared/model/floor";
-
-export interface Tile {
-  color: string;
-  cols: number;
-  rows: number;
-  text: string;
-  free: number;
-  frauen: number;
-  eAuto: number;
-  disability: number;
-}
+import {ActivatedRoute, Router} from "@angular/router";
+import {ClientBuildingService} from "../../../shared/services/client-building.service";
+import {MatPaginator} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-floors',
   templateUrl: './floors.component.html',
   styleUrls: ['./floors.component.scss']
 })
-export class FloorsComponent implements OnInit {
+export class FloorsComponent implements OnInit , AfterViewInit {
 
-  public floors: Floor[] = [];
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   public myBreakPoint: number = 4;
+  private floors: Floor[] = [];
+  public pagedFloors: Floor[] = [];
+  private parkId!: number;
+  private buildingId!: number;
 
-  constructor(private clientFloor: ClientFloorService) {
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private clientBuilding: ClientBuildingService,
+    private router: Router) {
+    this.activatedRoute.params.subscribe((params: any) => {
+      this.parkId = params.parkId;
+      this.buildingId = params.buildingId
+    });
   }
 
   ngOnInit(): void {
-    this.clientFloor.getFloors().subscribe(
-      (res: any) => this.floors = res.data,
-      (err: any) => console.log(err)
-    )
+    const resolverData = this.activatedRoute.snapshot.data['floors'];
+    console.log(resolverData.data);
+    if (resolverData.data){
+      this.floors=resolverData.data;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.floors.length;
+      this.paginateFloors();
+    }else {
+      console.log(resolverData.message);
+    }
+
     this.myBreakPoint = (window.innerWidth <= 600) ? 1 : 4;
     if (window.innerWidth > 950)
       this.myBreakPoint = 4;
@@ -40,6 +50,11 @@ export class FloorsComponent implements OnInit {
       this.myBreakPoint = 2;
     else if (window.innerWidth <= 550)
       this.myBreakPoint = 1;
+  }
+  ngAfterViewInit() {
+    this.paginator.page.subscribe(() => {
+      this.paginateFloors();
+    });
   }
 
   handleSize(event: any): void {
@@ -51,5 +66,17 @@ export class FloorsComponent implements OnInit {
       this.myBreakPoint = 2;
     else if (event.target.innerWidth <= 550)
       this.myBreakPoint = 1;
+  }
+
+  onClickFloor(id: number) {
+    console.log('/user/parks/' + this.parkId + '/buildings/' + this.buildingId + '/floors/' + id + '/slots')
+    this.router.navigateByUrl('/user/parks/' + this.parkId + '/buildings/' + this.buildingId + '/floors/' + id + '/slots').then(() => {
+    });
+  }
+
+  private paginateFloors() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedFloors = this.floors.slice(startIndex, endIndex);
   }
 }

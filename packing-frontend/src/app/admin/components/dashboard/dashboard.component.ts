@@ -136,7 +136,11 @@ export class DashboardComponent implements OnInit {
     }
     this.clientStatistic.getNumberOfReservationInEachWeek().subscribe(
       (res: ResponseMessage) => {
-        const data = res.data;
+        let data = [52];
+        for (let i = 0; i < res.data.length; i++) {
+          data[res.data[i][1]] = res.data[i][0];
+        }
+
         const dataset = {
           label: '# of Reservations',
           data: data,
@@ -168,7 +172,10 @@ export class DashboardComponent implements OnInit {
 
     this.clientStatistic.getNumberOfReservationInEachMonth().subscribe(
       (res: ResponseMessage) => {
-        const data = res.data;
+        let data = [12];
+        for (let i = 0; i < res.data.length; i++) {
+          data[res.data[i][1]] = res.data[i][0];
+        }
         const dataset = {
           label: '# of Reservations',
           data: data,

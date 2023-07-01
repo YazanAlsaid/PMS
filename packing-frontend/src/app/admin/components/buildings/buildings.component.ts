@@ -2,7 +2,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-dialog.component";
 import {Building} from "../../../shared/model/building";
@@ -20,6 +20,15 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   buildings: Building[] = [];
   searchQuery: string = '';
 
+  private dialogConfig: MatDialogConfig = {
+    width: '400px',
+    autoFocus: true,
+    disableClose: true,
+    data: {
+      building: null,
+      isUpdate: false,
+    }
+  };
   constructor(
     private dialog: MatDialog,
     private clientBuilding: ClientBuildingService) {
@@ -48,13 +57,16 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
     // Handle view functionality
   }
   create() {
-    const dialogRef = this.dialog.open(AddBuildingDialogComponent, {
-      width: '400px'
-    });
+    const dialogRef = this.dialog.open(AddBuildingDialogComponent, this.dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
       // Handle any actions after the dialog is closed
-      console.log('Dialog closed', result);
+      if (result.building != null){
+        this.clientBuilding.createBuilding(result.building).subscribe(
+          (res: any) => this.ngOnInit(),
+          (err: any) => console.log(err.error.error)
+        );
+      }
     });
   }
 

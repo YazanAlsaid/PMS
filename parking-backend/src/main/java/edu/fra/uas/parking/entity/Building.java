@@ -26,7 +26,6 @@ public class Building extends BaseEntity {
     @Column(name = "name", nullable = false, unique = true)
     @Size(min = 3, max = 50)
     private String name;
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "park_id", nullable = false)
     private Park park;
