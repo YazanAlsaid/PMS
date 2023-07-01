@@ -1,13 +1,19 @@
-import { Component } from '@angular/core';
-import {MatDialogRef} from "@angular/material/dialog";
+import { HttpClient } from '@angular/common/http';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+type SelectOption = {
+  value: string;
+  viewValue: string;
+};
 
 @Component({
   selector: 'app-reservation-dialog',
   templateUrl: './reservation-dialog.component.html',
-  styleUrls: ['./reservation-dialog.component.scss']
+  styleUrls: ['./reservation-dialog.component.scss'],
 })
 export class ReservationDialogComponent {
-  parkingName!: string;
+  parkId!: string;
   building!: string;
   floor!: string;
   slotNumber!: string;
@@ -21,20 +27,77 @@ export class ReservationDialogComponent {
   afternoonSelected!: boolean;
 
   // Define the parking options
-  parkingOptions: string[] = ['Parking 1', 'Parking 2', 'Parking 3'];
-  buildingOptions: string[] = ['Building 1', 'Building 2', 'Building 3'];
-  floorOptions: string[] = ['Floor 1', 'Floor 2', 'Floor 3'];
-  slotOptions: string[] = ['Slot 1', 'Slot 2', 'Slot 3'];
+  parkingOptions: SelectOption[] = [];
+  buildingOptions: SelectOption[] = [];
+  floorOptions: SelectOption[] = [];
+  slotOptions: SelectOption[] = [];
 
-  constructor(public dialogRef: MatDialogRef<ReservationDialogComponent>) { }
+  baseUrl = 'https://pms.alnaasan.de/api/v1/web';
+
+  constructor(
+    public dialogRef: MatDialogRef<ReservationDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private http: HttpClient
+  ) {
+    console.log({ data });
+    // get the parking options
+    this.http.get(`${this.baseUrl}/parks`).subscribe((res: any) => {
+      this.parkingOptions = res.data.content.map((parking: any) => {
+        console.log({ parking });
+        return {
+          value: parking.id,
+          viewValue: parking.name,
+          isDefault: parking.id === data.parkId,
+        };
+      });
+    });
+    // this.http
+    //   .get(`http://localhost:3000/buildings?parkingId=${data.parkId}`)
+    //   .subscribe((res: any) => {
+    //     this.buildingOptions = res.map((building: any) => {
+    //       return {
+    //         value: building.id,
+    //         viewValue: building.name,
+    //       };
+    //     });
+    //   });
+    // this.http
+    //   .get(`http://localhost:3000/floors?buildingId=${data.buildingId}`)
+    //   .subscribe((res: any) => {
+    //     this.floorOptions = res.map((floor: any) => {
+    //       return {
+    //         value: floor.id,
+    //         viewValue: floor.name,
+    //       };
+    //     });
+    //   });
+
+    // this.http
+    //   .get(`http://localhost:3000/slots?floorId=${data.floorId}`)
+    //   .subscribe((res: any) => {
+    //     this.slotOptions = res.map((slot: any) => {
+    //       return {
+    //         value: slot.id,
+    //         viewValue: slot.name,
+    //       };
+    //     });
+    //   });
+
+    this.parkId = data.parkId;
+    this.building = data.buildingId;
+    this.floor = data.floorId;
+    this.slotNumber = data.slotId;
+    this.date = data.date;
+    this.time = data.time;
+  }
   saveReservation() {
     const reservation = {
-      parkingName: this.parkingName,
+      parkingName: this.parkId,
       building: this.selectedBuilding,
       floor: this.selectedFloor,
       slotNumber: this.selectedSlot,
       date: this.date.toISOString(),
-      time: this.getTimeString()
+      time: this.getTimeString(),
     };
 
     // Logic for saving the reservation
@@ -68,6 +131,4 @@ export class ReservationDialogComponent {
     // Handle the validation error
     return dateRegex.test(this.date.toString());
   }
-
-
 }

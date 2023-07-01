@@ -2,26 +2,38 @@
 <mat-dialog-content>
   <mat-form-field>
     <mat-label>Parking Name</mat-label>
-    <mat-select [(ngModel)]="parkingName">
-      <mat-option *ngFor="let parking of parkingOptions" [value]="parking">{{ parking }}</mat-option>
+    <mat-select [(ngModel)]="parkId">
+      <mat-option
+        *ngFor="let parking of parkingOptions"
+        [value]="parking['value']"
+        >{{ parking.viewValue }}</mat-option
+      >
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Building</mat-label>
     <mat-select [(ngModel)]="selectedBuilding">
-      <mat-option *ngFor="let building of buildingOptions" [value]="building">{{ building }}</mat-option>
+      <mat-option
+        *ngFor="let building of buildingOptions"
+        [value]="building['value']"
+        >{{ building.viewValue }}</mat-option
+      >
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Floor</mat-label>
     <mat-select [(ngModel)]="selectedFloor">
-      <mat-option *ngFor="let floor of floorOptions" [value]="floor">{{ floor }}</mat-option>
+      <mat-option *ngFor="let floor of floorOptions" [value]="floor['value']">{{
+        floor.viewValue
+      }}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Slot Number</mat-label>
     <mat-select [(ngModel)]="selectedSlot">
-      <mat-option *ngFor="let slot of slotOptions" [value]="slot">{{ slot }}</mat-option>
+      <mat-option *ngFor="let slot of slotOptions" [value]="slot['value']">{{
+        slot.viewValue
+      }}</mat-option>
     </mat-select>
   </mat-form-field>
 

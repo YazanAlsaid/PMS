@@ -81,6 +81,7 @@ export class CalendarComponent implements OnInit {
     private modal: MatDialog,
     private http: HttpClient
   ) {
+    console.log({ datafromcal: data });
     this.buildingId = this.data.buildingId;
     this.floorId = this.data.floorId;
     this.slotID = this.data.slot.id;
@@ -149,25 +150,18 @@ export class CalendarComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modal.open(ReservationDialogComponent, {});
+    this.modal.open(ReservationDialogComponent, {
+      width: '400px',
+      autoFocus: true,
+      data: {
+        slotId: this.data.slot.id,
+        parkingId: this.data.parkId,
+        buildingId: this.data.buildingId,
+        floorId: this.data.floorId,
+        date: event.start,
+      },
+    });
   }
-
-  // addEvent(): void {
-  //   this.events = [
-  //     ...this.events,
-  //     {
-  //       title: 'New event',
-  //       start: startOfDay(new Date()),
-  //       end: endOfDay(new Date()),
-  //       color: colors['red'],
-  //       draggable: true,
-  //       resizable: {
-  //         beforeStart: true,
-  //         afterEnd: true,
-  //       },
-  //     },
-  //   ];
-  // }
 
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events = this.events.filter((event) => event !== eventToDelete);
