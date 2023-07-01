@@ -23,7 +23,7 @@ import { EventColor } from 'calendar-utils';
 import { endOfDay, isSameDay, isSameMonth, startOfDay } from 'date-fns';
 import { Subject } from 'rxjs';
 import { Reservation } from '../../model/reservation';
-import { AddReservationComponent } from '../add-reservation/add-reservation.component';
+import { ReservationDialogComponent } from 'src/app/user/components/reservation-dialog/reservation-dialog.component';
 
 const colors: Record<string, EventColor> = {
   red: { primary: '#ad2121', secondary: '#FAE3E3' },
@@ -149,7 +149,7 @@ export class CalendarComponent implements OnInit {
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modal.open(AddReservationComponent, {});
+    this.modal.open(ReservationDialogComponent, {});
   }
 
   // addEvent(): void {
