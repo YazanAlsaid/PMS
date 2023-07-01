@@ -1,13 +1,25 @@
 // import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {HttpClient} from '@angular/common/http';
-import {Component, Inject, OnInit, Optional, TemplateRef, ViewChild} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap';
-import {CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView,} from 'angular-calendar';
-import {EventColor} from 'calendar-utils';
-import {endOfDay, isSameDay, isSameMonth, startOfDay} from 'date-fns';
-import {Subject} from 'rxjs';
-import {Reservation} from "../../model/reservation";
+import { HttpClient } from '@angular/common/http';
+import {
+  Component,
+  Inject,
+  OnInit,
+  Optional,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {
+  CalendarEvent,
+  CalendarEventAction,
+  CalendarEventTimesChangedEvent,
+  CalendarView,
+} from 'angular-calendar';
+import { EventColor } from 'calendar-utils';
+import { endOfDay, isSameDay, isSameMonth, startOfDay } from 'date-fns';
+import { Subject } from 'rxjs';
+import { Reservation } from '../../model/reservation';
 
 const colors: Record<string, EventColor> = {
   red: {primary: '#ad2121', secondary: '#FAE3E3',},
@@ -31,8 +43,8 @@ export class CalendarComponent implements OnInit {
   viewDate: Date = new Date();
   refresh = new Subject<void>();
   activeDayIsOpen: boolean = true;
-  baseUrl = 'http://localhost:8080/api/v1/web';
-  reservations: { data: Reservation[] } = {data: []};
+  baseUrl = 'https://pms.alnaasan.de/api/v1/web';
+  reservations: { data: Reservation[] } = { data: [] };
   events: CalendarEvent[] = [];
   modalData!: {
     action: string;
@@ -76,7 +88,7 @@ export class CalendarComponent implements OnInit {
         this.reservations = reservations;
         this.events = reservations.data.map((reservation) => ({
           ...this.getEventPeriod(reservation),
-          title: reservation.period,
+          title: reservation.reservationPeriod,
           color: colors['blue'],
           actions: this.actions,
           resizable: {
@@ -104,7 +116,7 @@ export class CalendarComponent implements OnInit {
     const end = new Date(reservation.reservationAt);
     start.setHours(13);
     end.setHours(18);
-    if (reservation.period === 'MORNING') {
+    if (reservation.reservationPeriod === 'MORNING') {
       start.setHours(8);
       end.setHours(13);
     }

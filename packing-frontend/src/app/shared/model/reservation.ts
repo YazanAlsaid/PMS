@@ -6,8 +6,8 @@ import {Slot} from "./slot";
 export class Reservation {
   public id: number;
   public reservationAt: Date;
-  public period!: string;
-  public user !: User;
+  public reservationPeriod!: string;
+  public user!: User;
   public nfc!: Nfc;
   public slot!: Slot;
   public createdAt: Date;
