@@ -24,13 +24,13 @@ export class ClientStatisticService {
   }
 
   public getCounts(): Observable<ResponseMessage> {
-    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/statistics/view-numbers`);
+    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/statistics/counts`);
   }
 
   public getNumberOfReservationInEachWeek(): Observable<ResponseMessage> {
-    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/statistics/view-statistics-week`);
+    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/statistics/reservationCountByWeek`);
   }
   public getNumberOfReservationInEachMonth(): Observable<ResponseMessage> {
-    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/statistics/view-statistics-month`);
+    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/statistics/reservationCountByMonth`);
   }
 }
