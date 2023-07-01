@@ -14,6 +14,9 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:4200");
+        config.addAllowedOrigin("http://127.0.0.1:4200");
+        config.addAllowedOrigin("http://10.20.30.3");
+        config.addAllowedOrigin("https://pms.alnaasan.de");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);

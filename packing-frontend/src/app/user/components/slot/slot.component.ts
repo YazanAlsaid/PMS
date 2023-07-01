@@ -65,10 +65,12 @@ export class SlotComponent implements OnInit {
       this.myBreakPoint = 1;
   }
 
-  onSelect(parking: Slot) {
+  onSelect(slot: Slot) {
     this.dialog.open(CalendarComponent, {
       data: {
-        parking: parking,
+        slot: slot,
+        buildingId: this.buildingId,
+        floorId: this.floorId
       },
       width: '850px',
       height: '100%'
