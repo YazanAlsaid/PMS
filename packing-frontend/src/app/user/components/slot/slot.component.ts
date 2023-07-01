@@ -1,34 +1,20 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatDialog} from '@angular/material/dialog';
 import {CalendarComponent} from 'src/app/shared/components/calendar/calendar.component';
-import {ClientSlotService} from "../../../shared/services/client-slot.service";
 import {Slot} from "../../../shared/model/slot";
-import {ClientFloorService} from "../../../shared/services/client-floor.service";
 import {ActivatedRoute} from "@angular/router";
-
-export interface Reservation {
-  id: number;
-  parkingName: string;
-  building: string;
-  floor: string;
-  slotNumber: string;
-  date: string;
-  time: ReservationTime;
-  parkingId: number;
-}
-
-enum ReservationTime {
-  MORNING = 'Morning',
-  AFTERNOON = 'Afternoon',
-}
+import {MatPaginator} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-slot',
   templateUrl: './slot.component.html',
   styleUrls: ['./slot.component.scss'],
 })
-export class SlotComponent implements OnInit {
-  public slots: Slot[] = [];
+export class SlotComponent implements OnInit, AfterViewInit {
+
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
+  private slots: Slot[] = [];
+  public pagedSlots: Slot[] = [];
   public myBreakPoint: number = 4;
   private parkId!: number;
   private buildingId!: number;
@@ -36,8 +22,7 @@ export class SlotComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    public dialog: MatDialog,
-    private clientFloors: ClientFloorService
+    public dialog: MatDialog
   ) {
     this.activatedRoute.params.subscribe((params: any) => {
       this.parkId = params.parkId;
@@ -48,8 +33,17 @@ export class SlotComponent implements OnInit {
 
   ngOnInit() {
     const resolveData = this.activatedRoute.snapshot.data['slots'];
-    if (resolveData.data){
+    if (resolveData.data) {
       this.slots = resolveData.data;
+      this.slots.sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        return (nameA < nameB) ? -1 : 1;
+      });
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.slots.length;
+      this.paginateSlots();
     } else {
       console.log(resolveData.message);
     }
@@ -65,6 +59,12 @@ export class SlotComponent implements OnInit {
       this.myBreakPoint = 1;
   }
 
+  ngAfterViewInit() {
+    this.paginator.page.subscribe(() => {
+      this.paginateSlots();
+    });
+  }
+
   onSelect(slot: Slot) {
     this.dialog.open(CalendarComponent, {
       data: {
@@ -76,6 +76,7 @@ export class SlotComponent implements OnInit {
       height: '100%'
     });
   }
+
   handleSize(event: any) {
     if (event.target.innerWidth > 950)
       this.myBreakPoint = 4;
@@ -85,5 +86,11 @@ export class SlotComponent implements OnInit {
       this.myBreakPoint = 2;
     else if (event.target.innerWidth <= 550)
       this.myBreakPoint = 1;
+  }
+
+  private paginateSlots() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedSlots = this.slots.slice(startIndex, endIndex);
   }
 }

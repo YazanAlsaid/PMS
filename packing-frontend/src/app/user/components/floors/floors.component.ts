@@ -1,17 +1,20 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {Floor} from "../../../shared/model/floor";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
+import {MatPaginator} from "@angular/material/paginator";
 
 @Component({
   selector: 'app-floors',
   templateUrl: './floors.component.html',
   styleUrls: ['./floors.component.scss']
 })
-export class FloorsComponent implements OnInit {
+export class FloorsComponent implements OnInit , AfterViewInit {
 
-  public floors: Floor[] = [];
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   public myBreakPoint: number = 4;
+  private floors: Floor[] = [];
+  public pagedFloors: Floor[] = [];
   private parkId!: number;
   private buildingId!: number;
 
@@ -30,6 +33,10 @@ export class FloorsComponent implements OnInit {
     console.log(resolverData.data);
     if (resolverData.data){
       this.floors=resolverData.data;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.floors.length;
+      this.paginateFloors();
     }else {
       console.log(resolverData.message);
     }
@@ -43,6 +50,11 @@ export class FloorsComponent implements OnInit {
       this.myBreakPoint = 2;
     else if (window.innerWidth <= 550)
       this.myBreakPoint = 1;
+  }
+  ngAfterViewInit() {
+    this.paginator.page.subscribe(() => {
+      this.paginateFloors();
+    });
   }
 
   handleSize(event: any): void {
@@ -60,5 +72,11 @@ export class FloorsComponent implements OnInit {
     console.log('/user/parks/' + this.parkId + '/buildings/' + this.buildingId + '/floors/' + id + '/slots')
     this.router.navigateByUrl('/user/parks/' + this.parkId + '/buildings/' + this.buildingId + '/floors/' + id + '/slots').then(() => {
     });
+  }
+
+  private paginateFloors() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedFloors = this.floors.slice(startIndex, endIndex);
   }
 }

@@ -3,8 +3,8 @@
   <mat-card-content>
     <mat-grid-list [cols]="myBreakPoint" cols="4" rowHeight="120px" (window:resize)="handleSize($event)"
                    gutterSize="25px">
-      <ng-container *ngIf="tiles.length > 0; else noItemsTemplate">
-        <mat-grid-tile *ngFor="let item of tiles" (click)="onClickPark(item.id)">
+      <ng-container *ngIf="pagedParks.length > 0; else noItemsTemplate">
+        <mat-grid-tile *ngFor="let item of pagedParks" (click)="onClickPark(item.id)">
           <div class="card">
             <h5 class="card-title text-center">{{item.name}}</h5>
             <p class="card-text text-center">Count of Building: {{item['buildingCount']}}</p>
@@ -15,5 +15,7 @@
         <h2 class="card-title text-center">No Park to display.</h2>
       </ng-template>
     </mat-grid-list>
+    <!-- Pagination -->
+    <mat-paginator [pageSizeOptions]="[4, 8, 12]" showFirstLastButtons></mat-paginator>
   </mat-card-content>
 </mat-card>
