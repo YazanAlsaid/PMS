@@ -37,8 +37,7 @@ const colors: Record<string, EventColor> = {
   styleUrls: ['./calendar.component.scss'],
 })
 export class CalendarComponent implements OnInit {
-
-  @ViewChild('modalContent', {static: true}) modalContent!: TemplateRef<any>;
+  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
 
@@ -46,7 +45,7 @@ export class CalendarComponent implements OnInit {
 
   viewDate: Date = new Date();
   refresh = new Subject<void>();
-  activeDayIsOpen: boolean = true;
+  activeDayIsOpen: boolean = false;
   baseUrl = 'https://pms.alnaasan.de/api/v1/web';
   reservations: { data: Reservation[] } = { data: [] };
   events: CalendarEvent[] = [];
@@ -58,14 +57,14 @@ export class CalendarComponent implements OnInit {
     {
       label: '<i class="fas fa-fw fa-pencil-alt"></i>',
       a11yLabel: 'Edit',
-      onClick: ({event}: { event: CalendarEvent }): void => {
+      onClick: ({ event }: { event: CalendarEvent }): void => {
         this.handleEvent('Edited', event);
       },
     },
     {
       label: '<i class="fas fa-fw fa-trash-alt"></i>',
       a11yLabel: 'Delete',
-      onClick: ({event}: { event: CalendarEvent }): void => {
+      onClick: ({ event }: { event: CalendarEvent }): void => {
         this.events = this.events.filter((iEvent) => iEvent !== event);
         this.handleEvent('Deleted', event);
       },
@@ -88,7 +87,10 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.http.get<{ data: Reservation[] }>(`${this.baseUrl}/slots/${this.slotID}/reservations?buildingId=${this.buildingId}&floorId=${this.floorId}`)
+    this.http
+      .get<{ data: Reservation[] }>(
+        `${this.baseUrl}/slots/${this.slotID}/reservations?buildingId=${this.buildingId}&floorId=${this.floorId}`
+      )
       .subscribe((reservations) => {
         this.reservations = reservations;
         this.events = reservations.data.map((reservation) => ({
@@ -106,7 +108,7 @@ export class CalendarComponent implements OnInit {
   }
 
   dateSelected(date: any) {
-    console.log({date});
+    console.log({ date });
     // this.dialogRef.close();
     // this.router.navigate([`dashboard/slots`], {
     //   queryParams: {
@@ -125,26 +127,40 @@ export class CalendarComponent implements OnInit {
       start.setHours(8);
       end.setHours(13);
     }
-    return {start, end};
+    return { start, end };
   }
 
-  dayClicked({date: start, events,}: { date: Date; events: CalendarEvent[]; }): void {
+  dayClicked({
+    date: start,
+    events,
+  }: {
+    date: Date;
+    events: CalendarEvent[];
+  }): void {
     if (!isSameMonth(start, this.viewDate)) {
       return;
     }
     this.viewDate = start;
-    if ((isSameDay(this.viewDate, start) && this.activeDayIsOpen) || events.length === 0) {
+    if (
+      (isSameDay(this.viewDate, start) && this.activeDayIsOpen) ||
+      events.length === 0
+    ) {
       this.activeDayIsOpen = false;
+      return;
     }
     this.activeDayIsOpen = true;
   }
 
-  eventTimesChanged({event, newStart, newEnd,}: CalendarEventTimesChangedEvent): void {
+  eventTimesChanged({
+    event,
+    newStart,
+    newEnd,
+  }: CalendarEventTimesChangedEvent): void {
     this.events = this.events.map((iEvent) => {
       if (iEvent !== event) {
         return iEvent;
       }
-      return {...event, start: newStart, end: newEnd,};
+      return { ...event, start: newStart, end: newEnd };
     });
     this.handleEvent('Dropped or resized', event);
   }
