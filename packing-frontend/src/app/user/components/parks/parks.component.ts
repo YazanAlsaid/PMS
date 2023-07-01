@@ -21,12 +21,6 @@ export class ParksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    /*this.clientParking.getParks().subscribe(
-      (response: ResponseMessage) => this.tiles = response.data.content,
-      (error: any) => console.log(error.error)
-    );*/
-
-    //zweite
     const resolverData = this.activatedRoute.snapshot.data['parks'];
     if (resolverData.data){
       this.tiles=resolverData.data.content;

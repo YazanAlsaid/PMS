@@ -7,8 +7,10 @@ import { UserDashboardComponent } from './components/user-dashboard/user-dashboa
 import { FloorsComponent } from './components/floors/floors.component';
 import { ParksComponent } from './components/parks/parks.component';
 import { AuthGuard } from "../auth/guard/auth.guard";
-import {ParksResolveService} from "../shared/services/resolvers/parks-resolve.service";
+import {FloorsResolveService} from "../shared/services/resolvers/floors-resolve.service";
 import {BuildingResolveService} from "../shared/services/resolvers/building-resolve.service";
+import {ParksResolveService} from "../shared/services/resolvers/parks-resolve.service";
+import {SlotsResolveService} from "../shared/services/resolvers/slots-resolve.service";
 
 const routes: Routes = [
   {
@@ -23,9 +25,9 @@ const routes: Routes = [
                   { path: '', component: BuildingComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Buildings', roles: ['user', 'admin'] },resolve:{buildings: BuildingResolveService} },
                   { path: ':buildingId', children:[
                       { path: 'floors', children:[
-                          { path: '', component: FloorsComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Floors', roles: ['user', 'admin'] } },
+                          { path: '', component: FloorsComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Floors', roles: ['user', 'admin'] }, resolve: { floors: FloorsResolveService} },
                           { path: ':floorId', children:[
-                              { path: 'slots', component: SlotComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Slots', roles: ['user', 'admin'] } },
+                              { path: 'slots', component: SlotComponent, pathMatch: 'full', canActivate: [AuthGuard], data: { title: 'Slots', roles: ['user', 'admin'] }, resolve: {slots: SlotsResolveService} },
                             ] }
                         ]},
                     ]}

@@ -1,7 +1,9 @@
 package edu.fra.uas.parking.controller;
 
 import edu.fra.uas.parking.common.ResponseMessage;
+import edu.fra.uas.parking.entity.Reservation;
 import edu.fra.uas.parking.entity.Slot;
+import edu.fra.uas.parking.repository.ReservationRepository;
 import edu.fra.uas.parking.repository.SlotRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -25,10 +28,12 @@ public class SlotController implements BaseController<Slot> {
 
     private final Logger logger = LoggerFactory.getLogger(SlotController.class);
     private final SlotRepository slotRepository;
+    private final ReservationRepository reservationRepository;
 
     @Autowired
-    public SlotController(SlotRepository slotRepository) {
+    public SlotController(SlotRepository slotRepository, ReservationRepository reservationRepository) {
         this.slotRepository = slotRepository;
+        this.reservationRepository = reservationRepository;
     }
 
     @PreAuthorize("hasAuthority('VIEW_SLOTS')")
@@ -100,16 +105,6 @@ public class SlotController implements BaseController<Slot> {
         return this.message("Slot not found", null, HttpStatus.NOT_FOUND);
     }
 
-    @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
-    @GetMapping("/{id}/reservations")
-    public ResponseEntity<ResponseMessage> getReservationsBySlotId(@PathVariable("id") Long id) {
-        logger.debug("Getting reservations by slot id: {}", id);
-        Optional<Slot> slot = this.slotRepository.findById(id);
-        return slot.map(value ->
-                        this.message("Getting reservations by slot id", value.getReservations(), HttpStatus.OK))
-                .orElseGet(() -> this.message("Slot not found", null, HttpStatus.NOT_FOUND));
-    }
-
     @PreAuthorize("hasAuthority('VIEW_FLOOR')")
     @GetMapping("/{id}/floor")
     public ResponseEntity<ResponseMessage> getFloorBySlotId(@PathVariable("id") Long id) {
@@ -130,6 +125,22 @@ public class SlotController implements BaseController<Slot> {
                 .orElseGet(() -> this.message("Slot not found", null, HttpStatus.NOT_FOUND));
     }
 
+    @PreAuthorize("hasAuthority('VIEW_SLOTS')")
+    @GetMapping("/{id}/reservations")
+    public ResponseEntity<ResponseMessage> getReservationsBySlotId(
+            @PathVariable("id") Long slotId,
+            @RequestParam("buildingId") Long buildingId,
+            @RequestParam("floorId") Long floorId
+    ) {
+        List<Reservation> reservations = reservationRepository.findByBuildingFloorAndSlot(buildingId, floorId, slotId);
+
+        if (!reservations.isEmpty()) {
+            return this.message("Reservations found for the specified building, floor, and slot", reservations, HttpStatus.OK);
+        } else {
+            return this.message("No reservations found for the specified building, floor, and slot", null, HttpStatus.NOT_FOUND);
+        }
+    }
+
     private ResponseEntity<ResponseMessage> message(String message, Object data, HttpStatus httpStatus) {
         return new ResponseEntity<>(new ResponseMessage(message, data), httpStatus);
     }
@@ -137,7 +148,7 @@ public class SlotController implements BaseController<Slot> {
     private Slot addLinks(Slot slot) {
         slot.add(linkTo(methodOn(SlotController.class).getById(slot.getId())).withSelfRel());
         slot.add(linkTo(methodOn(SlotController.class).index()).withRel(IanaLinkRelations.COLLECTION));
-        slot.add(linkTo(methodOn(SlotController.class).getReservationsBySlotId(slot.getId())).withRel("reservations"));
+        slot.add(linkTo(methodOn(SlotController.class).getReservationsBySlotId(slot.getId(), null, null)).withRel("reservations"));
 
         return slot;
     }
