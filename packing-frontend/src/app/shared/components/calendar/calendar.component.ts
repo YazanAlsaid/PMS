@@ -103,6 +103,9 @@ export class CalendarComponent implements OnInit {
             afterEnd: true,
           },
           draggable: true,
+          meta: {
+            reservationPeriod: reservation.reservationPeriod,
+          },
         }));
       });
   }
@@ -175,6 +178,7 @@ export class CalendarComponent implements OnInit {
         buildingId: this.data.buildingId,
         floorId: this.data.floorId,
         date: event.start,
+        reservationPeriod: event.meta.reservationPeriod,
       },
     });
   }
