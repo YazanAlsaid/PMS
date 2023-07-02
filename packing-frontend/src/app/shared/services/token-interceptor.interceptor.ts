@@ -32,7 +32,6 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
       tap((event: HttpEvent<unknown>) => {
         if (event instanceof HttpResponse) {
           // Token is still valid
-          console.log("Token is valid");
         }
       }),
       catchError((error: HttpErrorResponse) => {
@@ -41,7 +40,7 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
           sessionStorage.removeItem('token');
            // Create a redirect URL from the current URL and store it as a query parameter
           const redirectUrl = `${window.location.pathname}?redirect=${encodeURIComponent(window.location.href)}`;
-          this.router.navigateByUrl(`/auth?${redirectUrl}`);
+          this.router.navigateByUrl(`/auth?${redirectUrl}`).then(()=>{});
         }
         return throwError(error);
       })

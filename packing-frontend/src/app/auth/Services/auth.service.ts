@@ -59,14 +59,10 @@ export class AuthService {
   }
 
   resetPassword(email: string): Observable<any> {
-    console.log(this.RESET_API);
-
     return this.http.post<any>(this.RESET_API, email , httpOptions);
   }
 
   setNewPassword(token: string, password: string, confirmPassword: string): Observable<any> {
-    console.log(this.SET_API);
-
     return this.http.post<any>(this.SET_API, { token, password, confirmPassword }, httpOptions);
   }
 

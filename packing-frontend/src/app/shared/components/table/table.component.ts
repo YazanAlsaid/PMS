@@ -17,8 +17,6 @@ export class TableComponent implements AfterViewInit, OnInit {
   public paginator!: MatPaginator;
 
   ngOnInit() {
-    console.log(this.dataSource.data[0]);
-    console.log(this.columns)
   }
 
   ngAfterViewInit() {

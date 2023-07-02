@@ -38,7 +38,6 @@ export class ReservationDialogComponent {
     };
 
     // Logic for saving the reservation
-    console.log(reservation);
 
     // Close the dialog
     this.dialogRef.close();

@@ -1,10 +1,10 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { Park } from "../../../shared/model/park";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Building } from "../../../shared/model/building";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { ClientParkService } from "../../../shared/services/client-park.service";
-import { Floor } from "../../../shared/model/floor";
+import {Component, Inject, OnInit} from '@angular/core';
+import {Park} from "../../../shared/model/park";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Building} from "../../../shared/model/building";
+import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
+import {ClientParkService} from "../../../shared/services/client-park.service";
+import {Floor} from "../../../shared/model/floor";
 
 @Component({
   selector: 'app-add-floor-dialog',
@@ -58,6 +58,7 @@ export class AddFloorDialogComponent implements OnInit {
       this.data.floor = new Floor(this.dialogForm.value.name);
       this.data.floor.building = this.dialogForm.value.building;
       this.dialogRef.close(this.data);
+
     }
   }
 
