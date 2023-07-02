@@ -54,5 +54,6 @@ export const RoutedComponent = [
   BuildingComponent,
   FloorsComponent,
   SlotComponent,
-  ParksComponent
+  ParksComponent,
+  ReservationsComponent
 ];
