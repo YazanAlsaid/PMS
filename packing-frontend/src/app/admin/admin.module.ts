@@ -25,6 +25,7 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {AddFloorDialogComponent} from './components/add-floor-dialog/add-floor-dialog.component';
 import {AddReservationDialogComponent} from './components/add-reservation-dialog/add-reservation-dialog.component';
+import {MatRadioModule} from '@angular/material/radio';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import {AddReservationDialogComponent} from './components/add-reservation-dialog
     MatGridListModule,
     MatSortModule,
     MatCheckboxModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatRadioModule,
   ],
 })
 export class AdminModule {
