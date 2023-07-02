@@ -8,6 +8,7 @@ import {Type} from "../../../shared/model/type";
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
 import {ClientTypeService} from "../../../shared/services/client-type.service";
 import {Slot} from "../../../shared/model/slot";
+import {ClientFloorService} from "../../../shared/services/client-floor.service";
 
 @Component({
   selector: 'app-add-slot-dialog',
@@ -18,6 +19,7 @@ export class AddSlotDialogComponent implements OnInit{
   public parkingOptions: Park[] = [];
   public buildingOptions: Building[] = [];
   public floorOptions: Building[] = [];
+  public slotOptions: Slot[] = [];
   public typeOptions: Type[] = [];
   public dialogForm!: FormGroup;
   private isUpdate: boolean = false;
@@ -28,7 +30,8 @@ export class AddSlotDialogComponent implements OnInit{
     private formBuilder: FormBuilder,
     private clientPark: ClientParkService,
     private clientType: ClientTypeService,
-    private clientBuilding: ClientBuildingService) {
+    private clientBuilding: ClientBuildingService,
+    private clientFloor: ClientFloorService,) {
     this.dialogForm = this.formBuilder.group({
       park: ['', Validators.required],
       building: ['', Validators.required],
@@ -80,15 +83,16 @@ export class AddSlotDialogComponent implements OnInit{
     }
   }
 
+
+
   onSubmit() {
     if (this.dialogForm.valid && this.isUpdate) {
       this.data.slot.name = this.dialogForm.value.name;
       this.data.slot.type = this.dialogForm.value.type;
       this.dialogRef.close(this.data.slot);
     } else if (this.dialogForm.valid) {
-      this.data.slot = new Slot(this.dialogForm.value.name, this.dialogForm.value.type);
-      this.data.slot.floor = this.dialogForm.value.floor;
-      this.dialogRef.close(this.data.slot);
+      this.data.slot = new Slot(this.dialogForm.value.name, this.dialogForm.value.floor ,this.dialogForm.value.type);
+      this.dialogRef.close(this.data);
     }
   }
 }

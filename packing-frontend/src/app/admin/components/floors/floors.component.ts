@@ -6,6 +6,7 @@ import {AddFloorDialogComponent} from "../add-floor-dialog/add-floor-dialog.comp
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {Floor} from "../../../shared/model/floor";
 import {ActivatedRoute} from "@angular/router";
+import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-dialog.component";
 
 @Component({
   selector: 'app-floors',
@@ -67,16 +68,15 @@ export class FloorsComponent implements OnInit {
   create() {
     const dialogRef = this.dialog.open(AddFloorDialogComponent, this.dialogConfig);
 
-    dialogRef.afterClosed().subscribe(
-      (data: any) => {
-        if (data.floor != null) {
-          this.clientFloors.createFloor(data.floor).subscribe(
-            (res: any) => this.ngOnInit(),
-            (err: any) => console.log(err.error.error)
-          )
-        }
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle any actions after the dialog is closed
+      if (result && result.floor != null){
+        this.clientFloors.createFloor(result.floor).subscribe(
+          (res: any) => this.floors.push(res.data),
+          (err: any) => console.log(err.error.error)
+        );
       }
-    );
+    });
   }
 
   show(element: any) {

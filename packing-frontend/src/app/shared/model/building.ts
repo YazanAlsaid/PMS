@@ -11,7 +11,8 @@ export class Building {
   public address!: any;
 
 
-  constructor(name: string) {
+  constructor(name: string,park: Park) {
     this.name = name;
+    this.park =park;
   }
 }
