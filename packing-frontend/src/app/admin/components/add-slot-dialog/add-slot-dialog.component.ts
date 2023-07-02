@@ -83,15 +83,7 @@ export class AddSlotDialogComponent implements OnInit{
     }
   }
 
-  onSelectFloors() {
-    if (this.dialogForm.get('floor')?.valid) {
-      const id = this.dialogForm.get('floor')?.value.id;
-      this.clientFloor.getSlots(id).subscribe(
-        (res: any) => this.slotOptions = res.data,
-        (err: any) => console.log(err)
-      )
-    }
-  }
+
 
   onSubmit() {
     if (this.dialogForm.valid && this.isUpdate) {
@@ -99,9 +91,8 @@ export class AddSlotDialogComponent implements OnInit{
       this.data.slot.type = this.dialogForm.value.type;
       this.dialogRef.close(this.data.slot);
     } else if (this.dialogForm.valid) {
-      this.data.slot = new Slot(this.dialogForm.value.name, this.dialogForm.value.type);
-      this.data.slot.floor = this.dialogForm.value.floor;
-      this.dialogRef.close(this.data.slot);
+      this.data.slot = new Slot(this.dialogForm.value.name, this.dialogForm.value.floor ,this.dialogForm.value.type);
+      this.dialogRef.close(this.data);
     }
   }
 }
