@@ -11,9 +11,7 @@ export class Floor {
   public slotsCount!: number;
 
 
-  constructor(name: string ,Building:Building ) {
+  constructor(name: string) {
     this.name = name;
-    this.building = Building;
-
   }
 }
