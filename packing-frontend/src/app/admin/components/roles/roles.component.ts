@@ -2,6 +2,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {ClientRoleService} from "../../../shared/services/client-role.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-roles',
@@ -14,7 +15,8 @@ export class RolesComponent implements AfterViewInit, OnInit {
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
 
-  constructor(private clientRoles: ClientRoleService) {
+  constructor(private clientRoles: ClientRoleService,
+              private activatedRoute: ActivatedRoute) {
   }
 
   ngAfterViewInit(): void {
@@ -22,13 +24,22 @@ export class RolesComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.clientRoles.getRoles().subscribe(
+    /*this.clientRoles.getRoles().subscribe(
       (res: any) => {
         this.dataSource.data = res.data;
         this.dataSource.paginator = this.paginator;
       },
       (err: any) => console.log(err)
-    )
+    )*/
+    const resolverData = this.activatedRoute.snapshot.data['roles'];
+    console.log(resolverData.data);
+    if (resolverData.data){
+      this.dataSource.data = resolverData.data;
+      this.dataSource.paginator = this.paginator;
+
+    }else {
+      console.log(resolverData.message);
+    }
   }
 
   edit(element: any) {
