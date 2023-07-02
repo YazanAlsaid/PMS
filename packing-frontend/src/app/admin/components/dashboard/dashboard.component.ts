@@ -34,10 +34,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.sub = this.activatedRoute.data.subscribe((v) => (this.data = v));
     this.clientStatistic.getCounts().subscribe(
-      (res: ResponseMessage) => {
-        this.counterData = res.data;
-        console.log(this.counterData);
-      },
+      (res: ResponseMessage) => this.counterData = res.data,
       (err: any) => console.log(err)
     );
 
@@ -107,7 +104,6 @@ export class DashboardComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       // Handle any actions after the dialog is closed
-      console.log('Dialog closed', result);
     });
   }
 
@@ -118,7 +114,6 @@ export class DashboardComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       // Handle any actions after the dialog is closed
-      console.log('Dialog closed', result);
     });
   }
 
@@ -136,7 +131,11 @@ export class DashboardComponent implements OnInit {
     }
     this.clientStatistic.getNumberOfReservationInEachWeek().subscribe(
       (res: ResponseMessage) => {
-        const data = res.data;
+        let data = [52];
+        for (let i = 0; i < res.data.length; i++) {
+          data[res.data[i][1]] = res.data[i][0];
+        }
+
         const dataset = {
           label: '# of Reservations',
           data: data,
@@ -168,7 +167,10 @@ export class DashboardComponent implements OnInit {
 
     this.clientStatistic.getNumberOfReservationInEachMonth().subscribe(
       (res: ResponseMessage) => {
-        const data = res.data;
+        let data = [12];
+        for (let i = 0; i < res.data.length; i++) {
+          data[res.data[i][1]] = res.data[i][0];
+        }
         const dataset = {
           label: '# of Reservations',
           data: data,

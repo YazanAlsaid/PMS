@@ -24,7 +24,6 @@ export class AddParkDialogComponent {
 
     this.isUpdate = this.data.isUpdate;
     if (this.isUpdate) {
-      console.log()
       this.dialogForm.get('name')?.setValue(this.data.park.name);
     }
   }

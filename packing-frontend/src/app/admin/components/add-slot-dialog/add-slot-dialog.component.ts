@@ -14,12 +14,13 @@ import {Slot} from "../../../shared/model/slot";
   templateUrl: './add-slot-dialog.component.html',
   styleUrls: ['./add-slot-dialog.component.scss']
 })
-export class AddSlotDialogComponent implements OnInit {
+export class AddSlotDialogComponent implements OnInit{
   public parkingOptions: Park[] = [];
   public buildingOptions: Building[] = [];
   public floorOptions: Building[] = [];
   public typeOptions: Type[] = [];
   public dialogForm!: FormGroup;
+  private isUpdate: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any, //erste
@@ -35,6 +36,7 @@ export class AddSlotDialogComponent implements OnInit {
       type: ['', Validators.required],
       name: ['', Validators.compose([Validators.required, Validators.minLength(3)])]
     });
+    this.isUpdate = this.data.isUpdate;
   }
 
   onNoClick(): void {
@@ -43,14 +45,15 @@ export class AddSlotDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientPark.getParks().subscribe(
-      (res: any) => {
-        this.parkingOptions = res.data.content;
-      },
+      (res: any) => this.parkingOptions = res.data.content,
       (err: any) => console.log(err)
     );
     this.clientType.getTypes().subscribe(
       (res: any) => {
         this.typeOptions = res.data;
+        if (this.isUpdate) {
+          this.dialogForm.get('type')?.setValue(this.data.slot.type.name);
+        }
       },
       (err: any) => console.log(err)
     );
@@ -68,7 +71,6 @@ export class AddSlotDialogComponent implements OnInit {
   }
 
   onSelectBuilding() {
-    console.log(this.dialogForm.get('building')?.value);
     if (this.dialogForm.get('building')?.valid) {
       const id = this.dialogForm.get('building')?.value.id;
       this.clientBuilding.getFloors(id).subscribe(
@@ -79,13 +81,14 @@ export class AddSlotDialogComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.dialogForm.valid) {
-      // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      console.log(this.dialogForm.get('floor')?.value);
-      const slot = new Slot(this.dialogForm.value.name, this.dialogForm.get('floor')?.value);
-      this.data.slot = slot;
-      // Schließe den Dialog
-      this.dialogRef.close(this.data);
+    if (this.dialogForm.valid && this.isUpdate) {
+      this.data.slot.name = this.dialogForm.value.name;
+      this.data.slot.type = this.dialogForm.value.type;
+      this.dialogRef.close(this.data.slot);
+    } else if (this.dialogForm.valid) {
+      this.data.slot = new Slot(this.dialogForm.value.name, this.dialogForm.value.type);
+      this.data.slot.floor = this.dialogForm.value.floor;
+      this.dialogRef.close(this.data.slot);
     }
   }
 }

@@ -23,7 +23,8 @@ import {MatSortModule} from "@angular/material/sort";
 import {AddBuildingDialogComponent} from './components/add-building-dialog/add-building-dialog.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatDatepickerModule} from "@angular/material/datepicker";
-import { AddFloorDialogComponent } from './components/add-floor-dialog/add-floor-dialog.component';
+import {AddFloorDialogComponent} from './components/add-floor-dialog/add-floor-dialog.component';
+import {AddReservationDialogComponent} from './components/add-reservation-dialog/add-reservation-dialog.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,9 @@ import { AddFloorDialogComponent } from './components/add-floor-dialog/add-floor
     AddSlotDialogComponent,
     AddParkDialogComponent,
     AddBuildingDialogComponent,
-    AddFloorDialogComponent
+    AddFloorDialogComponent,
+    AddReservationDialogComponent,
+    AddReservationDialogComponent,
   ],
   imports: [
     CommonModule,

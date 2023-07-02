@@ -2,6 +2,9 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {ClientNfcService} from "../../../shared/services/client-nfc.service";
+import {ActivatedRoute} from "@angular/router";
+import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
+import {MatDialogConfig} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-nfc-cards',
@@ -13,22 +16,36 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'serialNumber', 'nfcFrom', 'nfcTo', 'user', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
+  private dialog: any;
 
-  constructor(private clientNfc: ClientNfcService) {
+  constructor(private clientNfc: ClientNfcService,
+              private activatedRoute: ActivatedRoute) {
   }
+
+  private dialogConfig: MatDialogConfig = {
+    width: '400px',
+    autoFocus: true,
+    disableClose: true,
+    data: {
+      roles: null,
+      isUpdate: false,
+    }
+  };
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
   }
 
   ngOnInit(): void {
-    this.clientNfc.getNfcs().subscribe(
-      (res: any) => {
-        this.dataSource.data = res.data;
-        this.dataSource.paginator = this.paginator;
-      },
-      (err: any) => console.log(err)
-    )
+    const resolverData = this.activatedRoute.snapshot.data['nfcCards'];
+    console.log(resolverData);
+    if (resolverData.data){
+      this.dataSource.data = resolverData.data;
+      this.dataSource.paginator = this.paginator;
+
+    }else {
+      console.log(resolverData.message);
+    }
   }
 
   edit(element: any) {
@@ -36,6 +53,18 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   }
 
   create() {
+    const dialogRef = this.dialog.open(AddParkDialogComponent, this.dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        if (data.roles != null) {
+          this.clientNfc.createNfc(data.roles).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          )
+        }
+      }
+    );
 
   }
 
