@@ -1,7 +1,7 @@
-import {Timestamp} from "rxjs";
-import {User} from "./user";
-import {Nfc} from "./nfc";
-import {Slot} from "./slot";
+import { Timestamp } from 'rxjs';
+import { User } from './user';
+import { Nfc } from './nfc';
+import { Slot } from './slot';
 
 export class Reservation {
   public id!: number;
@@ -13,12 +13,15 @@ export class Reservation {
   public createdAt!: Date;
   public updatedAt!: Date;
 
-
-  constructor( reservationAt: Date, period: string, user: User , slot : Slot) {
-
+  constructor(
+    reservationAt: Date,
+    user: User,
+    slot: Slot,
+    period: Reservation['reservationPeriod']
+  ) {
     this.reservationAt = reservationAt;
     this.reservationPeriod = period;
     this.user = user;
-    this.slot=slot;
+    this.slot = slot;
   }
 }
