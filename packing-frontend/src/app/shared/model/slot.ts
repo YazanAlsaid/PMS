@@ -12,7 +12,8 @@ export class Slot {
   public updatedAt!: Date;
 
 
-  constructor( name: string, floor: Floor) {
+  constructor( name: string, floor: Floor , type: Type) {
+    this.type=type;
     this.name = name;
     this.floor = floor;
   }
