@@ -58,6 +58,7 @@ export class AddReservationDialogComponent {
     if (this.dialogForm.valid && this.isUpdate) {
       this.data.reservation.date = this.dialogForm.value.date;
       this.data.reservation.period = this.dialogForm.value.period;
+      this.data.reservation.user = this.dialogForm.value.user;
       this.data.reservation.slot = this.dialogForm.value.slot;
     } else if (this.dialogForm.valid && !this.isUpdate) {
       this.data.reservation = new Reservation(this.dialogForm.value.date, this.dialogForm.value.period,this.dialogForm.value.user,this.dialogForm.value.slot);
@@ -70,7 +71,11 @@ export class AddReservationDialogComponent {
     if (this.dialogForm.get('park')?.valid) {
       const id = this.dialogForm.get('park')?.value.id;
       this.clientPark.getBuilding(id).subscribe(
-        (res: any) => this.buildingOptions = res.data,
+        (res: any) => {
+          this.buildingOptions = res.data;
+          if (this.isUpdate){
+          }
+        },
         (err: any) => console.log(err)
       )
     }
@@ -83,11 +88,15 @@ export class AddReservationDialogComponent {
     if (this.dialogForm.get('building')?.valid) {
       const id = this.dialogForm.get('building')?.value.id;
       this.clientBuilding.getFloors(id).subscribe(
-        (res: any) => this.floorOptions = res.data,
+        (res: any) => {
+          this.floorOptions = res.data;
+          if (this.isUpdate){
+
+          }
+        },
         (err: any) => console.log(err)
       )
     }
-
   }
 
   onSelectFloor() {
@@ -95,7 +104,12 @@ export class AddReservationDialogComponent {
     if (this.dialogForm.get('floor')?.valid) {
       const id = this.dialogForm.get('floor')?.value.id;
       this.clientFloor.getSlots(id).subscribe(
-        (res: any) => this.slotOptions = res.data,
+        (res: any) => {
+          this.slotOptions = res.data;
+          if (this.isUpdate){
+
+          }
+        },
         (err: any) => console.log(err)
       )
     }
