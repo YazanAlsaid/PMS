@@ -74,6 +74,9 @@ export class UsersComponent implements AfterViewInit, OnInit {
         }
       }
     );
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle any actions after the dialog is closed
+    });
   }
 
   show(element: any) {
