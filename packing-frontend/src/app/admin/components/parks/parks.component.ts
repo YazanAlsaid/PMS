@@ -76,7 +76,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
       (data: any) => {
         if (data.park != null) {
           this.parksService.createPark(data.park).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) => this.parks.push(res.data),
             (err: any) => console.log(err.error.error)
           )
         }
