@@ -6,7 +6,7 @@ import {Slot} from "./slot";
 export class Reservation {
   public id!: number;
   public reservationAt: Date;
-  public period!: string;
+  public reservationPeriod!: string;
   public user !: User;
   public nfc!: Nfc;
   public slot!: Slot;
@@ -17,9 +17,8 @@ export class Reservation {
   constructor( reservationAt: Date, period: string, user: User , slot : Slot) {
 
     this.reservationAt = reservationAt;
-    this.period = period;
+    this.reservationPeriod = period;
     this.user = user;
     this.slot=slot;
-
   }
 }
