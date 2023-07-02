@@ -21,6 +21,7 @@ export class AddReservationDialogComponent {
   public buildingOptions : Building[] = [];
   public slotOptions : Slot[] = [];
   public dialogForm !: FormGroup;
+  private isUpdate: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any, //erste
@@ -37,19 +38,31 @@ export class AddReservationDialogComponent {
       date: ['', Validators.required],
       period: ['', Validators.required],
     });
-  }
+    this.isUpdate = this.data.isUpdate;
+    if(this.isUpdate){
 
-  onSubmit() {
-    if (this.dialogForm.valid) {
-      // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      console.log(this.dialogForm.get('slot')?.value);
-      // @ts-ignore
-      const reservation  = new Reservation(this.dialogForm.value.name, this.dialogForm.get('slot')?.value);
-      this.data.reservation = reservation;
-      // Schließe den Dialog
-      this.dialogRef.close(this.data);
     }
   }
+
+  ngOnInit(): void {
+    this.clientPark.getParks().subscribe(
+      (res: any) => {
+        this.parkingOptions = res.data.content;
+      }
+    );
+  }
+
+  onSubmit(): void {
+    if (this.dialogForm.valid && this.isUpdate) {
+      this.data.reservation.date = this.dialogForm.value.date;
+      this.data.reservation.period = this.dialogForm.value.period;
+      this.data.reservation.slot = this.dialogForm.value.slot;
+    } else if (this.dialogForm.valid && !this.isUpdate) {
+      this.data.reservation = new Reservation(this.dialogForm.value.date, this.dialogForm.value.period,this.dialogForm.value.user,this.dialogForm.value.slot);
+      this.data.reservation.slot = this.dialogForm.value.slot;
+      this.dialogRef.close(this.data);
+      }
+    }
 
   onSelectPark() {
     if (this.dialogForm.get('park')?.valid) {
