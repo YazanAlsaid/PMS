@@ -14,8 +14,7 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./slots.component.scss']
 })
 export class SlotsComponent implements OnInit {
-  @ViewChild(MatPaginator)
-  public paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public pagedSlots: Slot[] = [];
   public slots: Slot[] = [];
@@ -70,17 +69,18 @@ export class SlotsComponent implements OnInit {
 
   create() {
     const dialogRef = this.dialog.open(AddSlotDialogComponent, this.dialogConfig);
-
-    dialogRef.afterClosed().subscribe(
-      (data: any) => {
-        if (data.slot != null) {
-          this.clientSlots.createSlot(data.slot).subscribe(
-            (res: any) => this.ngOnInit(),
-            (err: any) => console.log(err.error.error)
-          );
-        }
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle any actions after the dialog is closed
+      if (result && result.slot != null){
+        this.clientSlots.createSlot(result.slot).subscribe(
+          (res: any) => {
+            this.slots.push(res.data);
+            this.paginateSlots();
+          },
+          (err: any) => console.log(err.error.error)
+        );
       }
-    );
+    });
   }
 
   show(element: any) {}
