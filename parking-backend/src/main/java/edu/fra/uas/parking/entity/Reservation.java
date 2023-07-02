@@ -30,7 +30,6 @@ public class Reservation extends BaseEntity {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "nfc_card_id", nullable = false)
     private NfcCard nfcCard;
-    @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "slot_id", nullable = false)
     private Slot slot;

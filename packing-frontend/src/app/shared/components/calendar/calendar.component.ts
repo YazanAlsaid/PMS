@@ -89,7 +89,6 @@ export class CalendarComponent implements OnInit {
   }
 
   dateSelected(date: any) {
-    console.log({date});
     // this.dialogRef.close();
     // this.router.navigate([`dashboard/slots`], {
     //   queryParams: {

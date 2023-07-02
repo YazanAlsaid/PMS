@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'app-entry',
@@ -33,23 +33,17 @@ export class EntryComponent {
       const ndef = new NDEFReader();
       const signal = this.abortController.signal;
 
-      await ndef.scan({ signal });
+      await ndef.scan({signal});
 
       ndef.onreading = (event) => {
-        console.log(event);
-        console.log(event.serialNumber);
-
         this.readCards = [
           ...this.readCards,
-          { serialNumber: event.serialNumber, data: ' ' },
+          {serialNumber: event.serialNumber, data: ' '},
         ];
-
-        console.log({ readCards: this.readCards });
         // this.stopScan();
       };
 
       ndef.onreadingerror = (error) => {
-        console.log({ error });
         const errorMsg = "Couldn't read from NFC tag, try another one";
         this.error = errorMsg;
         // this.NFCErrored = true;
@@ -60,9 +54,7 @@ export class EntryComponent {
     } catch (error) {
       this.startScan();
       this.error = 'Error occured!';
-      console.log(error);
       this.NFCErrored = true;
-      console.log({ error });
     }
   }
 

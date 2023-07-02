@@ -38,13 +38,6 @@ export class ParksComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-   /* this.parksService.getParks().subscribe(
-      (res: ResponseMessage) => {
-        this.dataSource = res.data.content;
-        this.parks = this.dataSource;
-      },
-      (err: any) => console.log(err)
-    );*/
     const resolverData = this.activatedRoute.snapshot.data['parks'];
     if (resolverData.data){
       this.dataSource = resolverData.data.content;
@@ -65,6 +58,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
     const dialogRef = this.dialog.open(AddParkDialogComponent, this.dialogConfig);
     dialogRef.afterClosed().subscribe(
       (data: any) => {
+        this.dialogConfig.data.isUpdate = false;
         if (data.park != null && data.isUpdate) {
           this.parksService.updatePark(data.park.id, data.park).subscribe(
             (res: any) => this.ngOnInit(),

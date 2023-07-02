@@ -104,7 +104,7 @@ public class UserController implements BaseController<User> {
                 this.message("Getting roles by user id", value.getRoles(), HttpStatus.OK))
                 .orElseGet(() -> this.message("User not found", null, HttpStatus.NOT_FOUND));
     }
-    @PreAuthorize("#id == principal.id and hasAuthority('VIEW_RESERVATIONS')")
+    @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
     @GetMapping("/{id}/reservations")
     public ResponseEntity<ResponseMessage> getReservationsByUserId(@PathVariable("id") Long id) {
         logger.debug("Getting reservations by user id: {}", id);

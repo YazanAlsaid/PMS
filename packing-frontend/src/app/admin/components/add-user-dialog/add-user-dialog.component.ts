@@ -25,20 +25,9 @@ export class AddUserDialogComponent {
     });
   }
 
- /* if (this.dialogForm.valid) {
-  // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-  console.log(this.dialogForm.get('floor')?.value);
-  const slot = new Slot(this.dialogForm.value.name, this.dialogForm.get('floor')?.value);
-  this.data.slot = slot;
-  // Schließe den Dialog
-  this.dialogRef.close(this.data);
-}*/
-
   onSubmit(): void {
     if (this.dialogForm.valid) {
       // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      console.log(this.dialogForm.get('slots')?.value);
-
       // Schließe den Dialog
       this.dialogRef.close();
     }

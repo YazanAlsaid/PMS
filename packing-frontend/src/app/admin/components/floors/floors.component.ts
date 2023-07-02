@@ -37,15 +37,7 @@ export class FloorsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-   /* this.clientFloors.getFloors().subscribe(
-      (res: any) => {
-        this.dataSource = res.data;
-        this.floors = res.data;
-      },
-      (err: any) => console.log(err)
-    )*/
     const resolverData = this.activatedRoute.snapshot.data['floors'];
-    console.log(resolverData.data);
     if (resolverData.data){
       this.dataSource = resolverData.data;
       this.floors = resolverData.data
@@ -56,7 +48,20 @@ export class FloorsComponent implements OnInit {
   }
 
   edit(element: any) {
-
+    this.dialogConfig.data.floor = element;
+    this.dialogConfig.data.isUpdate = true;
+    const dialogRef = this.dialog.open(AddFloorDialogComponent, this.dialogConfig);
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        this.dialogConfig.data.isUpdate = false;
+        if (data.floor != null && data.isUpdate) {
+          this.clientFloors.updateFloor(data.floor.id, data.floor).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          )
+        }
+      }
+    );
   }
 
   create() {
