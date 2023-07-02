@@ -5,6 +5,7 @@ import {ClientFloorService} from "../../../shared/services/client-floor.service"
 import {AddFloorDialogComponent} from "../add-floor-dialog/add-floor-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {Floor} from "../../../shared/model/floor";
+import { ResponseMessage } from 'src/app/shared/model/response-message';
 
 @Component({
   selector: 'app-floors',
@@ -36,7 +37,7 @@ export class FloorsComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientFloors.getFloors().subscribe(
-      (res: any) => {
+      (res: ResponseMessage) => {
         this.dataSource = res.data;
         this.floors = res.data;
       },
@@ -45,7 +46,20 @@ export class FloorsComponent implements OnInit {
   }
 
   edit(element: any) {
-
+    this.dialogConfig.data.floor = element;
+    this.dialogConfig.data.isUpdate = true;
+    const dialogRef = this.dialog.open(AddFloorDialogComponent, this.dialogConfig);
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        this.dialogConfig.data.isUpdate = false;
+        if (data.floor != null && data.isUpdate) {
+          this.clientFloors.updateFloor(data.floor.id, data.floor).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          )
+        }
+      }
+    );
   }
 
   create() {

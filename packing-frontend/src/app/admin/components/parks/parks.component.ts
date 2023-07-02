@@ -55,6 +55,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
     const dialogRef = this.dialog.open(AddParkDialogComponent, this.dialogConfig);
     dialogRef.afterClosed().subscribe(
       (data: any) => {
+        this.dialogConfig.data.isUpdate = false;
         if (data.park != null && data.isUpdate) {
           this.parksService.updatePark(data.park.id, data.park).subscribe(
             (res: any) => this.ngOnInit(),

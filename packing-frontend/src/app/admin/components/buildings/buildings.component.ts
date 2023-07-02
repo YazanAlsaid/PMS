@@ -6,6 +6,8 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-dialog.component";
 import {Building} from "../../../shared/model/building";
+import { th } from 'date-fns/locale';
+import { ResponseMessage } from 'src/app/shared/model/response-message';
 
 @Component({
   selector: 'app-buildings',
@@ -40,22 +42,31 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.clientBuilding.getBuildings().subscribe(
-      (res: any) => {
+      (res: ResponseMessage) => {
+        this.dataSource = res.data;
         this.buildings = res.data;
-        this.dataSource = this.buildings;
-        // this.dataSource.paginator = this.paginator;
       },
       (err: any) => console.log(err)
+    );
+  }
+
+  edit(element: any) {
+    this.dialogConfig.data.building = element;
+    this.dialogConfig.data.isUpdate = true;
+    const dialogRef = this.dialog.open(AddBuildingDialogComponent, this.dialogConfig);
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        this.dialogConfig.data.isUpdate = false;
+        if (data.building != null && data.isUpdate) {
+          this.clientBuilding.updateBuilding(data.building.id, data.building).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          );
+        }
+      }
     )
   }
 
-  edit(building: any): void {
-    // Handle edit functionality
-  }
-
-  show(building: any): void {
-    // Handle view functionality
-  }
   create() {
     const dialogRef = this.dialog.open(AddBuildingDialogComponent, this.dialogConfig);
 
@@ -68,6 +79,10 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
         );
       }
     });
+  }
+
+  show(element: any): void {
+    // Handle view functionality
   }
 
   getRandomColor(): string {
