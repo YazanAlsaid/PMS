@@ -72,9 +72,9 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       // Handle any actions after the dialog is closed
-      if (result.building != null){
+      if (result && result.building != null){
         this.clientBuilding.createBuilding(result.building).subscribe(
-          (res: any) => this.ngOnInit(),
+          (res: any) => this.buildings.push(res.data),
           (err: any) => console.log(err.error.error)
         );
       }
