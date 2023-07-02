@@ -6,6 +6,7 @@ import {Type} from "../../../shared/model/type";
 import {AddSlotDialogComponent} from "../add-slot-dialog/add-slot-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientSlotService} from "../../../shared/services/client-slot.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-slots',
@@ -32,17 +33,26 @@ export class SlotsComponent implements OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private clientSlots: ClientSlotService) {
+    private clientSlots: ClientSlotService,
+    private activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
-    this.clientSlots.getSlots().subscribe(
+  /*  this.clientSlots.getSlots().subscribe(
       (res: any) => {
         this.dataSource = res.data;
         this.slots = res.data;
       },
       (err: any) => console.log(err)
-    )
+    )*/
+    const resolveData = this.activatedRoute.snapshot.data['slots'];
+    if (resolveData.data){
+      this.dataSource = resolveData.data;
+      this.slots = resolveData.data;
+
+    } else {
+      console.log(resolveData.message);
+    }
   }
 
   edit(element: any) {

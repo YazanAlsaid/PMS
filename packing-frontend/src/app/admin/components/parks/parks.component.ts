@@ -7,6 +7,7 @@ import {Park} from "../../../shared/model/park";
 import {MatSort} from "@angular/material/sort";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-parks',
@@ -32,17 +33,26 @@ export class ParksComponent implements AfterViewInit, OnInit {
   };
   constructor(
     public dialog: MatDialog,
-    private parksService: ClientParkService) {
+    private parksService: ClientParkService,
+    private activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
-    this.parksService.getParks().subscribe(
+   /* this.parksService.getParks().subscribe(
       (res: ResponseMessage) => {
         this.dataSource = res.data.content;
         this.parks = this.dataSource;
       },
       (err: any) => console.log(err)
-    );
+    );*/
+    const resolverData = this.activatedRoute.snapshot.data['parks'];
+    if (resolverData.data){
+      this.dataSource = resolverData.data.content;
+      this.parks = this.dataSource;
+
+    }else {
+      console.log(resolverData.message);
+    }
   }
 
   ngAfterViewInit(): void {
