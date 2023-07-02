@@ -13,7 +13,7 @@
   </mat-card-actions>
   <mat-card-content>
     <mat-grid-list cols="4" rowHeight="230px" gutterSize="16px" class="building-grid">
-      <mat-grid-tile *ngFor="let park of dataSource">
+      <mat-grid-tile *ngFor="let park of pagedParks">
         <mat-card class="building-card border border-primary shadow">
           <mat-card-title class="building-title mt-3">Park {{ park.id }}</mat-card-title>
           <mat-card-content>
@@ -32,6 +32,7 @@
         </mat-card>
       </mat-grid-tile>
     </mat-grid-list>
+    <mat-paginator [pageSizeOptions]="[8,12,16]" showFirstLastButtons></mat-paginator>
   </mat-card-content>
 </mat-card>
 

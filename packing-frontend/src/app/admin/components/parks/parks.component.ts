@@ -15,11 +15,12 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./parks.component.scss']
 })
 export class ParksComponent implements AfterViewInit, OnInit {
-  @ViewChild("paginator") paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public dataSource: Park[] = [];
-  public parks:Park[] = [];
+  private parks: Park[] = [];
+  public pagedParks: Park[] = [];
 
   searchQuery: any;
   private dialogConfig: MatDialogConfig = {
@@ -31,6 +32,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
       isUpdate: false,
     }
   };
+
   constructor(
     public dialog: MatDialog,
     private parksService: ClientParkService,
@@ -39,17 +41,28 @@ export class ParksComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['parks'];
-    if (resolverData.data){
+    if (resolverData.data) {
       this.dataSource = resolverData.data.content;
       this.parks = this.dataSource;
-
-    }else {
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.parks.length;
+      this.paginateParks();
+    } else {
       console.log(resolverData.message);
     }
   }
 
-  ngAfterViewInit(): void {
-    // this.dataSource.paginator = this.paginator;
+  public paginateParks(){
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedParks = this.parks.slice(startIndex, endIndex);
+  }
+
+  ngAfterViewInit() {
+    this.paginator.page.subscribe(() => {
+      this.paginateParks();
+    });
   }
 
   edit(element: any) {
