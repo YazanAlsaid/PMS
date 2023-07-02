@@ -9,6 +9,7 @@ import {ClientParkService} from "../../../shared/services/client-park.service";
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
 import {ClientFloorService} from "../../../shared/services/client-floor.service";
 import {Reservation} from "../../../shared/model/reservation";
+import {ClientSlotService} from "../../../shared/services/client-slot.service";
 
 @Component({
   selector: 'app-add-reservation-dialog',
@@ -29,7 +30,8 @@ export class AddReservationDialogComponent {
     private formBuilder: FormBuilder,
     private clientPark: ClientParkService,
     private clientBuilding: ClientBuildingService,
-    private clientFloor: ClientFloorService) {
+    private clientFloor: ClientFloorService,
+    public clientSlot: ClientSlotService) {
     this.dialogForm = this.formBuilder.group({
       park: ['', Validators.required],
       building: ['', Validators.required],
@@ -97,7 +99,6 @@ export class AddReservationDialogComponent {
         (err: any) => console.log(err)
       )
     }
-
   }
 
   onNoClick() {

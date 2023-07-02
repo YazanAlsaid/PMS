@@ -8,6 +8,7 @@ import {Type} from "../../../shared/model/type";
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
 import {ClientTypeService} from "../../../shared/services/client-type.service";
 import {Slot} from "../../../shared/model/slot";
+import {ClientFloorService} from "../../../shared/services/client-floor.service";
 
 @Component({
   selector: 'app-add-slot-dialog',
@@ -18,6 +19,7 @@ export class AddSlotDialogComponent implements OnInit{
   public parkingOptions: Park[] = [];
   public buildingOptions: Building[] = [];
   public floorOptions: Building[] = [];
+  public slotOptions: Slot[] = [];
   public typeOptions: Type[] = [];
   public dialogForm!: FormGroup;
   private isUpdate: boolean = false;
@@ -28,7 +30,8 @@ export class AddSlotDialogComponent implements OnInit{
     private formBuilder: FormBuilder,
     private clientPark: ClientParkService,
     private clientType: ClientTypeService,
-    private clientBuilding: ClientBuildingService) {
+    private clientBuilding: ClientBuildingService,
+    private clientFloor: ClientFloorService,) {
     this.dialogForm = this.formBuilder.group({
       park: ['', Validators.required],
       building: ['', Validators.required],
@@ -75,6 +78,16 @@ export class AddSlotDialogComponent implements OnInit{
       const id = this.dialogForm.get('building')?.value.id;
       this.clientBuilding.getFloors(id).subscribe(
         (res: any) => this.floorOptions = res.data,
+        (err: any) => console.log(err)
+      )
+    }
+  }
+
+  onSelectFloors() {
+    if (this.dialogForm.get('floor')?.valid) {
+      const id = this.dialogForm.get('floor')?.value.id;
+      this.clientFloor.getSlots(id).subscribe(
+        (res: any) => this.slotOptions = res.data,
         (err: any) => console.log(err)
       )
     }
