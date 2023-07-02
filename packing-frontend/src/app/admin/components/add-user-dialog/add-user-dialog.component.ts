@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
+import {Slot} from "../../../shared/model/slot";
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -27,8 +28,6 @@ export class AddUserDialogComponent {
   onSubmit(): void {
     if (this.dialogForm.valid) {
       // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      console.log(this.dialogForm.value);
-
       // Schließe den Dialog
       this.dialogRef.close();
     }

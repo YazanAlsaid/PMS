@@ -5,7 +5,7 @@
     <button mat-raised-button color="primary" (click)="create()" class="mx-3">Add Slot</button>
     <mat-form-field appearance="fill">
       <mat-label>Search Building</mat-label>
-      <input matInput type="text" class="mr-3" [(ngModel)]="searchQuery" (ngModelChange)="searchBuildings()"/>
+      <input matInput type="text" class="mr-3" [(ngModel)]="searchQuery" (ngModelChange)="searchSlots()" />
       <button mat-button *ngIf="searchQuery" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
         <mat-icon>close</mat-icon>
       </button>
@@ -13,24 +13,26 @@
   </mat-card-actions>
   <mat-card-content>
     <mat-grid-list cols="4" rowHeight="230px" gutterSize="16px" class="building-grid">
-      <mat-grid-tile *ngFor="let slots of dataSource">
+      <mat-grid-tile *ngFor="let slot of pagedSlots">
         <mat-card class="building-card border border-primary shadow">
-          <mat-card-title class="building-title mt-3">Slot {{ slots.id }}</mat-card-title>
+          <mat-card-title class="building-title mt-3">Slot {{ slot.id }}</mat-card-title>
           <mat-card-content>
-            <p class="building-info">Name: {{ slots.name }}</p>
-            <p class="building-info">Created At: {{ slots.createdAt | date:'yyyy.MM.dd hh:mm:ss' }}</p>
-            <p class="building-info">Updated At: {{ slots.updatedAt | date:'yyyy.MM.dd hh:mm:ss' }}</p>
+            <p class="building-info">Name: {{ slot.name }}</p>
+            <p class="building-info">Created At: {{ slot.createdAt | date:'yyyy.MM.dd hh:mm:ss' }}</p>
+            <p class="building-info">Updated At: {{ slot.updatedAt | date:'yyyy.MM.dd hh:mm:ss' }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-icon-button (click)="edit(slots)" color="primary">
+            <button mat-icon-button (click)="edit(slot)" color="primary">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button (click)="show(slots)" color="primary">
+            <button mat-icon-button (click)="show(slot)" color="primary">
               <mat-icon>visibility</mat-icon>
             </button>
           </mat-card-actions>
         </mat-card>
       </mat-grid-tile>
     </mat-grid-list>
+    <!-- Pagination -->
+    <mat-paginator [pageSizeOptions]="[8, 12, 16]" showFirstLastButtons (page)="paginateSlots()"></mat-paginator>
   </mat-card-content>
 </mat-card>

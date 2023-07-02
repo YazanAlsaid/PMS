@@ -6,6 +6,8 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-dialog.component";
 import {Building} from "../../../shared/model/building";
+import {ActivatedRoute} from "@angular/router";
+import {Park} from "../../../shared/model/park";
 
 @Component({
   selector: 'app-buildings',
@@ -13,11 +15,11 @@ import {Building} from "../../../shared/model/building";
   styleUrls: ['./buildings.component.scss']
 })
 export class BuildingsComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator)
+  @ViewChild(MatPaginator, {static: true})
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource: Building[] = [];
-  buildings: Building[] = [];
+  private buildings: Building[] = [];
+  public pagedBuilding: Building[] = [];
   searchQuery: string = '';
 
   private dialogConfig: MatDialogConfig = {
@@ -29,45 +31,72 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
       isUpdate: false,
     }
   };
+
   constructor(
     private dialog: MatDialog,
-    private clientBuilding: ClientBuildingService) {
+    private clientBuilding: ClientBuildingService,
+    private activatedRoute: ActivatedRoute) {
   }
 
   ngAfterViewInit(): void {
-    // this.dataSource.paginator = this.paginator;
+    this.paginator.page.subscribe(() => {
+      this.pagenateBuilding();
+    })
   }
 
   ngOnInit(): void {
-    this.clientBuilding.getBuildings().subscribe(
-      (res: any) => {
-        this.buildings = res.data;
-        this.dataSource = this.buildings;
-        // this.dataSource.paginator = this.paginator;
-      },
-      (err: any) => console.log(err)
+    const resolverData = this.activatedRoute.snapshot.data['buildings'];
+    if (resolverData.data) {
+      this.buildings = resolverData.data;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.buildings.length;
+      this.pagenateBuilding();
+
+    } else {
+      console.log(resolverData.message);
+    }
+  }
+
+  public pagenateBuilding() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedBuilding = this.buildings.slice(startIndex, endIndex);
+  }
+
+  edit(element: any) {
+    this.dialogConfig.data.building = element;
+    this.dialogConfig.data.isUpdate = true;
+    const dialogRef = this.dialog.open(AddBuildingDialogComponent, this.dialogConfig);
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        this.dialogConfig.data.isUpdate = false;
+        if (data.building != null && data.isUpdate) {
+          this.clientBuilding.updateBuilding(data.building.id, data.building).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          );
+        }
+      }
     )
   }
 
-  edit(building: any): void {
-    // Handle edit functionality
-  }
-
-  show(building: any): void {
-    // Handle view functionality
-  }
   create() {
     const dialogRef = this.dialog.open(AddBuildingDialogComponent, this.dialogConfig);
 
     dialogRef.afterClosed().subscribe(result => {
       // Handle any actions after the dialog is closed
-      if (result.building != null){
+      if (result && result.building != null) {
         this.clientBuilding.createBuilding(result.building).subscribe(
-          (res: any) => this.ngOnInit(),
+          (res: any) => this.buildings.push(res.data),
           (err: any) => console.log(err.error.error)
         );
       }
     });
+  }
+
+  show(element: any): void {
+    // Handle view functionality
   }
 
   getRandomColor(): string {
@@ -92,16 +121,16 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
 
   searchBuildings() {
     if (this.searchQuery.trim() !== '') {
-      this.dataSource = this.buildings.filter(building =>
+      this.pagedBuilding = this.buildings.filter(building =>
         building.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
-      this.dataSource = this.buildings;
+      this.pagedBuilding = this.buildings;
     }
   }
 
   clearSearch() {
     this.searchQuery = '';
-    this.dataSource = this.buildings;
+    this.pagedBuilding = this.buildings;
   }
 }

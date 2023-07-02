@@ -7,6 +7,7 @@ import {Park} from "../../../shared/model/park";
 import {MatSort} from "@angular/material/sort";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-parks',
@@ -14,11 +15,12 @@ import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.compone
   styleUrls: ['./parks.component.scss']
 })
 export class ParksComponent implements AfterViewInit, OnInit {
-  @ViewChild("paginator") paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public dataSource: Park[] = [];
-  public parks:Park[] = [];
+  private parks: Park[] = [];
+  public pagedParks: Park[] = [];
 
   searchQuery: any;
   private dialogConfig: MatDialogConfig = {
@@ -30,23 +32,37 @@ export class ParksComponent implements AfterViewInit, OnInit {
       isUpdate: false,
     }
   };
+
   constructor(
     public dialog: MatDialog,
-    private parksService: ClientParkService) {
+    private parksService: ClientParkService,
+    private activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
-    this.parksService.getParks().subscribe(
-      (res: ResponseMessage) => {
-        this.dataSource = res.data.content;
-        this.parks = this.dataSource;
-      },
-      (err: any) => console.log(err)
-    );
+    const resolverData = this.activatedRoute.snapshot.data['parks'];
+    if (resolverData.data) {
+      this.dataSource = resolverData.data.content;
+      this.parks = this.dataSource;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.parks.length;
+      this.paginateParks();
+    } else {
+      console.log(resolverData.message);
+    }
   }
 
-  ngAfterViewInit(): void {
-    // this.dataSource.paginator = this.paginator;
+  public paginateParks(){
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedParks = this.parks.slice(startIndex, endIndex);
+  }
+
+  ngAfterViewInit() {
+    this.paginator.page.subscribe(() => {
+      this.paginateParks();
+    });
   }
 
   edit(element: any) {
@@ -55,6 +71,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
     const dialogRef = this.dialog.open(AddParkDialogComponent, this.dialogConfig);
     dialogRef.afterClosed().subscribe(
       (data: any) => {
+        this.dialogConfig.data.isUpdate = false;
         if (data.park != null && data.isUpdate) {
           this.parksService.updatePark(data.park.id, data.park).subscribe(
             (res: any) => this.ngOnInit(),
@@ -72,7 +89,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
       (data: any) => {
         if (data.park != null) {
           this.parksService.createPark(data.park).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) => this.parks.push(res.data),
             (err: any) => console.log(err.error.error)
           )
         }
@@ -97,11 +114,18 @@ export class ParksComponent implements AfterViewInit, OnInit {
 
   }
 
-  searchBuildings() {
-
+  searchParks() {
+    if (this.searchQuery.trim() !== '') {
+      this.pagedParks = this.parks.filter(park =>
+        park.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    } else {
+      this.pagedParks = this.parks;
+    }
   }
 
   clearSearch() {
-
+    this.searchQuery = '';
+    this.pagedParks = this.parks;
   }
 }
