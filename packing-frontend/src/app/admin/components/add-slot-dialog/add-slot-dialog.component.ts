@@ -43,15 +43,11 @@ export class AddSlotDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.clientPark.getParks().subscribe(
-      (res: any) => {
-        this.parkingOptions = res.data.content;
-      },
+      (res: any) => this.parkingOptions = res.data.content,
       (err: any) => console.log(err)
     );
     this.clientType.getTypes().subscribe(
-      (res: any) => {
-        this.typeOptions = res.data;
-      },
+      (res: any) => this.typeOptions = res.data,
       (err: any) => console.log(err)
     );
   }
@@ -68,7 +64,6 @@ export class AddSlotDialogComponent implements OnInit {
   }
 
   onSelectBuilding() {
-    console.log(this.dialogForm.get('building')?.value);
     if (this.dialogForm.get('building')?.valid) {
       const id = this.dialogForm.get('building')?.value.id;
       this.clientBuilding.getFloors(id).subscribe(
@@ -81,7 +76,6 @@ export class AddSlotDialogComponent implements OnInit {
   onSubmit() {
     if (this.dialogForm.valid) {
       // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      console.log(this.dialogForm.get('floor')?.value);
       const slot = new Slot(this.dialogForm.value.name, this.dialogForm.get('floor')?.value);
       this.data.slot = slot;
       // Schließe den Dialog

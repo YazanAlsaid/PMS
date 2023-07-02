@@ -41,19 +41,10 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-   /* this.clientBuilding.getBuildings().subscribe(
-      (res: any) => {
-        this.buildings = res.data;
-        this.dataSource = this.buildings;
-        // this.dataSource.paginator = this.paginator;
-      },
-      (err: any) => console.log(err)
-    )*/
     const resolverData = this.activatedRoute.snapshot.data['buildings'];
     if (resolverData.data){
       this.buildings = resolverData.data;
       this.dataSource = this.buildings;
-
     }else {
       console.log(resolverData.message);
     }

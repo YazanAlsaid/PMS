@@ -38,13 +38,6 @@ export class ParksComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-   /* this.parksService.getParks().subscribe(
-      (res: ResponseMessage) => {
-        this.dataSource = res.data.content;
-        this.parks = this.dataSource;
-      },
-      (err: any) => console.log(err)
-    );*/
     const resolverData = this.activatedRoute.snapshot.data['parks'];
     if (resolverData.data){
       this.dataSource = resolverData.data.content;

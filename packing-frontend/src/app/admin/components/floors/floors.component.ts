@@ -37,15 +37,7 @@ export class FloorsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-   /* this.clientFloors.getFloors().subscribe(
-      (res: any) => {
-        this.dataSource = res.data;
-        this.floors = res.data;
-      },
-      (err: any) => console.log(err)
-    )*/
     const resolverData = this.activatedRoute.snapshot.data['floors'];
-    console.log(resolverData.data);
     if (resolverData.data){
       this.dataSource = resolverData.data;
       this.floors = resolverData.data

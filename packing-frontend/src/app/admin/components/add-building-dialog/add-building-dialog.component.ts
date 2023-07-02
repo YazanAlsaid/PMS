@@ -38,7 +38,6 @@ export class AddBuildingDialogComponent implements OnInit {
   onSubmit(): void {
     if (this.dialogForm.valid) {
       // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      console.log(this.dialogForm.get('park')?.value);
       const building = new Building(this.dialogForm.value.name,this.dialogForm.get('park')?.value);
       this.data.building=building;
       // Schließe den Dialog

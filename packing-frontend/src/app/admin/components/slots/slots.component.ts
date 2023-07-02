@@ -38,13 +38,6 @@ export class SlotsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-  /*  this.clientSlots.getSlots().subscribe(
-      (res: any) => {
-        this.dataSource = res.data;
-        this.slots = res.data;
-      },
-      (err: any) => console.log(err)
-    )*/
     const resolveData = this.activatedRoute.snapshot.data['slots'];
     if (resolveData.data){
       this.dataSource = resolveData.data;

@@ -40,8 +40,6 @@ export class AddFloorDialogComponent implements OnInit {
   onSubmit() {
     if (this.dialogForm.valid) {
       // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      console.log(this.dialogForm.get('building')?.value);
-
       const floor = new Floor(this.dialogForm.value.name,this.dialogForm.get('building')?.value );
       this.data.floor=floor;
       // Schließe den Dialog

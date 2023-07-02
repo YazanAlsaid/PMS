@@ -30,7 +30,6 @@ export class FloorsComponent implements OnInit , AfterViewInit {
 
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['floors'];
-    console.log(resolverData.data);
     if (resolverData.data){
       this.floors=resolverData.data;
       this.paginator.pageSize = 8;
@@ -69,7 +68,6 @@ export class FloorsComponent implements OnInit , AfterViewInit {
   }
 
   onClickFloor(id: number) {
-    console.log('/user/parks/' + this.parkId + '/buildings/' + this.buildingId + '/floors/' + id + '/slots')
     this.router.navigateByUrl('/user/parks/' + this.parkId + '/buildings/' + this.buildingId + '/floors/' + id + '/slots').then(() => {
     });
   }
