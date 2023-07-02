@@ -4,9 +4,10 @@ import {MatTableDataSource} from "@angular/material/table";
 import {User} from "../../../shared/model/user";
 import {Nfc} from "../../../shared/model/nfc";
 import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
-import {MatDialog} from "@angular/material/dialog";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientUserService} from "../../../shared/services/client-user.service";
 import {ActivatedRoute} from "@angular/router";
+import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 
 @Component({
   selector: 'app-users',
@@ -31,6 +32,16 @@ export class UsersComponent implements AfterViewInit, OnInit {
     private activatedRoute: ActivatedRoute) {
   }
 
+  private dialogConfig: MatDialogConfig = {
+    width: '400px',
+    autoFocus: true,
+    disableClose: true,
+    data: {
+      user: null,
+      isUpdate: false,
+    }
+  };
+
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
   }
@@ -51,10 +62,18 @@ export class UsersComponent implements AfterViewInit, OnInit {
   }
 
   create(): void {
-    const dialogRef = this.dialog.open(AddUserDialogComponent, {
-      width: '400px'
-    });
+    const dialogRef = this.dialog.open(AddUserDialogComponent, this.dialogConfig);
 
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        if (data.user != null) {
+          this.clientUser.createUser(data.user).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          )
+        }
+      }
+    );
     dialogRef.afterClosed().subscribe(result => {
       // Handle any actions after the dialog is closed
     });
