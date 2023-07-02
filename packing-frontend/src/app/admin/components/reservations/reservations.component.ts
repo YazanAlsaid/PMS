@@ -17,7 +17,7 @@ import {AddReservationDialogComponent} from "../add-reservation-dialog/add-reser
 export class ReservationsComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator)
   public paginator!: MatPaginator;
-  public readonly displayedColumns: string[] = ['id','user', 'reservationAt', 'reservationPeriod', 'createdAt', 'updatedAt', 'action'];
+  public readonly displayedColumns: string[] = ['id', 'user', 'reservationAt', 'reservationPeriod', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
 
   constructor(private clientReservations: ClientReservationService,
@@ -40,14 +40,6 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-   /* this.clientReservations.getReservations().subscribe(
-      (res: any) => {
-        console.log(res.data);
-        this.dataSource.data = res.data;
-        this.dataSource.paginator = this.paginator;
-      },
-      (err: any) => console.log(err)
-    )*/
     const resolveData = this.activatedRoute.snapshot.data['reservations'];
     if (resolveData.data){
       this.dataSource.data = resolveData.data;

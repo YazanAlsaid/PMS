@@ -47,15 +47,7 @@ export class UsersComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-   /* this.clientUser.getUsers().subscribe(
-      (res: any) => {
-        this.users = res.data;
-        this.updatePagedUsers();
-      },
-      (err: any) => console.log(err)
-    )*/
     const resolverData = this.activatedRoute.snapshot.data['users'];
-    console.log(resolverData.data);
     if (resolverData.data){
       this.users = resolverData.data;
       this.updatePagedUsers();
@@ -82,6 +74,9 @@ export class UsersComponent implements AfterViewInit, OnInit {
         }
       }
     );
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle any actions after the dialog is closed
+    });
   }
 
   show(element: any) {
@@ -97,7 +92,6 @@ export class UsersComponent implements AfterViewInit, OnInit {
     const endIndex = startIndex + this.pageSize;
 
     this.pagedUsers = this.users.slice(startIndex, endIndex);
-    console.log(this.pagedUsers);
   }
 
   onPageChange(event: any) {

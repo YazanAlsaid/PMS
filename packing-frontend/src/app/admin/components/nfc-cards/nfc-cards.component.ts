@@ -37,13 +37,6 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-  /*  this.clientNfc.getNfcs().subscribe(
-      (res: any) => {
-        this.dataSource.data = res.data;
-        this.dataSource.paginator = this.paginator;
-      },
-      (err: any) => console.log(err)
-    )*/
     const resolverData = this.activatedRoute.snapshot.data['nfcCards'];
     console.log(resolverData);
     if (resolverData.data){

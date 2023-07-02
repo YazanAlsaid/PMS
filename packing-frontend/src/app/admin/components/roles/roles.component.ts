@@ -37,15 +37,7 @@ export class RolesComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    /*this.clientRoles.getRoles().subscribe(
-      (res: any) => {
-        this.dataSource.data = res.data;
-        this.dataSource.paginator = this.paginator;
-      },
-      (err: any) => console.log(err)
-    )*/
     const resolverData = this.activatedRoute.snapshot.data['roles'];
-    console.log(resolverData.data);
     if (resolverData.data){
       this.dataSource.data = resolverData.data;
       this.dataSource.paginator = this.paginator;

@@ -14,35 +14,64 @@ export class AddBuildingDialogComponent implements OnInit {
   public parkingName!: Park;
   public parkingOptions!: Park[]
   public dialogForm: FormGroup;
+  private isUpdate: boolean = false;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any, //erste
+    @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<AddBuildingDialogComponent>,
     private formBuilder: FormBuilder,
-    private clientPark: ClientParkService) {
+    private clientPark: ClientParkService
+  ) {
     this.dialogForm = this.formBuilder.group({
       park: ['', Validators.required],
       name: ['', Validators.compose([Validators.required, Validators.minLength(3)])]
     });
+    this.isUpdate = this.data.isUpdate;
+
+    if (this.isUpdate) {
+      this.dialogForm.get('park')?.disable();
+      this.dialogForm.get('name')?.setValue(this.data.building.name);
+    }
   }
 
   ngOnInit(): void {
     this.clientPark.getParks().subscribe(
       (res: any) => {
-        this.parkingOptions = res.data.content
+        this.parkingOptions = res.data.content;
+        if (this.isUpdate) {
+          const selectedParkId = this.data.building.park.id;
+          this.dialogForm.get('park')?.setValue(selectedParkId);
+          this.onSelectPark();
+        }
       },
       (err: any) => console.log(err)
-    )
+    );
   }
 
   onSubmit(): void {
-    if (this.dialogForm.valid) {
-      // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      console.log(this.dialogForm.get('park')?.value);
-      const building = new Building(this.dialogForm.value.name,this.dialogForm.get('park')?.value);
-      this.data.building=building;
-      // Schließe den Dialog
+    if (this.dialogForm.valid && this.isUpdate) {
+      this.data.building.name = this.dialogForm.value.name;
       this.dialogRef.close(this.data);
+    } else if (this.dialogForm.valid && !this.isUpdate) {
+      this.data.building = new Building(this.dialogForm.value.name);
+      this.data.building.park = this.dialogForm.value.park;
+      this.dialogRef.close(this.data);
+    }
+  }
+
+  onSelectPark() {
+    if (this.dialogForm.get('park')?.value) {
+      const id = this.dialogForm.get('park')?.value;
+      this.clientPark.getPark(id).subscribe(
+        (res: any) => {
+          this.parkingOptions = res.data;
+          if (this.isUpdate) {
+            const selectedBuildingId = this.data.building.id;
+            this.dialogForm.get('building')?.setValue(selectedBuildingId);
+          }
+        },
+        (err: any) => console.log(err)
+      );
     }
   }
 }

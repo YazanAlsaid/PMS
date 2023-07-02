@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { Observable } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
-import { AuthService } from 'src/app/auth/Services/auth.service';
-import { Router } from '@angular/router';
+import {Component, EventEmitter, Input, Output, inject} from '@angular/core';
+import {BreakpointObserver, Breakpoints} from '@angular/cdk/layout';
+import {Observable} from 'rxjs';
+import {map, shareReplay} from 'rxjs/operators';
+import {AuthService} from 'src/app/auth/Services/auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-nav',
@@ -13,7 +13,8 @@ import { Router } from '@angular/router';
 export class NavComponent {
   private breakpointObserver = inject(BreakpointObserver);
 
-  constructor(private authService: AuthService, private router:Router) {}
+  constructor(private authService: AuthService, private router: Router) {
+  }
 
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
@@ -32,9 +33,9 @@ export class NavComponent {
 
   logout() {
     this.authService.logout().subscribe(() => {
-    // Redirect to login page after logout
-    this.router.navigate(['/login']);
-    console.log('Logged out successfully');
+      // Redirect to login page after logout
+      this.router.navigate(['/login']).then(() => {
+      });
     });
   }
 }
