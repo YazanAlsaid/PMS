@@ -6,6 +6,7 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-dialog.component";
 import {Building} from "../../../shared/model/building";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-buildings',
@@ -31,7 +32,8 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   };
   constructor(
     private dialog: MatDialog,
-    private clientBuilding: ClientBuildingService) {
+    private clientBuilding: ClientBuildingService,
+    private activatedRoute: ActivatedRoute) {
   }
 
   ngAfterViewInit(): void {
@@ -39,14 +41,22 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.clientBuilding.getBuildings().subscribe(
+   /* this.clientBuilding.getBuildings().subscribe(
       (res: any) => {
         this.buildings = res.data;
         this.dataSource = this.buildings;
         // this.dataSource.paginator = this.paginator;
       },
       (err: any) => console.log(err)
-    )
+    )*/
+    const resolverData = this.activatedRoute.snapshot.data['buildings'];
+    if (resolverData.data){
+      this.buildings = resolverData.data;
+      this.dataSource = this.buildings;
+
+    }else {
+      console.log(resolverData.message);
+    }
   }
 
   edit(building: any): void {

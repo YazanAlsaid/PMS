@@ -6,6 +6,7 @@ import {Nfc} from "../../../shared/model/nfc";
 import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {MatDialog} from "@angular/material/dialog";
 import {ClientUserService} from "../../../shared/services/client-user.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-users',
@@ -26,7 +27,8 @@ export class UsersComponent implements AfterViewInit, OnInit {
 
   constructor(
     public dialog: MatDialog,
-    private clientUser: ClientUserService) {
+    private clientUser: ClientUserService,
+    private activatedRoute: ActivatedRoute) {
   }
 
   ngAfterViewInit(): void {
@@ -34,13 +36,22 @@ export class UsersComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.clientUser.getUsers().subscribe(
+   /* this.clientUser.getUsers().subscribe(
       (res: any) => {
         this.users = res.data;
         this.updatePagedUsers();
       },
       (err: any) => console.log(err)
-    )
+    )*/
+    const resolverData = this.activatedRoute.snapshot.data['users'];
+    console.log(resolverData.data);
+    if (resolverData.data){
+      this.users = resolverData.data;
+      this.updatePagedUsers();
+
+    }else {
+      console.log(resolverData.message);
+    }
   }
 
   edit(element: any) {

@@ -2,6 +2,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {ClientReservationService} from "../../../shared/services/client-reservation.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-reservations',
@@ -14,7 +15,8 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
   public readonly displayedColumns: string[] = ['id','user', 'reservationAt', 'reservationPeriod', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
 
-  constructor(private clientReservations: ClientReservationService) {
+  constructor(private clientReservations: ClientReservationService,
+              private activatedRoute: ActivatedRoute) {
   }
 
   ngAfterViewInit(): void {
@@ -22,14 +24,22 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.clientReservations.getReservations().subscribe(
+   /* this.clientReservations.getReservations().subscribe(
       (res: any) => {
         console.log(res.data);
         this.dataSource.data = res.data;
         this.dataSource.paginator = this.paginator;
       },
       (err: any) => console.log(err)
-    )
+    )*/
+    const resolveData = this.activatedRoute.snapshot.data['reservations'];
+    if (resolveData.data){
+      this.dataSource.data = resolveData.data;
+      this.dataSource.paginator = this.paginator;
+
+    } else {
+      console.log(resolveData.message);
+    }
   }
 
   edit(element: any) {
