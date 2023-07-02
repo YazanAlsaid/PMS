@@ -72,7 +72,7 @@ export class ReservationsComponent implements OnInit {
         this.reservations = reservations;
         this.events = reservations.data.map((reservation) => ({
           ...this.getEventPeriod(reservation),
-          title: reservation.period,
+          title: reservation.reservationPeriod,
           color: colors['blue'],
           actions: this.actions,
           resizable: {
@@ -100,7 +100,7 @@ export class ReservationsComponent implements OnInit {
     const end = new Date(reservation.reservationAt);
     start.setHours(13);
     end.setHours(18);
-    if (reservation.period === 'MORNING') {
+    if (reservation.reservationPeriod === 'MORNING') {
       start.setHours(8);
       end.setHours(13);
     }
