@@ -35,8 +35,6 @@ export class ResetPasswordComponent implements OnInit {
         this.successMessage = 'Password reset request submitted successfully';
         this.errorMessage = '';
         this.resetForm.reset();
-        console.log('Password reset request successful');
-        console.log(res);
 
         setTimeout(() => {
           this.successMessage = ''; // Clear the success message after 3 seconds
@@ -45,7 +43,6 @@ export class ResetPasswordComponent implements OnInit {
       (error) => {
         this.errorMessage = error.error.error;
         this.successMessage = '';
-        console.log('Password reset request failed:', error);
       }
     );
   }

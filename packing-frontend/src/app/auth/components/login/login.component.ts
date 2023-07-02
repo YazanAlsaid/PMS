@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../Services/auth.service';
-import { StorageService } from '../../Services/storage.service';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import {Component, OnInit} from '@angular/core';
+import {AuthService} from '../../Services/auth.service';
+import {StorageService} from '../../Services/storage.service';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -26,7 +26,8 @@ export class LoginComponent implements OnInit {
     private storageService: StorageService,
     private router: Router,
     private activeRoute: ActivatedRoute
-  ) { }
+  ) {
+  }
 
   ngOnInit(): void {
     if (this.storageService.isLoggedIn()) {
@@ -47,23 +48,18 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     if (this.loginForm.valid) {
-      console.log(this.loginForm.value);
       this.authService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe(
         (res: any) => {
-          console.log(res);
           this.storageService.saveToken(res.token);
           this.storageService.saveUser(res.user);
-
           // Get the value of the 'redirect' parameter from the query string
           let redirectUrl;
           // Parse the current URL to get the query parameters
           this.activeRoute.queryParams.subscribe(params => redirectUrl = params['returnUrl']);
-
-          console.log('redirectUrl: ', redirectUrl);
-
           if (redirectUrl) {
             // If a redirect URL is specified, clear the stored URL and navigate to it
-            this.router.navigateByUrl(redirectUrl);
+            this.router.navigateByUrl(redirectUrl).then(() => {
+            });
           } else {
             // Otherwise, navigate to a default page
             this.router.navigate(['/user/dashboard']);

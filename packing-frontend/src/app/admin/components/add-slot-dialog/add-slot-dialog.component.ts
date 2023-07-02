@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Inject, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {Building} from "../../../shared/model/building";
 import {ClientParkService} from "../../../shared/services/client-park.service";
@@ -28,62 +28,37 @@ export class AddSlotDialogComponent implements OnInit{
     private formBuilder: FormBuilder,
     private clientPark: ClientParkService,
     private clientType: ClientTypeService,
-    private clientBuilding: ClientBuildingService
-  ) {
+    private clientBuilding: ClientBuildingService) {
     this.dialogForm = this.formBuilder.group({
       park: ['', Validators.required],
       building: ['', Validators.required],
       floor: ['', Validators.required],
-      type: ['', Validators.compose([Validators.required, Validators.minLength(3)])],
+      type: ['', Validators.required],
       name: ['', Validators.compose([Validators.required, Validators.minLength(3)])]
     });
     this.isUpdate = this.data.isUpdate;
-    if (this.isUpdate) {
-      this.setComboBoxValues(this.data.park);
-    }
   }
-
 
   onNoClick(): void {
     this.dialogRef.close();
   }
 
   ngOnInit(): void {
+    this.clientPark.getParks().subscribe(
+      (res: any) => this.parkingOptions = res.data.content,
+      (err: any) => console.log(err)
+    );
     this.clientType.getTypes().subscribe(
       (res: any) => {
         this.typeOptions = res.data;
         if (this.isUpdate) {
-          console.log(this.data.slot.type);
-          console.log(this.typeOptions);
-
           this.dialogForm.get('type')?.setValue(this.data.slot.type.name);
-          console.log("After",this.dialogForm.get('type')?.value);
-
         }
       },
       (err: any) => console.log(err)
     );
-    this.clientPark.getParks().subscribe(
-      (res: any) => {
-        this.parkingOptions = res.data.content;
-        if (this.isUpdate) {
-        //const selectedParkId = this.data.slot.floor.building.park.id;
-        //const selectedBuildingId = this.data.slot.floor.building.id;
-        //this.dialogForm.get('park')?.setValue(selectedParkId);
-        //this.dialogForm.get('building')?.setValue(selectedBuildingId);
-        //this.onSelectPark();
-        //this.onSelectBuilding();
-        }
-      },
-      (err: any) => console.log(err)
-    );
-
   }
 
-  //ngAfterViewInit(): void {
-  //  this.dialogForm.get('type')?.setValue(this.data.slot.type.name);
-  //  console.log("After",this.dialogForm.get('type')?.value);
-  //}
 
   onSelectPark() {
     if (this.dialogForm.get('park')?.valid) {
@@ -96,7 +71,6 @@ export class AddSlotDialogComponent implements OnInit{
   }
 
   onSelectBuilding() {
-    console.log(this.dialogForm.get('building')?.value);
     if (this.dialogForm.get('building')?.valid) {
       const id = this.dialogForm.get('building')?.value.id;
       this.clientBuilding.getFloors(id).subscribe(
@@ -117,10 +91,4 @@ export class AddSlotDialogComponent implements OnInit{
       this.dialogRef.close(this.data.slot);
     }
   }
-
-  private setComboBoxValues(slot: Slot) {
-    this.dialogForm.get('name')?.setValue(slot.name);
-    this.dialogForm.get('park')?.setValue(slot.floor.building.park);
-  }
-
 }

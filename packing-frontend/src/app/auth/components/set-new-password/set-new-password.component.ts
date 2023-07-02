@@ -37,7 +37,6 @@ export class SetNewPasswordComponent implements OnInit {
     this.authService.setNewPassword(resetToken, password, confirmPassword).subscribe(
       (res: any) => {
         // Password reset successful, you can redirect to a success page or perform any necessary actions
-        console.log('Password reset successful:', res);
         this.router.navigate(['/reset-password-success']);
       },
       (error) => {
@@ -46,7 +45,6 @@ export class SetNewPasswordComponent implements OnInit {
         } else {
           this.errorMessage = 'An error occurred. Please try again.';
         }
-        console.log('Password reset failed:', error);
       }
     );
   }
