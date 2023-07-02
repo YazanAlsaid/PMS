@@ -1,5 +1,6 @@
 import {Building} from "./building";
 import {Slot} from "./slot";
+import {Park} from "./park";
 
 export class Floor {
   public id!: number;
@@ -11,7 +12,8 @@ export class Floor {
   public slotsCount!: number;
 
 
-  constructor(name: string) {
+  constructor(name: string , building : Building) {
+    this.building=building;
     this.name = name;
   }
 }
