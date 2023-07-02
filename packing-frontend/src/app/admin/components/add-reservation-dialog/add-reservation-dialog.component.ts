@@ -10,6 +10,8 @@ import {ClientBuildingService} from "../../../shared/services/client-building.se
 import {ClientFloorService} from "../../../shared/services/client-floor.service";
 import {Reservation} from "../../../shared/model/reservation";
 import {ClientSlotService} from "../../../shared/services/client-slot.service";
+import {ClientUserService} from "../../../shared/services/client-user.service";
+import { User } from 'src/app/shared/model/user';
 
 @Component({
   selector: 'app-add-reservation-dialog',
@@ -23,12 +25,14 @@ export class AddReservationDialogComponent {
   public slotOptions : Slot[] = [];
   public dialogForm !: FormGroup;
   private isUpdate: boolean = false;
+  public userOptions : User[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any, //erste
     public dialogRef: MatDialogRef<AddReservationDialogComponent>,
     private formBuilder: FormBuilder,
     private clientPark: ClientParkService,
+    private clientUser: ClientUserService,
     private clientBuilding: ClientBuildingService,
     private clientFloor: ClientFloorService,
     public clientSlot: ClientSlotService) {
@@ -37,8 +41,9 @@ export class AddReservationDialogComponent {
       building: ['', Validators.required],
       floor: ['', Validators.required],
       slot: ['', Validators.required],
-      date: ['', Validators.required],
+      date: [['0','1'], Validators.required],
       period: ['', Validators.required],
+      user: ['', Validators.required]
     });
     this.isUpdate = this.data.isUpdate;
     if(this.isUpdate){
@@ -48,13 +53,18 @@ export class AddReservationDialogComponent {
 
   ngOnInit(): void {
     this.clientPark.getParks().subscribe(
-      (res: any) => {
-        this.parkingOptions = res.data.content;
-      }
+      (res: any) => this.parkingOptions = res.data.content,
+      (err: any) => console.log(err)
+    );
+    this.clientUser.getUsers().subscribe(
+      (res: any) => this.userOptions = res.data,
+      (err: any) => console.log(err)
     );
   }
 
   onSubmit(): void {
+    console.log(this.dialogForm.valid);
+
     if (this.dialogForm.valid && this.isUpdate) {
       this.data.reservation.date = this.dialogForm.value.date;
       this.data.reservation.period = this.dialogForm.value.period;
@@ -63,6 +73,9 @@ export class AddReservationDialogComponent {
     } else if (this.dialogForm.valid && !this.isUpdate) {
       this.data.reservation = new Reservation(this.dialogForm.value.date, this.dialogForm.value.period,this.dialogForm.value.user,this.dialogForm.value.slot);
       this.data.reservation.slot = this.dialogForm.value.slot;
+      this.data.buildingId = this.dialogForm.value.building.id;
+      this.data.floorId = this.dialogForm.value.floor.id;
+      this.data.slotId = this.dialogForm.value.slot.id;
       this.dialogRef.close(this.data);
       }
     }
