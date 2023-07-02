@@ -1,17 +1,19 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from "@angular/material/paginator";
-import { Slot } from "../../../shared/model/slot";
-import { AddSlotDialogComponent } from "../add-slot-dialog/add-slot-dialog.component";
-import { MatDialog, MatDialogConfig } from "@angular/material/dialog";
-import { ClientSlotService } from "../../../shared/services/client-slot.service";
-import { ResponseMessage } from 'src/app/shared/model/response-message';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator} from "@angular/material/paginator";
+import {MatTableDataSource} from "@angular/material/table";
+import {Slot} from "../../../shared/model/slot";
+import {Type} from "../../../shared/model/type";
+import {AddSlotDialogComponent} from "../add-slot-dialog/add-slot-dialog.component";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {ClientSlotService} from "../../../shared/services/client-slot.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-slots',
   templateUrl: './slots.component.html',
   styleUrls: ['./slots.component.scss']
 })
-export class SlotsComponent implements OnInit, AfterViewInit {
+export class SlotsComponent implements OnInit {
   @ViewChild(MatPaginator)
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
@@ -31,26 +33,29 @@ export class SlotsComponent implements OnInit, AfterViewInit {
 
   constructor(
     public dialog: MatDialog,
-    private clientSlots: ClientSlotService
-  ) {}
-
-  ngOnInit(): void {
-    this.clientSlots.getSlots().subscribe(
-      (res: ResponseMessage) => {
-        this.slots = res.data;
-        this.paginator.pageSize = 8;
-        this.paginator.pageIndex = 0;
-        this.paginator.length = this.slots.length;
-        this.paginateSlots();
-      },
-      (err: any) => console.log(err)
-    );
+    private clientSlots: ClientSlotService,
+    private activatedRoute: ActivatedRoute) {
   }
 
-  ngAfterViewInit() {
-    this.paginator.page.subscribe(() => {
+  ngOnInit(): void {
+  /*  this.clientSlots.getSlots().subscribe(
+      (res: any) => {
+        this.dataSource = res.data;
+        this.slots = res.data;
+      },
+      (err: any) => console.log(err)
+    )*/
+    const resolveData = this.activatedRoute.snapshot.data['slots'];
+    if (resolveData.data){
+      this.slots = resolveData.data;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.slots.length;
       this.paginateSlots();
-    });
+
+    } else {
+      console.log(resolveData.message);
+    }
   }
 
   edit(element: any) {
@@ -100,4 +105,6 @@ export class SlotsComponent implements OnInit, AfterViewInit {
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedSlots = this.slots.slice(startIndex, endIndex);
   }
+
+
 }

@@ -5,7 +5,7 @@ import {ClientFloorService} from "../../../shared/services/client-floor.service"
 import {AddFloorDialogComponent} from "../add-floor-dialog/add-floor-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {Floor} from "../../../shared/model/floor";
-import { ResponseMessage } from 'src/app/shared/model/response-message';
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-floors',
@@ -32,17 +32,27 @@ export class FloorsComponent implements OnInit {
   };
   constructor(
     private dialog: MatDialog,
-    private clientFloors: ClientFloorService) {
+    private clientFloors: ClientFloorService,
+    private activatedRoute: ActivatedRoute) {
   }
 
   ngOnInit(): void {
-    this.clientFloors.getFloors().subscribe(
-      (res: ResponseMessage) => {
+   /* this.clientFloors.getFloors().subscribe(
+      (res: any) => {
         this.dataSource = res.data;
         this.floors = res.data;
       },
       (err: any) => console.log(err)
-    )
+    )*/
+    const resolverData = this.activatedRoute.snapshot.data['floors'];
+    console.log(resolverData.data);
+    if (resolverData.data){
+      this.dataSource = resolverData.data;
+      this.floors = resolverData.data
+
+    }else {
+      console.log(resolverData.message);
+    }
   }
 
   edit(element: any) {

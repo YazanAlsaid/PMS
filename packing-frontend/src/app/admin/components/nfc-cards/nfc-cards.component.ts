@@ -2,6 +2,7 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {ClientNfcService} from "../../../shared/services/client-nfc.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-nfc-cards',
@@ -14,7 +15,8 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   public readonly displayedColumns: string[] = ['id', 'serialNumber', 'nfcFrom', 'nfcTo', 'user', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
 
-  constructor(private clientNfc: ClientNfcService) {
+  constructor(private clientNfc: ClientNfcService,
+              private activatedRoute: ActivatedRoute) {
   }
 
   ngAfterViewInit(): void {
@@ -22,13 +24,22 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    this.clientNfc.getNfcs().subscribe(
+  /*  this.clientNfc.getNfcs().subscribe(
       (res: any) => {
         this.dataSource.data = res.data;
         this.dataSource.paginator = this.paginator;
       },
       (err: any) => console.log(err)
-    )
+    )*/
+    const resolverData = this.activatedRoute.snapshot.data['nfcCards'];
+    console.log(resolverData);
+    if (resolverData.data){
+      this.dataSource.data = resolverData.data;
+      this.dataSource.paginator = this.paginator;
+
+    }else {
+      console.log(resolverData.message);
+    }
   }
 
   edit(element: any) {
