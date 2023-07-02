@@ -7,6 +7,7 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {Floor} from "../../../shared/model/floor";
 import {ActivatedRoute} from "@angular/router";
 import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-dialog.component";
+import {Building} from "../../../shared/model/building";
 
 @Component({
   selector: 'app-floors',
@@ -14,11 +15,13 @@ import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-di
   styleUrls: ['./floors.component.scss']
 })
 export class FloorsComponent implements OnInit {
-  @ViewChild(MatPaginator)
+  @ViewChild(MatPaginator ,{static: true})
   public paginator!: MatPaginator;
+
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource: Floor[] = [];
   public floors: Floor[] = [];
+  public pagedFloor: Floor[] = [];
+
 
   searchQuery: any;
 
@@ -37,11 +40,27 @@ export class FloorsComponent implements OnInit {
     private activatedRoute: ActivatedRoute) {
   }
 
+  ngAfterViewInit(): void {
+    this.paginator.page.subscribe(() => {
+      this.pagenateFloor();
+    })
+  }
+
+  public pagenateFloor() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedFloor = this.floors.slice(startIndex, endIndex);
+  }
+
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['floors'];
     if (resolverData.data){
-      this.dataSource = resolverData.data;
+      this.pagedFloor = resolverData.data;
       this.floors = resolverData.data
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.floors.length;
+      this.pagenateFloor();
 
     }else {
       console.log(resolverData.message);
@@ -91,11 +110,18 @@ export class FloorsComponent implements OnInit {
 
   }
 
-  searchBuildings() {
-
+  searchFloors() {
+    if (this.searchQuery.trim() !== '') {
+      this.pagedFloor = this.floors.filter(floor =>
+        floor.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    } else {
+      this.pagedFloor = this.floors;
+    }
   }
 
   clearSearch() {
-
+    this.searchQuery = '';
+    this.pagedFloor = this.floors;
   }
 }
