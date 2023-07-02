@@ -19,26 +19,27 @@ export class AuthGuard implements CanActivate {
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
     const allowedRoles = route.data['roles'] as string[];
-
-    if (this.authService.isLoggedIn() && state.url === '/auth/login') {
+    if (!this.authService.isLoggedIn() && state.url === '/auth/login' || state.url.includes('/reset-password') || state.url.includes('/change-password')) {
+      return true;
+    } else if (this.authService.isLoggedIn() && state.url === '/auth/login') {
       this.router.navigate(['/user/dashboard']).then(() => {
       });
-      return true;
-    } else if (!this.authService.isLoggedIn() && state.url === '/auth/login' || state.url.includes('/reset-password') || state.url.includes('/change-password')) {
-      return true;
-    } else if (!this.authService.isLoggedIn() && !state.url.includes('returnUrl')) {
-      this.router.createUrlTree(['/auth/login'], {queryParams: {returnUrl: state.url}});
-      return true;
     } else if (this.authService.isLoggedIn() && allowedRoles && allowedRoles.length > 0) {
       if (!this.authService.hasRoles(allowedRoles)) {
         this.router.createUrlTree(['/dashboard/forbidden']);
       }
       return true;
-    } else {
-      this.router.createUrlTree(['/auth/login'], {queryParams: {returnUrl: state.url}});
+    } else if (!this.authService.isLoggedIn() && state.url.includes('returnUrl')) {
       return true;
+    } else if (this.authService.isLoggedIn() && state.url.includes('returnUrl')) {
+      this.router.navigateByUrl(route.params['returnUrl']).then(() => {
+      });
+      return true;
+    } else {
+      console.log({returnUrl: state.url});
+      this.router.navigateByUrl('/auth/login?returnUrl=' + state.url).then(() => {
+      });
     }
-
     return false;
   }
 }
