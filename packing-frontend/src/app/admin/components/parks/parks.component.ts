@@ -114,11 +114,18 @@ export class ParksComponent implements AfterViewInit, OnInit {
 
   }
 
-  searchBuildings() {
-
+  searchParks() {
+    if (this.searchQuery.trim() !== '') {
+      this.pagedParks = this.parks.filter(park =>
+        park.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    } else {
+      this.pagedParks = this.parks;
+    }
   }
 
   clearSearch() {
-
+    this.searchQuery = '';
+    this.pagedParks = this.parks;
   }
 }

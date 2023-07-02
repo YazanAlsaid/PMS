@@ -89,9 +89,20 @@ export class SlotsComponent implements OnInit {
 
   addBuilding() {}
 
-  searchBuildings() {}
+  searchSlots() {
+    if (this.searchQuery.trim() !== '') {
+      this.pagedSlots = this.slots.filter(slot =>
+        slot.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    } else {
+      this.pagedSlots = this.slots;
+    }
+  }
 
-  clearSearch() {}
+  clearSearch() {
+    this.searchQuery = '';
+    this.pagedSlots = this.slots;
+  }
 
   paginateSlots() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
