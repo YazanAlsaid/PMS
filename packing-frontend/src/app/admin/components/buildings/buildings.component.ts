@@ -59,13 +59,23 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
     }
   }
 
-  edit(building: any): void {
-    // Handle edit functionality
+  edit(element: any) {
+    this.dialogConfig.data.building = element;
+    this.dialogConfig.data.isUpdate = true;
+    const dialogRef = this.dialog.open(AddBuildingDialogComponent, this.dialogConfig);
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        this.dialogConfig.data.isUpdate = false;
+        if (data.building != null && data.isUpdate) {
+          this.clientBuilding.updateBuilding(data.building.id, data.building).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          );
+        }
+      }
+    )
   }
 
-  show(building: any): void {
-    // Handle view functionality
-  }
   create() {
     const dialogRef = this.dialog.open(AddBuildingDialogComponent, this.dialogConfig);
 
@@ -78,6 +88,10 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
         );
       }
     });
+  }
+
+  show(element: any): void {
+    // Handle view functionality
   }
 
   getRandomColor(): string {

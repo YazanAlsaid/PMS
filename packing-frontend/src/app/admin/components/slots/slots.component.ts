@@ -17,7 +17,7 @@ export class SlotsComponent implements OnInit {
   @ViewChild(MatPaginator)
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource: Slot[] = [];
+  public pagedSlots: Slot[] = [];
   public slots: Slot[] = [];
   searchQuery: any;
 
@@ -47,8 +47,11 @@ export class SlotsComponent implements OnInit {
     )*/
     const resolveData = this.activatedRoute.snapshot.data['slots'];
     if (resolveData.data){
-      this.dataSource = resolveData.data;
       this.slots = resolveData.data;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.slots.length;
+      this.paginateSlots();
 
     } else {
       console.log(resolveData.message);
@@ -56,11 +59,24 @@ export class SlotsComponent implements OnInit {
   }
 
   edit(element: any) {
-
+    this.dialogConfig.data.slot = element;
+    this.dialogConfig.data.isUpdate = true;
+    const dialogRef = this.dialog.open(AddSlotDialogComponent, this.dialogConfig);
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        this.dialogConfig.data.isUpdate = false;
+        if (data.slot != null && data.isUpdate) {
+          this.clientSlots.updateSlot(data.slot.id, data.slot).subscribe(
+            (res: any) => this.ngOnInit(),
+            (err: any) => console.log(err.error.error)
+          );
+        }
+      }
+    );
   }
 
   create() {
-    const dialogRef = this.dialog.open(AddSlotDialogComponent,this.dialogConfig);
+    const dialogRef = this.dialog.open(AddSlotDialogComponent, this.dialogConfig);
 
     dialogRef.afterClosed().subscribe(
       (data: any) => {
@@ -68,31 +84,26 @@ export class SlotsComponent implements OnInit {
           this.clientSlots.createSlot(data.slot).subscribe(
             (res: any) => this.ngOnInit(),
             (err: any) => console.log(err.error.error)
-          )
+          );
         }
       }
     );
   }
 
+  show(element: any) {}
 
-  show(element: any) {
+  exportBuildings() {}
 
-  }
+  addBuilding() {}
 
-  exportBuildings() {
+  searchBuildings() {}
 
-  }
+  clearSearch() {}
 
-  addBuilding() {
-
-  }
-
-  searchBuildings() {
-
-  }
-
-  clearSearch() {
-
+  paginateSlots() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedSlots = this.slots.slice(startIndex, endIndex);
   }
 
 
