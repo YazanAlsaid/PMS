@@ -158,14 +158,30 @@ public class InitDB {
 
         roleAdmin = roleRepository.save(roleAdmin);
         roleUser = roleRepository.save(roleUser);
-        this.createUsers(roleUser);
         User admin = new User("PMS", "PMS", Gender.MALE, "pms@alnaasan.de", "pms123456");
         admin.setRole(roleAdmin);
         this.userRepository.save(admin);
 
-        for (int i = 1; i <= this.userRepository.count(); i++) {
-            NfcCard nfcCard = new NfcCard("d3r5-47ef-12" + i, this.userRepository.getById((long) i), LocalDate.now(), LocalDate.now().plusMonths(12));
-            nfcCardRepository.save(nfcCard);
+        NfcCard nfcCard = new NfcCard("d3r5-47ef-12" + 1, this.userRepository.getById((long) 1), LocalDate.now(), LocalDate.now().plusMonths(12));
+        nfcCardRepository.save(nfcCard);
+
+        for (int i = 1; i <= 10; i++) {
+            LocalDate date = this.randomLocalDate();
+            Period period = (i % 2 == 0) ? Period.MORNING : Period.AFTERNOON;
+            Optional<User> optionalUser = this.userRepository.findById((long) 1);
+            Optional<NfcCard> optionalNfcCard = this.nfcCardRepository.findById((long) 1);
+            Optional<Slot> optionalSlot = this.slotRepository.findById((long) ((i / 10 == 0) ? 1 : i / 10));
+            if (optionalUser.isPresent() && optionalNfcCard.isPresent() && optionalSlot.isPresent()) {
+                Reservation reservation = new Reservation(date, period, optionalUser.get(), null, optionalNfcCard.get(), optionalSlot.get());
+                logger.debug(this.reservationRepository.save(reservation).toString());
+            }
+        }
+
+        this.createUsers(roleUser);
+
+        for (int i = 2; i <= this.userRepository.count(); i++) {
+            NfcCard nfcCard1 = new NfcCard("d3r5-47ef-12" + i, this.userRepository.getById((long) i), LocalDate.now(), LocalDate.now().plusMonths(12));
+            nfcCardRepository.save(nfcCard1);
         }
 
         for (int i = 1; i <= 30; i++) {
