@@ -11,13 +11,14 @@ import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 @Component({
   selector: 'app-roles',
   templateUrl: './roles.component.html',
-  styleUrls: ['./roles.component.scss']
+  styleUrls: ['./roles.component.scss'],
 })
 export class RolesComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator,{static: true})
+  @ViewChild(MatPaginator, { static: true })
   public paginator!: MatPaginator;
-  public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource = new MatTableDataSource();
+  private roles: Role[] = [];
+  public pagedRoles: Role[] = [];
+  public downloadJsonHref: any;
 
   constructor(private clientRoles: ClientRoleService,
               private activatedRoute: ActivatedRoute,
@@ -32,27 +33,37 @@ export class RolesComponent implements AfterViewInit, OnInit {
     data: {
       role: null,
       isUpdate: false,
-    }
+    },
   };
+  searchQuery: any;
+
+  exportRole() {
+    const jsonData = JSON.stringify(this.pagedRoles, null, 2);
+    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
+      'data:text/json;charset=UTF-8,' + encodeURIComponent(jsonData)
+    );
+  }
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    this.paginator.page.subscribe(() => {
+      this.paginateRoles();
+    });
   }
 
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['roles'];
-    if (resolverData.data){
-      this.dataSource.data = resolverData.data;
-      this.dataSource.paginator = this.paginator;
-
-    }else {
+    if (resolverData.data) {
+      this.roles = resolverData.data;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.roles.length;
+      this.paginateRoles();
+    } else {
       console.log(resolverData.message);
     }
   }
 
-  edit(element: any) {
-
-  }
+  edit(element: any) {}
 
   create() {
     const dialogRef = this.dialog.open(AddRoleDialoggComponent, this.dialogConfig);
@@ -69,9 +80,34 @@ export class RolesComponent implements AfterViewInit, OnInit {
       }
     );
 
+    dialogRef.afterClosed().subscribe((data: any) => {
+      if (data.role != null) {
+        this.clientRoles.createRole(data.role).subscribe(
+          (res: any) => {
+            this.roles.push(res.data);
+            this.paginateRoles();
+          },
+          (err: any) => console.log(err.error.error)
+        );
+      }
+    });
   }
 
-  show(element: any) {
+  show(element: any) {}
 
+  searchRole() {
+    if (this.searchQuery.trim() !== '') {
+      this.pagedRoles = this.roles.filter((role) =>
+        role.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    } else {
+      this.pagedRoles = this.roles;
+    }
+  }
+
+  private paginateRoles() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedRoles = this.roles.slice(startIndex, endIndex);
   }
 }

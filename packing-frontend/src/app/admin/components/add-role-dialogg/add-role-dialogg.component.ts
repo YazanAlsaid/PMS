@@ -9,7 +9,7 @@ import { Role } from 'src/app/shared/model/role';
 })
 export class AddRoleDialoggComponent implements OnInit {
   public dialogForm: FormGroup;
-  private isUpdate: boolean = false;
+  private readonly isUpdate: boolean = false;
 
 constructor(
   @Inject(MAT_DIALOG_DATA) public data: any,
