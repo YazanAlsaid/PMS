@@ -1,11 +1,11 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
-import {MatTableDataSource} from "@angular/material/table";
 import {User} from "../../../shared/model/user";
 import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientUserService} from "../../../shared/services/client-user.service";
 import {ActivatedRoute} from "@angular/router";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-users',
@@ -13,23 +13,17 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./users.component.scss']
 })
 export class UsersComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator)
-  public paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) public paginator!: MatPaginator;
 
-  public pagedUser: User[] = [];
-  // public readonly displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'createdAt', 'updatedAt', 'action'];
-  public readonly displayedColumns: string[] = ['id'];
-  public dataSource = new MatTableDataSource();
-  users: User[] = [];
-  pagedUsers: User[] = []; // Array to store the users for the current page
-  currentPage = 1; // Current page number
-  pageSize = 8; // Number of users per page
-  myBreakPoint: any = 4;
+  private users: User[] = [];
+  public pagedUsers: User[] = []; // Array to store the users for the current page
+  public myBreakPoint: any = 4;
 
   constructor(
     public dialog: MatDialog,
     private clientUser: ClientUserService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -41,28 +35,25 @@ export class UsersComponent implements AfterViewInit, OnInit {
       isUpdate: false,
     }
   };
+  searchQuery: any;
+  downloadJsonHref: any;
 
   ngAfterViewInit(): void {
     this.paginator.page.subscribe(() => {
-      this.pagenateUser();
-    })
-  }
-
-
-
-  public pagenateUser() {
-    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-    const endIndex = startIndex + this.paginator.pageSize;
-    this.pagedUser = this.users.slice(startIndex, endIndex);
+      this.paginateParks();
+    });
   }
 
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['users'];
-    if (resolverData.data){
+    if (resolverData.data) {
       this.users = resolverData.data;
-      this.updatePagedUsers();
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.users.length;
+      this.paginateParks();
 
-    }else {
+    } else {
       console.log(resolverData.message);
     }
   }
@@ -94,23 +85,30 @@ export class UsersComponent implements AfterViewInit, OnInit {
 
   }
 
-  applyFilter(event: KeyboardEvent) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-  updatePagedUsers() {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-
+  private paginateParks() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
     this.pagedUsers = this.users.slice(startIndex, endIndex);
   }
 
-  onPageChange(event: any) {
-    this.currentPage = event.pageIndex + 1;
-    this.updatePagedUsers();
-  }
 
   handleSize($event: any) {
 
+  }
+
+  exportUsers() {
+    const jsonDate = JSON.stringify(this.pagedUsers, null, 2);
+    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonDate));
+  }
+
+  searchUsers() {
+    if (this.searchQuery.trim() !== '') {
+      this.pagedUsers = this.users.filter(user =>
+        user.firstName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        user.lastName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(this.searchQuery.toLowerCase()));
+    } else {
+      this.pagedUsers = this.users;
+    }
   }
 }
