@@ -1,7 +1,13 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
-import {Slot} from "../../../shared/model/slot";
+import {Component, Inject} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {User} from "../../../shared/model/user";
+import {Role} from "../../../shared/model/role";
+import {Floor} from "../../../shared/model/floor";
+import {ClientParkService} from "../../../shared/services/client-park.service";
+import {ClientUserService} from "../../../shared/services/client-user.service";
+import {ClientRoleService} from "../../../shared/services/client-role.service";
+import {ResponseMessage} from "../../../shared/model/response-message";
 
 @Component({
   selector: 'app-add-user-dialog',
@@ -10,26 +16,52 @@ import {Slot} from "../../../shared/model/slot";
 })
 export class AddUserDialogComponent {
 
+
+  public roleOptions: Role[] = [];
+
   dialogForm: FormGroup;
+  private isUpdate: Boolean = false;
 
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private formBuilder: FormBuilder,
-    public dialogRef: MatDialogRef<AddUserDialogComponent>
+    public dialogRef: MatDialogRef<AddUserDialogComponent>,
+    private clientRole: ClientRoleService
   ) {
     this.dialogForm = this.formBuilder.group({
-      firstname: ['', Validators.required],
-      lastname: ['', Validators.required],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
-      confirmPassword: ['', Validators.required]
+      confirmPassword: ['', Validators.required],
+      role: ['', Validators.required]
     });
   }
 
+  ngOnInit(): void {
+
+    this.clientRole.getRoles().subscribe(
+      (res: ResponseMessage) => this.roleOptions = res.data,
+      (err: any) => console.log(err)
+    )
+  }
+
   onSubmit(): void {
-    if (this.dialogForm.valid) {
-      // Hier kannst du den Code ausführen, um die eingegebenen Daten zu verarbeiten
-      // Schließe den Dialog
-      this.dialogRef.close();
+    let roles: Role[] = [];
+    if (this.dialogForm.valid && this.isUpdate) {
+      this.data.user.name = this.dialogForm.value.name;
+      this.dialogRef.close(this.data);
+    } else if (this.dialogForm.valid && !this.isUpdate) {
+      roles.push(this.dialogForm.value.role);
+      this.data.user = new User(
+        this.dialogForm.value.firstName,
+        this.dialogForm.value.lastName,
+        this.dialogForm.value.email
+        , this.dialogForm.value.password,
+        this.dialogForm.value.confirmPassword,
+        roles);
+      this.dialogRef.close(this.data);
+
     }
   }
 }

@@ -1,12 +1,11 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
-import {MatTableDataSource} from "@angular/material/table";
 import {Slot} from "../../../shared/model/slot";
-import {Type} from "../../../shared/model/type";
 import {AddSlotDialogComponent} from "../add-slot-dialog/add-slot-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientSlotService} from "../../../shared/services/client-slot.service";
 import {ActivatedRoute} from "@angular/router";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-slots',
@@ -14,8 +13,7 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./slots.component.scss']
 })
 export class SlotsComponent implements OnInit {
-  @ViewChild(MatPaginator)
-  public paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public pagedSlots: Slot[] = [];
   public slots: Slot[] = [];
@@ -30,11 +28,13 @@ export class SlotsComponent implements OnInit {
       isUpdate: false,
     }
   };
+  public downloadJsonHref: any;
 
   constructor(
     public dialog: MatDialog,
     private clientSlots: ClientSlotService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer) {
   }
 
   ngOnInit(): void {
@@ -60,7 +60,7 @@ export class SlotsComponent implements OnInit {
         this.dialogConfig.data.isUpdate = false;
         if (data.slot != null && data.isUpdate) {
           this.clientSlots.updateSlot(data.slot.id, data.slot).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) =>  this.slots.push(res.data),
             (err: any) => console.log(err.error.error)
           );
         }
@@ -70,34 +70,43 @@ export class SlotsComponent implements OnInit {
 
   create() {
     const dialogRef = this.dialog.open(AddSlotDialogComponent, this.dialogConfig);
-
-    dialogRef.afterClosed().subscribe(
-      (data: any) => {
-        if (data.slot != null) {
-          this.clientSlots.createSlot(data.slot).subscribe(
-            (res: any) => this.ngOnInit(),
-            (err: any) => console.log(err.error.error)
-          );
-        }
+    dialogRef.afterClosed().subscribe(result => {
+      // Handle any actions after the dialog is closed
+      if (result && result.slot != null){
+        this.clientSlots.createSlot(result.slot).subscribe(
+          (res: any) => {
+            this.slots.push(res.data);
+            this.paginateSlots();
+          },
+          (err: any) => console.log(err.error.error)
+        );
       }
-    );
+    });
   }
 
   show(element: any) {}
 
-  exportBuildings() {}
+  exportSlots() {
+    const jsonData = JSON.stringify(this.pagedSlots , null , 2);
+    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
+
+  }
 
   addBuilding() {}
 
-  searchBuildings() {}
-
-  clearSearch() {}
+  searchSlots() {
+    if (this.searchQuery.trim() !== '') {
+      this.pagedSlots = this.slots.filter(slot =>
+        slot.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    } else {
+      this.pagedSlots = this.slots;
+    }
+  }
 
   paginateSlots() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedSlots = this.slots.slice(startIndex, endIndex);
   }
-
-
 }

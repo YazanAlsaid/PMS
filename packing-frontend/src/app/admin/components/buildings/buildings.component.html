@@ -1,19 +1,17 @@
 <mat-card class="shadow">
   <mat-card-title class="text-center mt-3">Buildings</mat-card-title>
   <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="exportBuildings()" class="mx-3">Export Buildings</button>
+    <a mat-raised-button color="primary" (click)="exportBuildings()" class="mx-3"
+       [href]="downloadJsonHref" download="buildings.json">Export Buildings</a>
     <button mat-raised-button color="primary" (click)="create()" class="mx-3">Add Building</button>
     <mat-form-field appearance="fill">
       <mat-label>Search Building</mat-label>
       <input matInput type="text" class="mr-3" [(ngModel)]="searchQuery" (ngModelChange)="searchBuildings()"/>
-      <button mat-button *ngIf="searchQuery" matSuffix mat-icon-button aria-label="Clear" (click)="clearSearch()">
-        <mat-icon>close</mat-icon>
-      </button>
     </mat-form-field>
   </mat-card-actions>
   <mat-card-content>
     <mat-grid-list cols="4" rowHeight="230px" gutterSize="16px" class="building-grid">
-      <mat-grid-tile *ngFor="let building of dataSource">
+      <mat-grid-tile *ngFor="let building of pagedBuilding">
         <mat-card class="building-card border border-primary shadow">
           <mat-card-title class="building-title mt-3">Building {{ building.id }}</mat-card-title>
           <mat-card-content>
@@ -32,6 +30,7 @@
         </mat-card>
       </mat-grid-tile>
     </mat-grid-list>
+    <mat-paginator [pageSizeOptions]="[8,12,16]" showFirstLastButtons></mat-paginator>
   </mat-card-content>
 </mat-card>
 

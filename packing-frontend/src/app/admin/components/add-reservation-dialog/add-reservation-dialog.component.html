@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Add Slots</h2>
+<h2 mat-dialog-title>Add Reservations</h2>
 <div mat-dialog-content>
   <form [formGroup]="dialogForm" (ngSubmit)="onSubmit()" #formDir="ngForm" novalidate>
     <mat-form-field>
@@ -34,17 +34,28 @@
     </mat-form-field>
 
     <mat-form-field>
-      <input type="date" matInput formControlName="date" placeholder="Date of reservation" required pattern="^(0[1-9]|1\d|2\d|3[01])/(0[1-9]|1[0-2])/((19|20)\d\d)$">
-      <mat-hint>MM/DD/YYYY</mat-hint>
-      <mat-error *ngIf="dialogForm.controls['date'].invalid">Date is required</mat-error>
+      <mat-label>User</mat-label>
+      <mat-select formControlName="user" name="user">
+        <mat-option *ngFor="let user of userOptions" [value]="user">{{ user['firstName'] +' '+ user['lastName'] }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="dialogForm.controls['user'].invalid">User is required</mat-error>
     </mat-form-field>
 
-    <section class="example-section">
-      <mat-checkbox formControlName="period">Morning</mat-checkbox>
-      <mat-checkbox formControlName="period">Afternoon</mat-checkbox>
-    </section>
 
-<!--    <mat-form-field class="example-form-field">
+    <mat-form-field>
+      <input type="date" matInput formControlName="date" placeholder="Date of reservation">
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <!--<mat-error *ngIf="dialogForm.controls['date'].invalid">Date is required</mat-error>-->
+    </mat-form-field>
+
+    <br>
+    <mat-radio-group formControlName="period">
+      <mat-radio-button value="0">Morning</mat-radio-button>
+      <mat-radio-button value="1">Afternoon</mat-radio-button>
+    </mat-radio-group>
+
+
+    <!--    <mat-form-field class="example-form-field">
       <mat-label>Choose a date</mat-label>
       <input matInput [matDatepicker]="datepicker" formControlName="slot" name="slot" required pattern="^(0[1-9]|1\d|2\d|3[01])/(0[1-9]|1[0-2])/((19|20)\d\d)$" (keydown)="onDateInputKeydown($event)" (blur)="validateDate()">
       <mat-hint>MM/DD/YYYY</mat-hint>

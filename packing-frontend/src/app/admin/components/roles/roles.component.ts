@@ -4,7 +4,8 @@ import {MatTableDataSource} from "@angular/material/table";
 import {ClientRoleService} from "../../../shared/services/client-role.service";
 import {ActivatedRoute} from "@angular/router";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
-import {MatDialogConfig} from "@angular/material/dialog";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import { AddRoleDialoggComponent } from '../add-role-dialog/add-role-dialogg.component';
 
 @Component({
   selector: 'app-roles',
@@ -12,14 +13,14 @@ import {MatDialogConfig} from "@angular/material/dialog";
   styleUrls: ['./roles.component.scss']
 })
 export class RolesComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator)
+  @ViewChild(MatPaginator,{static: true})
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
-  private dialog: any;
 
   constructor(private clientRoles: ClientRoleService,
-              private activatedRoute: ActivatedRoute) {
+              private activatedRoute: ActivatedRoute,
+              public dialog: MatDialog,) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -52,13 +53,13 @@ export class RolesComponent implements AfterViewInit, OnInit {
   }
 
   create() {
-    const dialogRef = this.dialog.open(AddParkDialogComponent, this.dialogConfig);
+    const dialogRef = this.dialog.open(AddRoleDialoggComponent, this.dialogConfig);
 
     dialogRef.afterClosed().subscribe(
       (data: any) => {
         if (data.role != null) {
           this.clientRoles.createRole(data.role).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) => this.dataSource.data.push(res.data),
             (err: any) => console.log(err.error.error)
           )
         }
