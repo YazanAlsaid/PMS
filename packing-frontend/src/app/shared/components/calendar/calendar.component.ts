@@ -194,14 +194,6 @@ export class CalendarComponent implements OnInit {
     this.activeDayIsOpen = false;
   }
   hourSegmentClicked(event: any) {
-    console.log({ hourSegmentClickedEvent: event });
-    // if the event.date is not between 8 and 18, return
-    if (
-      new Date(event.date).getHours() < 8 ||
-      new Date(event.date).getHours() >= 18
-    ) {
-      return;
-    }
     this.modal.open(ReservationDialogComponent, {
       width: '400px',
       autoFocus: true,

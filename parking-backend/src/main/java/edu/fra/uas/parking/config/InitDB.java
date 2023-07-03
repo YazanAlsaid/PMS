@@ -66,7 +66,7 @@ public class InitDB {
         this.guestRepository = guestRepository;
     }
 
-    // @PostConstruct
+    @PostConstruct
     public void init() {
 
         logger.debug("Init Databases started...");

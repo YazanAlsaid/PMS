@@ -8,6 +8,7 @@ import {ResponseMessage} from "../model/response-message";
   providedIn: 'root'
 })
 export class HttpService {
+
   private readonly hostname: string = window.location.hostname;
   private readonly port: string = window.location.port;
   private readonly protocol: string = window.location.protocol;
@@ -30,9 +31,7 @@ export class HttpService {
    * Author: Kaddour Alnaasan
    */
   public getAll(entity: string): Observable<ResponseMessage> {
-    return this.http.get<ResponseMessage>(
-      `https://pms.alnaasan.de/api/v1/web/${entity}`
-    );
+    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/${entity}`);
   }
 
   /**
@@ -43,9 +42,7 @@ export class HttpService {
    * @Author: Kaddour Alnaasan
    */
   public getById(entity: string, id: number): Observable<ResponseMessage> {
-    return this.http.get<ResponseMessage>(
-      `https://pms.alnaasan.de/api/v1/web/${entity}/${id}`
-    );
+    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/${entity}/${id}`);
   }
 
   /**
@@ -56,10 +53,7 @@ export class HttpService {
    * @author: Kaddour Alnaasan
    */
   public create(entity: string, obj: any): Observable<ResponseMessage> {
-    return this.http.post<ResponseMessage>(
-      `https://pms.alnaasan.de/api/v1/web/${entity}`,
-      obj
-    );
+    return this.http.post<ResponseMessage>(`${this.url}/api/v1/web/${entity}`, obj);
   }
 
   /**
@@ -70,15 +64,8 @@ export class HttpService {
    * @returns Observable<ResponseMessage>
    * @author: Kaddour Alnaasan
    */
-  public update(
-    entity: string,
-    id: number,
-    obj: any
-  ): Observable<ResponseMessage> {
-    return this.http.put<ResponseMessage>(
-      `https://pms.alnaasan.de/api/v1/web/${entity}/${id}`,
-      obj
-    );
+  public update(entity: string, id: number, obj: any): Observable<ResponseMessage> {
+    return this.http.put<ResponseMessage>(`${this.url}/api/v1/web/${entity}/${id}`, obj);
   }
 
   /**
@@ -89,9 +76,7 @@ export class HttpService {
    * @author: Kaddour Alnaasan
    */
   public delete(entity: string, id: number): Observable<ResponseMessage> {
-    return this.http.delete<ResponseMessage>(
-      `https://pms.alnaasan.de/api/v1/web/${entity}/${id}`
-    );
+    return this.http.delete<ResponseMessage>(`${this.url}/api/v1/web/${entity}/${id}`);
   }
 
   /**
@@ -101,14 +86,8 @@ export class HttpService {
    * @param subEntity
    * @author kaddour Alnaasan
    */
-  public getSubList(
-    entity: string,
-    id: number,
-    subEntity: string
-  ): Observable<ResponseMessage> {
-    return this.http.get<ResponseMessage>(
-      `https://pms.alnaasan.de/api/v1/web/${entity}/${id}/${subEntity}`
-    );
+  public getSubList(entity: string, id: number, subEntity: string): Observable<ResponseMessage> {
+    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/${entity}/${id}/${subEntity}`);
   }
 
   public customRequest(uri: string, data: any): Observable<ResponseMessage> {

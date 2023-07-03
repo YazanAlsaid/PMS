@@ -53,9 +53,8 @@
 
         <!-- MySQL Connector Dependency -->
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.6.0</version>
+            <groupId>mysql</groupId> <!-- Updated groupId -->
+            <artifactId>mysql-connector-java</artifactId> <!-- Updated artifactId -->
         </dependency>
 
         <!-- Spring Boot Test Dependency -->
