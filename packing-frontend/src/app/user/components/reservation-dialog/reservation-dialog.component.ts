@@ -5,6 +5,10 @@ import { ClientParkService } from '../../../shared/services/client-park.service'
 import { ResponseMessage } from '../../../shared/model/response-message';
 import { ClientBuildingService } from '../../../shared/services/client-building.service';
 import { ClientFloorService } from '../../../shared/services/client-floor.service';
+import { ClientReservationService } from 'src/app/shared/services/client-reservation.service';
+import { Reservation } from 'src/app/shared/model/reservation';
+import { StorageService } from 'src/app/auth/Services/storage.service';
+import { Slot } from 'src/app/shared/model/slot';
 
 type SelectOption = {
   value: string;
@@ -17,7 +21,8 @@ export type ReservationDialogComponentData = {
   buildingId: string;
   floorId: string;
   date: string;
-  reservationPeriod: 'MORNING' | 'AFTERNOON';
+  reservationPeriod: Reservation['reservationPeriod'];
+  slotObj: Slot;
 };
 
 @Component({
@@ -47,7 +52,9 @@ export class ReservationDialogComponent {
     private http: HttpClient,
     private clientPark: ClientParkService,
     private clientBuilding: ClientBuildingService,
-    private clientFloor: ClientFloorService
+    private clientFloor: ClientFloorService,
+    private clientReservation: ClientReservationService,
+    private storageService: StorageService
   ) {
     this.clientPark.getParks().subscribe((res: ResponseMessage) => {
       this.parkingOptions = res.data.content.map((parking: any) => {
@@ -100,16 +107,24 @@ export class ReservationDialogComponent {
   }
 
   saveReservation() {
-    const reservation = {
-      parkingName: this.parkingId,
-      building: this.building,
-      floor: this.floor,
-      slotNumber: this.slotNumber,
-      date: this.date,
-      time: this.data.reservationPeriod,
-    };
+    const reservation: Reservation = new Reservation(
+      new Date(this.date),
+      this.storageService.getUser(),
+      this.data.slotObj,
+      this.data.reservationPeriod
+    );
 
     // Logic for saving the reservation
+    this.clientReservation
+      .createReservation(
+        reservation,
+        this.data.buildingId,
+        this.data.floorId,
+        this.data.slotId
+      )
+      .subscribe((res) => {
+        console.log(res);
+      });
 
     // Close the dialog
     this.dialogRef.close();
