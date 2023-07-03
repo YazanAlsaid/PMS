@@ -5,6 +5,7 @@ import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.compone
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientUserService} from "../../../shared/services/client-user.service";
 import {ActivatedRoute} from "@angular/router";
+import {Reservation} from "../../../shared/model/reservation";
 import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
@@ -40,8 +41,20 @@ export class UsersComponent implements AfterViewInit, OnInit {
 
   ngAfterViewInit(): void {
     this.paginator.page.subscribe(() => {
-      this.paginateParks();
-    });
+      this.pagenateUser();
+    })
+  }
+  exportUser() {
+    const jsonData = JSON.stringify(this.users , null , 2);
+    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
+
+  }
+
+
+  public pagenateUser() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedUser = this.users.slice(startIndex, endIndex);
   }
 
   ngOnInit(): void {
