@@ -198,6 +198,7 @@ export class CalendarComponent implements OnInit {
         slotId: this.data.slot.id,
         date: event.start,
         reservationPeriod: event.meta.reservationPeriod,
+        slotObj: this.data.slot,
       },
     });
   }
@@ -229,6 +230,7 @@ export class CalendarComponent implements OnInit {
         floorId: this.data.floorId,
         date: event.date,
         reservationPeriod: getReservationPeriodFromDate(date),
+        slotObj: this.data.slot,
       },
     });
   }
