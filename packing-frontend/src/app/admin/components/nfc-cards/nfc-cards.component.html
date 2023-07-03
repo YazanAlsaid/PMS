@@ -1,4 +1,4 @@
-<mat-card class="mb-3 shadow">
+<!--mat-card class="mb-3 shadow">
   <mat-card-title class="h1 text-center mt-3">NFS-Cards</mat-card-title>
   <mat-card-actions>
     <button mat-raised-button color="primary" (click)="create()">Add NCF-Card</button>
@@ -63,3 +63,46 @@
     </mat-paginator>
   </mat-card-content>
 </mat-card>
+-->
+
+<mat-card class="shadow">
+  <mat-card-title class="text-center mt-3">NfcCard</mat-card-title>
+  <mat-card-actions>
+    <a mat-raised-button color="primary" (click)="exportNfcCard()" class="btn m-3" title="Download JSON" [href]="downloadJsonHref"
+       download="nfcCards.json">
+      <mat-icon>save_alt</mat-icon>
+      <span style="margin-left: 10px;">Export</span>
+    </a>
+    <button mat-raised-button color="primary" (click)="create()" class="mx-3">Add NfcCard</button>
+    <mat-form-field appearance="fill">
+      <mat-label>Search NfcCard</mat-label>
+      <input matInput type="text" class="mr-3" [(ngModel)]="searchQuery" (ngModelChange)="searchNfcCard()"/>
+    </mat-form-field>
+  </mat-card-actions>
+  <mat-card-content>
+    <mat-grid-list cols="4" rowHeight="230px" gutterSize="16px" class="building-grid">
+      <mat-grid-tile *ngFor="let nfcCard of pagedNfcCards">
+        <mat-card class="building-card border border-primary shadow">
+          <mat-card-title class="building-title mt-3">NfcCard {{ nfcCard.id }}</mat-card-title>
+          <mat-card-content>
+            <p class="building-info">Serial Number: {{ nfcCard.serialNumber }}</p>
+            <p class="building-info">User: {{ nfcCard['user']['firstName'] }} {{ nfcCard['user']['lastName'] }}</p>
+            <p class="building-info">Created At: {{ nfcCard.createdAt | date:'yyyy.MM.dd hh:mm:ss' }}</p>
+            <p class="building-info">Updated At: {{ nfcCard.updatedAt | date:'yyyy.MM.dd hh:mm:ss' }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-icon-button (click)="edit(nfcCard)" color="primary">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="show(nfcCard)" color="primary">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+    <mat-paginator [pageSizeOptions]="[8,12,16]" showFirstLastButtons></mat-paginator>
+  </mat-card-content>
+</mat-card>
+
+

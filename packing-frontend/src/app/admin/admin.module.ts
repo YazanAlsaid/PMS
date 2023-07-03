@@ -26,8 +26,8 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {AddFloorDialogComponent} from './components/add-floor-dialog/add-floor-dialog.component';
 import {AddReservationDialogComponent} from './components/add-reservation-dialog/add-reservation-dialog.component';
 import {MatRadioModule} from '@angular/material/radio';
-import { AddRoleDialoggComponent } from './components/add-role-dialogg/add-role-dialogg.component';
 import { AddNfcDialogComponent } from './components/add-nfc-dialog/add-nfc-dialog.component';
+import {AddRoleDialogComponent} from "./components/add-role-dialog/add-role-dialog.component";
 
 @NgModule({
   declarations: [
@@ -40,7 +40,7 @@ import { AddNfcDialogComponent } from './components/add-nfc-dialog/add-nfc-dialo
     AddFloorDialogComponent,
     AddReservationDialogComponent,
     AddReservationDialogComponent,
-    AddRoleDialoggComponent,
+    AddRoleDialogComponent,
     AddNfcDialogComponent,
   ],
   imports: [

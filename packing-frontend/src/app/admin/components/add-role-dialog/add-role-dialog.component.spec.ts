@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddRoleDialoggComponent } from './add-role-dialogg.component';
+import { AddRoleDialogComponent } from './add-role-dialog.component';
 
 describe('AddRoleDialoggComponent', () => {
-  let component: AddRoleDialoggComponent;
-  let fixture: ComponentFixture<AddRoleDialoggComponent>;
+  let component: AddRoleDialogComponent;
+  let fixture: ComponentFixture<AddRoleDialogComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AddRoleDialoggComponent]
+      declarations: [AddRoleDialogComponent]
     });
-    fixture = TestBed.createComponent(AddRoleDialoggComponent);
+    fixture = TestBed.createComponent(AddRoleDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

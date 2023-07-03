@@ -5,7 +5,9 @@ import {ClientRoleService} from "../../../shared/services/client-role.service";
 import {ActivatedRoute} from "@angular/router";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import { AddRoleDialoggComponent } from '../add-role-dialog/add-role-dialogg.component';
+import { AddRoleDialogComponent } from '../add-role-dialog/add-role-dialog.component';
+import {DomSanitizer} from "@angular/platform-browser";
+import {Role} from "../../../shared/model/role";
 
 @Component({
   selector: 'app-roles',
@@ -17,8 +19,6 @@ export class RolesComponent implements AfterViewInit, OnInit {
   public paginator!: MatPaginator;
   private roles: Role[] = [];
   public pagedRoles: Role[] = [];
-  public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource = new MatTableDataSource();
   public downloadJsonHref: any;
 
   constructor(private clientRoles: ClientRoleService,
@@ -40,7 +40,7 @@ export class RolesComponent implements AfterViewInit, OnInit {
 
 
   exportRole() {
-    const jsonData = JSON.stringify(this.dataSource.data, null, 2);
+    const jsonData = JSON.stringify(this.pagedRoles, null, 2);
     this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonData));
 
   }
@@ -69,7 +69,7 @@ export class RolesComponent implements AfterViewInit, OnInit {
   }
 
   create() {
-    const dialogRef = this.dialog.open(AddRoleDialoggComponent, this.dialogConfig);
+    const dialogRef = this.dialog.open(AddRoleDialogComponent, this.dialogConfig);
 
     dialogRef.afterClosed().subscribe(
       (data: any) => {
