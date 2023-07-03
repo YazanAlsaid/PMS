@@ -1,11 +1,12 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { User } from '../../../shared/model/user';
-import { AddUserDialogComponent } from '../add-user-dialog/add-user-dialog.component';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { ClientUserService } from '../../../shared/services/client-user.service';
-import { ActivatedRoute } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator} from "@angular/material/paginator";
+import {MatTableDataSource} from "@angular/material/table";
+import {User} from "../../../shared/model/user";
+import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {ClientUserService} from "../../../shared/services/client-user.service";
+import {ActivatedRoute} from "@angular/router";
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-users',
@@ -23,8 +24,8 @@ export class UsersComponent implements AfterViewInit, OnInit {
     public dialog: MatDialog,
     private clientUser: ClientUserService,
     private activatedRoute: ActivatedRoute,
-    private sanitizer: DomSanitizer
-  ) {}
+    private sanckPopup: SnackPopupService) {
+  }
 
   private dialogConfig: MatDialogConfig = {
     width: '400px',
@@ -78,13 +79,18 @@ export class UsersComponent implements AfterViewInit, OnInit {
       this.dialogConfig
     );
 
-    dialogRef.afterClosed().subscribe((data: any) => {
-      console.log(data);
-      if (data.user != null) {
-        this.clientUser.createUser(data.user).subscribe(
-          (res: any) => this.ngOnInit(),
-          (err: any) => console.log(err.error.error)
-        );
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        console.log(data)
+        if (data.user != null) {
+          this.clientUser.createUser(data.user).subscribe(
+            (res: any) => {
+              this.users.push(res.data),
+              this.sanckPopup.open(res.message);
+            },
+            (err: any) => console.log(err.error.error)
+          )
+        }
       }
     });
     dialogRef.afterClosed().subscribe((result) => {

@@ -6,6 +6,7 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientSlotService} from "../../../shared/services/client-slot.service";
 import {ActivatedRoute} from "@angular/router";
 import {DomSanitizer} from "@angular/platform-browser";
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-slots',
@@ -34,7 +35,8 @@ export class SlotsComponent implements OnInit {
     public dialog: MatDialog,
     private clientSlots: ClientSlotService,
     private activatedRoute: ActivatedRoute,
-    private sanitizer: DomSanitizer) {
+    private sanitizer: DomSanitizer,
+    private sanckPopup: SnackPopupService) {
   }
 
   ngOnInit(): void {
@@ -77,6 +79,7 @@ export class SlotsComponent implements OnInit {
           (res: any) => {
             this.slots.push(res.data);
             this.paginateSlots();
+            this.sanckPopup.open(res.message);
           },
           (err: any) => console.log(err.error.error)
         );

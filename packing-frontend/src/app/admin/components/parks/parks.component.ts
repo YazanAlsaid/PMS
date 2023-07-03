@@ -1,14 +1,13 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { ClientParkService } from '../../../shared/services/client-park.service';
-import { MatPaginator } from '@angular/material/paginator';
-import { Park } from '../../../shared/model/park';
-import { MatSort } from '@angular/material/sort';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { AddParkDialogComponent } from '../add-park-dialog/add-park-dialog.component';
-import { ActivatedRoute } from '@angular/router';
-import { DomSanitizer } from '@angular/platform-browser';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { SnackPopupService } from '../../../shared/services/snack-popup.service';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {ClientParkService} from "../../../shared/services/client-park.service";
+import {MatPaginator} from "@angular/material/paginator";
+import {Park} from "../../../shared/model/park";
+import {MatSort} from "@angular/material/sort";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
+import {ActivatedRoute} from "@angular/router";
+import {DomSanitizer} from "@angular/platform-browser";
+import {SnackPopupService} from "../../../shared/services/snack-popup.service";
 
 @Component({
   selector: 'app-parks',

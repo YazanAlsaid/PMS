@@ -1,13 +1,12 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
-import { ClientRoleService } from '../../../shared/services/client-role.service';
-import { ActivatedRoute } from '@angular/router';
-import { AddParkDialogComponent } from '../add-park-dialog/add-park-dialog.component';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { AddRoleDialogComponent } from '../add-role-dialog/add-role-dialog.component';
-import { DomSanitizer } from '@angular/platform-browser';
-import { Role } from '../../../shared/model/role';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import {MatPaginator} from "@angular/material/paginator";
+import {MatTableDataSource} from "@angular/material/table";
+import {ClientRoleService} from "../../../shared/services/client-role.service";
+import {ActivatedRoute} from "@angular/router";
+import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import { AddRoleDialoggComponent } from '../add-role-dialogg/add-role-dialogg.component';
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-roles',
@@ -21,12 +20,11 @@ export class RolesComponent implements AfterViewInit, OnInit {
   public pagedRoles: Role[] = [];
   public downloadJsonHref: any;
 
-  constructor(
-    private clientRoles: ClientRoleService,
-    private activatedRoute: ActivatedRoute,
-    public dialog: MatDialog,
-    private sanitizer: DomSanitizer
-  ) {}
+  constructor(private clientRoles: ClientRoleService,
+              private activatedRoute: ActivatedRoute,
+              public dialog: MatDialog,
+              private sanckPopup: SnackPopupService) {
+  }
 
   private dialogConfig: MatDialogConfig = {
     width: '400px',
@@ -68,9 +66,18 @@ export class RolesComponent implements AfterViewInit, OnInit {
   edit(element: any) {}
 
   create() {
-    const dialogRef = this.dialog.open(
-      AddRoleDialogComponent,
-      this.dialogConfig
+    const dialogRef = this.dialog.open(AddRoleDialoggComponent, this.dialogConfig);
+
+    dialogRef.afterClosed().subscribe(
+      (data: any) => {
+        if (data.role != null) {
+          this.clientRoles.createRole(data.role).subscribe(
+            (res: any) =>{ this.dataSource.data.push(res.data),
+            this.sanckPopup.open(res.message);},
+            (err: any) => console.log(err.error.error)
+          )
+        }
+      }
     );
 
     dialogRef.afterClosed().subscribe((data: any) => {

@@ -55,7 +55,7 @@ public class RoleController implements BaseController<Role> {
         return this.message("Getting role by id", role, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAuthority('ADD_SLOT')")
+    @PreAuthorize("hasAuthority('ADD_ROLE')")
     @PostMapping
     @Override
     public ResponseEntity<ResponseMessage> create(@Valid @RequestBody Role role) {
@@ -68,10 +68,10 @@ public class RoleController implements BaseController<Role> {
         Role roleCreated = this.roleRepository.save(role);
         this.addLinks(roleCreated);
 
-        return this.message("Creating role", roleCreated, HttpStatus.CREATED);
+        return this.message("Created Role", roleCreated, HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasAuthority('UPDATE_SLOT')")
+    @PreAuthorize("hasAuthority('UPDATE_ROLE')")
     @PutMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody Role role) {
@@ -86,7 +86,7 @@ public class RoleController implements BaseController<Role> {
         return this.message("Role not found", null, HttpStatus.NOT_FOUND);
     }
 
-    @PreAuthorize("hasAuthority('DELETE_SLOT')")
+    @PreAuthorize("hasAuthority('DELETE_ROLE')")
     @DeleteMapping("/{id}")
     @Override
     public ResponseEntity<ResponseMessage> deleteById(@PathVariable("id") Long id) {

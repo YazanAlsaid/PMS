@@ -3,9 +3,8 @@ import {MatPaginator} from "@angular/material/paginator";
 import {ClientNfcService} from "../../../shared/services/client-nfc.service";
 import {ActivatedRoute} from "@angular/router";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {AddNfcDialogComponent} from '../add-nfc-dialog/add-nfc-dialog.component';
-import {DomSanitizer} from "@angular/platform-browser";
-import {Nfc} from "../../../shared/model/nfc";
+import { AddNfcDialogComponent } from '../add-nfc-dialog/add-nfc-dialog.component';
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-nfc-cards',
@@ -24,7 +23,7 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   constructor(private clientNfc: ClientNfcService,
               private activatedRoute: ActivatedRoute,
               private dialog: MatDialog,
-              private sanitizer: DomSanitizer) {
+              private sanckPopup: SnackPopupService) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -99,6 +98,7 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
               this.nfcCards = this.nfcCards.slice();
               // Reset the paginator to the first page
               this.paginator.firstPage();
+              this.sanckPopup.open(res.message);
             },
             (err: any) => console.log(err.error.error)
           )
