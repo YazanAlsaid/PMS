@@ -1,7 +1,6 @@
-import { Timestamp } from 'rxjs';
-import { User } from './user';
 import { Nfc } from './nfc';
 import { Slot } from './slot';
+import { User } from './user';
 
 export class Reservation {
   public id!: number;
