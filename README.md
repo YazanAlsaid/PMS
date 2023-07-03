@@ -41,7 +41,7 @@ Before running the Parking Management System, ensure that the following software
       `cd parking-frontend`
 
     - Install the dependencies:
-      `npm install`
+      `npm install --force`
 
 ## Usage
 
@@ -58,15 +58,17 @@ Before running the Parking Management System, ensure that the following software
 1.  Access the Parking Management System:
 
     - Open a web browser and visit `http://localhost:4200`.
+## Deployment 
 
+    System has been deployed on the server : https://pms.alnaasan.de
 ## Contact
 
 For any inquiries or further information, please contact the project maintainer:
 
-- **Kaddour Alnaasan** (Group leader)
+- **Kaddour Alnaasan** (Group leader) [Email](mailto:kaddour.alnaasan@stud.fra-uas.de)
 - Ebrahim Al Numayri - [Email](mailto:ebrahim.al-numayri@best.fra-uas.de)
 - Solomon Obinna Ozoemenam - [Email](mailto:solomon.ozoemenam@stud.fra-uas.de)
-- Mohammed Dawoud
-- Yazan Jad Mohammad Saad Alsaid
+- Mohammed Dawoud - [Email](mailto:mohammed.dawoud@stud.fra-uas.de)
+- Yazan Jad Mohammad Saad Alsaid - [Email](mailto:yazan.alsaid@stud.fra-uas.de)
 
 Thank you for using the Parking Management System!
