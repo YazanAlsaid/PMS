@@ -111,5 +111,6 @@ export class SlotsComponent implements OnInit {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedSlots = this.slots.slice(startIndex, endIndex);
+    this.paginator.length = this.slots.length
   }
 }
