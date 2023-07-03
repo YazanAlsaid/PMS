@@ -164,7 +164,7 @@ public class InitDB {
         this.userRepository.save(admin);
 
         for (int i = 1; i <= this.userRepository.count(); i++) {
-            NfcCard nfcCard = new NfcCard("d3r5-47ef-12" + i, this.userRepository.getById((long) i), LocalDateTime.now(), LocalDateTime.now().plusMonths(12));
+            NfcCard nfcCard = new NfcCard("d3r5-47ef-12" + i, this.userRepository.getById((long) i), LocalDate.now(), LocalDate.now().plusMonths(12));
             nfcCardRepository.save(nfcCard);
         }
 

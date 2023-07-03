@@ -5,9 +5,7 @@ import {ClientRoleService} from "../../../shared/services/client-role.service";
 import {ActivatedRoute} from "@angular/router";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {AddRoleDialoggComponent} from '../add-role-dialog/add-role-dialogg.component';
-import {DomSanitizer} from "@angular/platform-browser";
-import {Role} from "../../../shared/model/role";
+import { AddRoleDialoggComponent } from '../add-role-dialog/add-role-dialogg.component';
 
 @Component({
   selector: 'app-roles',

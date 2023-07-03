@@ -4,8 +4,8 @@ import {MatTableDataSource} from "@angular/material/table";
 import {ClientNfcService} from "../../../shared/services/client-nfc.service";
 import {ActivatedRoute} from "@angular/router";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
-import {MatDialogConfig} from "@angular/material/dialog";
-import {DomSanitizer} from "@angular/platform-browser";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import { AddNfcDialogComponent } from '../add-nfc-dialog/add-nfc-dialog.component';
 
 @Component({
   selector: 'app-nfc-cards',
@@ -13,16 +13,14 @@ import {DomSanitizer} from "@angular/platform-browser";
   styleUrls: ['./nfc-cards.component.scss']
 })
 export class NfcCardsComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator)
-  public paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'serialNumber', 'nfcFrom', 'nfcTo', 'user', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
-  private dialog: any;
-  public downloadJsonHref: any;
+
 
   constructor(private clientNfc: ClientNfcService,
               private activatedRoute: ActivatedRoute,
-              private sanitizer: DomSanitizer) {
+              private dialog: MatDialog) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -30,7 +28,7 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
     autoFocus: true,
     disableClose: true,
     data: {
-      roles: null,
+      nfcCard: null,
       isUpdate: false,
     }
   };
@@ -62,20 +60,30 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   }
 
   create() {
-    const dialogRef = this.dialog.open(AddParkDialogComponent, this.dialogConfig);
+    const dialogRef = this.dialog.open(AddNfcDialogComponent, this.dialogConfig);
 
     dialogRef.afterClosed().subscribe(
       (data: any) => {
-        if (data.roles != null) {
-          this.clientNfc.createNfc(data.roles).subscribe(
-            (res: any) => this.ngOnInit(),
+        if (data.nfcCard != null) {
+          this.clientNfc.createNfc(data.nfcCard).subscribe(
+            (res: any) => {
+              // Insert the new NFC at the beginning of the data array
+              this.dataSource.data.unshift(res.data);
+              // Sort the data in descending order based on the 'createdAt' property
+              this.dataSource.data.sort((a: any, b:any) => b.createdAt.localeCompare(a.createdAt));
+              // Reassign the data source to update the table
+              this.dataSource.data = this.dataSource.data.slice();
+              // Reset the paginator to the first page
+              this.paginator.firstPage();
+            },
             (err: any) => console.log(err.error.error)
           )
         }
       }
     );
-
   }
+
+
 
   show(element: any) {
 

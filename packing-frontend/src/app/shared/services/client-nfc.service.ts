@@ -15,16 +15,16 @@ export class ClientNfcService {
     return this.httpService.getAll("nfc-cards");
   }
   public getNfc(id : number) : Observable<ResponseMessage> {
-    return this.httpService.getById("nfcs",id);
+    return this.httpService.getById("nfc-cards",id);
   }
   public createNfc(nfc : Nfc) : Observable<ResponseMessage> {
-    return this.httpService.create('nfcs',nfc);
+    return this.httpService.create('nfc-cards',nfc);
   }
   public updateNfc(id : number,nfc : Nfc) : Observable<ResponseMessage> {
-    return this.httpService.update("nfcs",id,nfc);
+    return this.httpService.update("nfc-cards",id,nfc);
 
   }
   public deleteNfc(id : number) : Observable<ResponseMessage> {
-    return this.httpService.delete("nfcs", id);
+    return this.httpService.delete("nfc-cards", id);
   }
 }

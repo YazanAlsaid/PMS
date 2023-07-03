@@ -11,6 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,9 +25,9 @@ public class NfcCard extends BaseEntity {
     @Size(min = 3, max = 50)
     private String serialNumber;
     @Column(name = "nfc_from")
-    private LocalDateTime nfcFrom;
+    private LocalDate nfcFrom;
     @Column(name = "nfc_to")
-    private LocalDateTime nfcTo;
+    private LocalDate nfcTo;
     @JsonIgnore
     @OneToMany(mappedBy = "nfcCard", cascade = CascadeType.MERGE)
     private Set<Reservation> reservations = new HashSet<>();
@@ -38,7 +39,7 @@ public class NfcCard extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public NfcCard(String serialNumber, User user, LocalDateTime nfcFrom, LocalDateTime nfcTo) {
+    public NfcCard(String serialNumber, User user, LocalDate nfcFrom, LocalDate nfcTo) {
         this.serialNumber = serialNumber;
         this.nfcFrom = nfcFrom;
         this.nfcTo = nfcTo;
@@ -81,22 +82,22 @@ public class NfcCard extends BaseEntity {
     }
 
     @SuppressWarnings("unused")
-    public LocalDateTime getNfcFrom() {
+    public LocalDate getNfcFrom() {
         return nfcFrom;
     }
 
     @SuppressWarnings("unused")
-    public LocalDateTime getNfcTo() {
+    public LocalDate getNfcTo() {
         return nfcTo;
     }
 
     @SuppressWarnings("unused")
-    public void setNfcFrom(LocalDateTime nfcFrom) {
+    public void setNfcFrom(LocalDate nfcFrom) {
         this.nfcFrom = nfcFrom;
     }
 
     @SuppressWarnings("unused")
-    public void setNfcTo(LocalDateTime nfcTo) {
+    public void setNfcTo(LocalDate nfcTo) {
         this.nfcTo = nfcTo;
     }
 
