@@ -15,8 +15,7 @@ import {AddReservationDialogComponent} from "../add-reservation-dialog/add-reser
   styleUrls: ['./reservations.component.scss']
 })
 export class ReservationsComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator)
-  public paginator!: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'user', 'reservationAt', 'reservationPeriod', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
 
@@ -31,6 +30,9 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
     disableClose: true,
     data: {
       reservation: null,
+      buildingId: null,
+      floorId: null,
+      slotId: null,
       isUpdate: false,
     }
   };
@@ -59,9 +61,9 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
 
     dialogRef.afterClosed().subscribe(
       (data: any) => {
-        if (data.reservation != null) {
-          this.clientReservations.createReservation(data.reservation).subscribe(
-            (res: any) => this.ngOnInit(),
+        if (data && data.reservation != null) {
+          this.clientReservations.createReservation(data.reservation, data.buildingId, data.floorId, data.slotId).subscribe(
+            (res: any) => this.dataSource.data.push(res.data),
             (err: any) => console.log(err.error.error)
           )
         }
