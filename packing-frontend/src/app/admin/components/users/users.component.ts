@@ -6,6 +6,8 @@ import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.compone
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientUserService} from "../../../shared/services/client-user.service";
 import {ActivatedRoute} from "@angular/router";
+import {Reservation} from "../../../shared/model/reservation";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-users',
@@ -17,6 +19,7 @@ export class UsersComponent implements AfterViewInit, OnInit {
   public paginator!: MatPaginator;
 
   public pagedUser: User[] = [];
+
   // public readonly displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'createdAt', 'updatedAt', 'action'];
   public readonly displayedColumns: string[] = ['id'];
   public dataSource = new MatTableDataSource();
@@ -25,11 +28,13 @@ export class UsersComponent implements AfterViewInit, OnInit {
   currentPage = 1; // Current page number
   pageSize = 8; // Number of users per page
   myBreakPoint: any = 4;
+  public downloadJsonHref: any;
 
   constructor(
     public dialog: MatDialog,
     private clientUser: ClientUserService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -47,7 +52,11 @@ export class UsersComponent implements AfterViewInit, OnInit {
       this.pagenateUser();
     })
   }
+  exportUser() {
+    const jsonData = JSON.stringify(this.users , null , 2);
+    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
 
+  }
 
 
   public pagenateUser() {

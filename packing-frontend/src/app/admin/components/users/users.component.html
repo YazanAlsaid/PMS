@@ -2,7 +2,8 @@
   <mat-card-title class="h1 text-center mt-3">Users</mat-card-title>
   <mat-card-actions>
     <button mat-raised-button color="primary" (click)="create()">Add User</button>
-    <button mat-raised-button color="primary" class="mx-3">Export Users</button>
+    <a mat-raised-button color="primary" class="mx-3" (click)="exportUser()"
+            [href]="downloadJsonHref" download="users.json">Export Users</a>
     <mat-form-field>
       <mat-label>Filter</mat-label>
       <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
