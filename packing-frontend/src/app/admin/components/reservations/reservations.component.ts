@@ -15,10 +15,11 @@ import {DomSanitizer} from "@angular/platform-browser";
 })
 export class ReservationsComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
-  public readonly displayedColumns: string[] = ['id', 'user', 'reservationAt', 'reservationPeriod', 'createdAt', 'updatedAt', 'action'];
-  public dataSource = new MatTableDataSource();
-  public pagedReservation: Reservation[] = [];
   public downloadJsonHref: any;
+  public searchQuery: any;
+  public pagedReservations: Reservation[] = [];
+  private filteredReservations: Reservation[] = [];
+  private reservations: Reservation[] = [];
 
   constructor(private clientReservations: ClientReservationService,
               private activatedRoute: ActivatedRoute,
@@ -39,15 +40,22 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
     }
   };
 
+
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    this.paginator.page.subscribe(() => {
+      this.paginateReservations();
+    });
   }
 
   ngOnInit(): void {
     const resolveData = this.activatedRoute.snapshot.data['reservations'];
-    if (resolveData.data){
-      this.dataSource.data = resolveData.data;
-      this.dataSource.paginator = this.paginator;
+    if (resolveData.data) {
+      this.reservations = resolveData.data;
+      this.filteredReservations = resolveData.data;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.reservations.length;
+      this.paginateReservations();
 
     } else {
       console.log(resolveData.message);
@@ -58,9 +66,9 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
 
   }
 
-  exportReservation() {
-    const jsonData = JSON.stringify(this.dataSource.data , null , 2);
-    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
+  exportReservations() {
+    const jsonData = JSON.stringify(this.pagedReservations, null, 2);
+    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonData));
 
   }
 
@@ -71,7 +79,10 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
       (data: any) => {
         if (data && data.reservation != null) {
           this.clientReservations.createReservation(data.reservation, data.buildingId, data.floorId, data.slotId).subscribe(
-            (res: any) => this.dataSource.data.push(res.data),
+            (res: any) => {
+              this.reservations.push(res.data);
+              this.paginateReservations();
+            },
             (err: any) => console.log(err.error.error)
           )
         }
@@ -82,5 +93,28 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
 
   show(element: any) {
 
+  }
+
+
+  searchReservations() {
+    if (this.searchQuery.trim() !== '') {
+      this.filteredReservations = this.reservations.filter(reservation =>
+        reservation.slot.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        reservation.reservationAt.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        reservation.reservationPeriod.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        reservation.user.firstName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        reservation.user.lastName.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+    } else {
+      this.filteredReservations = this.reservations;
+    }
+    this.paginateReservations();
+  }
+
+  private paginateReservations() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedReservations = this.filteredReservations.slice(startIndex, endIndex);
+    this.paginator.length = this.filteredReservations.length;
   }
 }
