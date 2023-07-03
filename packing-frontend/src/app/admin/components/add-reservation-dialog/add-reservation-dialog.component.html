@@ -43,9 +43,11 @@
 
 
     <mat-form-field>
-      <input type="date" matInput formControlName="date" placeholder="Date of reservation">
-      <mat-hint>MM/DD/YYYY</mat-hint>
-      <!--<mat-error *ngIf="dialogForm.controls['date'].invalid">Date is required</mat-error>-->
+      <mat-label>Date of reservation</mat-label>
+      <input matInput [matDatepicker]="datepicker" formControlName="date" placeholder="Date of reservation">
+      <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
+      <mat-datepicker #datepicker></mat-datepicker>
+      <mat-error *ngIf="dialogForm.controls['date'].invalid">Date is required</mat-error>
     </mat-form-field>
 
     <br>
