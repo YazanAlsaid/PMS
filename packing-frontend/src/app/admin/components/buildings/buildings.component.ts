@@ -1,13 +1,10 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
-import {MatTableDataSource} from "@angular/material/table";
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-dialog.component";
 import {Building} from "../../../shared/model/building";
 import {ActivatedRoute} from "@angular/router";
-import {Park} from "../../../shared/model/park";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 
 @Component({
@@ -77,7 +74,7 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
         this.dialogConfig.data.isUpdate = false;
         if (data.building != null && data.isUpdate) {
           this.clientBuilding.updateBuilding(data.building.id, data.building).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) => this.buildings.push(res.data),
             (err: any) => console.log(err.error.error)
           );
         }
@@ -103,24 +100,9 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
     // Handle view functionality
   }
 
-  getRandomColor(): string {
-    // Generate a random color code
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
-
   exportBuildings() {
    const jsonData = JSON.stringify(this.pagedBuilding , null , 2);
    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
-  }
-
-  addBuilding() {
-    // Add logic to add a new building
-    // This function will be called when the "Add Building" button is clicked
   }
 
   searchBuildings() {
@@ -131,10 +113,5 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
     } else {
       this.pagedBuilding = this.buildings;
     }
-  }
-
-  clearSearch() {
-    this.searchQuery = '';
-    this.pagedBuilding = this.buildings;
   }
 }
