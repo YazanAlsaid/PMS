@@ -5,7 +5,6 @@ import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.compone
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientUserService} from "../../../shared/services/client-user.service";
 import {ActivatedRoute} from "@angular/router";
-import {Reservation} from "../../../shared/model/reservation";
 import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
@@ -44,9 +43,10 @@ export class UsersComponent implements AfterViewInit, OnInit {
       this.pagenateUser();
     })
   }
+
   exportUser() {
-    const jsonData = JSON.stringify(this.users , null , 2);
-    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
+    const jsonData = JSON.stringify(this.users, null, 2);
+    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonData));
 
   }
 
@@ -54,7 +54,7 @@ export class UsersComponent implements AfterViewInit, OnInit {
   public pagenateUser() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
-    this.pagedUser = this.users.slice(startIndex, endIndex);
+    this.pagedUsers = this.users.slice(startIndex, endIndex);
   }
 
   ngOnInit(): void {
@@ -65,7 +65,6 @@ export class UsersComponent implements AfterViewInit, OnInit {
       this.paginator.pageIndex = 0;
       this.paginator.length = this.users.length;
       this.paginateParks();
-
     } else {
       console.log(resolverData.message);
     }
@@ -106,12 +105,6 @@ export class UsersComponent implements AfterViewInit, OnInit {
 
 
   handleSize($event: any) {
-
-  }
-
-  exportUsers() {
-    const jsonDate = JSON.stringify(this.pagedUsers, null, 2);
-    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonDate));
   }
 
   searchUsers() {
