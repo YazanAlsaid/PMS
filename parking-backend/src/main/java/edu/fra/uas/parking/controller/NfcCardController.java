@@ -70,7 +70,7 @@ public class NfcCardController implements BaseController<NfcCard> {
         NfcCard buildingCreated = this.nfcCardRepository.save(nfcCard);
         this.addLinks(buildingCreated);
 
-        return this.message("Creating nfcCard", buildingCreated, HttpStatus.CREATED);
+        return this.message("NFC-Card has been added to the User", buildingCreated, HttpStatus.CREATED);
     }
     @PreAuthorize("hasAuthority('UPDATE_NFC_CARD')")
     @PutMapping("/{id}")

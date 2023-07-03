@@ -68,7 +68,7 @@ public class RoleController implements BaseController<Role> {
         Role roleCreated = this.roleRepository.save(role);
         this.addLinks(roleCreated);
 
-        return this.message("Created Role", roleCreated, HttpStatus.CREATED);
+        return this.message("Role has been created", roleCreated, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority('UPDATE_ROLE')")
