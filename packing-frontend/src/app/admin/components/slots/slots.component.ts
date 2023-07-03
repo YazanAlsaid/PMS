@@ -7,6 +7,7 @@ import {AddSlotDialogComponent} from "../add-slot-dialog/add-slot-dialog.compone
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientSlotService} from "../../../shared/services/client-slot.service";
 import {ActivatedRoute} from "@angular/router";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-slots',
@@ -29,11 +30,13 @@ export class SlotsComponent implements OnInit {
       isUpdate: false,
     }
   };
+  public downloadJsonHref: any;
 
   constructor(
     public dialog: MatDialog,
     private clientSlots: ClientSlotService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer) {
   }
 
   ngOnInit(): void {
@@ -85,7 +88,11 @@ export class SlotsComponent implements OnInit {
 
   show(element: any) {}
 
-  exportBuildings() {}
+  exportSlots() {
+    const jsonData = JSON.stringify(this.pagedSlots , null , 2);
+    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
+
+  }
 
   addBuilding() {}
 
