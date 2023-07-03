@@ -32,7 +32,9 @@ export class ReservationDialogComponent {
     @Inject(MAT_DIALOG_DATA)
     public data: any,
     private http: HttpClient
-  ) {
+  ) {}
+
+  ngOnInit(): void {
     this.http.get(`${this.baseUrl}/parks`).subscribe((res: any) => {
       this.parkingOptions = res.data.content.map((parking: any) => {
         console.log({ parking });
@@ -44,7 +46,7 @@ export class ReservationDialogComponent {
     });
 
     this.http
-      .get(`${this.baseUrl}/parks/${data.parkingId}/buildings`)
+      .get(`${this.baseUrl}/parks/${this.data.parkingId}/buildings`)
       .subscribe((res: any) => {
         this.buildingOptions = res.data.map((building: any) => {
           return {
@@ -55,7 +57,7 @@ export class ReservationDialogComponent {
       });
 
     this.http
-      .get(`${this.baseUrl}/buildings/${data.buildingId}/floors`)
+      .get(`${this.baseUrl}/buildings/${this.data.buildingId}/floors`)
       .subscribe((res: any) => {
         this.floorOptions = res.data.map((floor: any) => {
           return {
@@ -66,7 +68,7 @@ export class ReservationDialogComponent {
       });
 
     this.http
-      .get(`${this.baseUrl}/floors/${data.floorId}/slots`)
+      .get(`${this.baseUrl}/floors/${this.data.floorId}/slots`)
       .subscribe((res: any) => {
         this.slotOptions = res.data.map((slot: any) => {
           return {
@@ -76,15 +78,13 @@ export class ReservationDialogComponent {
         });
       });
 
-    this.parkId = data.parkId;
-    this.building = data.buildingId;
-    this.floor = data.floorId;
-    this.slotNumber = data.slotId;
-    this.date = data.date;
-    this.time = data.reservationPeriod;
-  }
+    this.parkId = this.data.parkId;
+    this.building = this.data.buildingId;
+    this.floor = this.data.floorId;
+    this.slotNumber = this.data.slotId;
+    this.date = this.data.date;
+    this.time = this.data.reservationPeriod;
 
-  ngOnInit(): void {
     this.slotNumber = this.data.slotId;
     this.parkId = this.data.parkingId;
     this.building = this.data.buildingId;
