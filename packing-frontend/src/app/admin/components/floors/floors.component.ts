@@ -1,13 +1,11 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
-import {MatTableDataSource} from "@angular/material/table";
 import {ClientFloorService} from "../../../shared/services/client-floor.service";
 import {AddFloorDialogComponent} from "../add-floor-dialog/add-floor-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {Floor} from "../../../shared/model/floor";
 import {ActivatedRoute} from "@angular/router";
-import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-dialog.component";
-import {Building} from "../../../shared/model/building";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-floors',
@@ -34,10 +32,12 @@ export class FloorsComponent implements OnInit {
       isUpdate: false,
     }
   };
+  public downloadJsonHref: any;
   constructor(
     private dialog: MatDialog,
     private clientFloors: ClientFloorService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer) {
   }
 
   ngAfterViewInit(): void {
@@ -76,7 +76,7 @@ export class FloorsComponent implements OnInit {
         this.dialogConfig.data.isUpdate = false;
         if (data.floor != null && data.isUpdate) {
           this.clientFloors.updateFloor(data.floor.id, data.floor).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) => this.floors.push(res.data),
             (err: any) => console.log(err.error.error)
           )
         }
@@ -102,13 +102,13 @@ export class FloorsComponent implements OnInit {
 
   }
 
-  exportBuildings() {
+  exportFloors() {
+    const jsonData = JSON.stringify(this.pagedFloor , null , 2);
+    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
 
   }
 
-  addBuilding() {
 
-  }
 
   searchFloors() {
     if (this.searchQuery.trim() !== '') {
@@ -120,8 +120,4 @@ export class FloorsComponent implements OnInit {
     }
   }
 
-  clearSearch() {
-    this.searchQuery = '';
-    this.pagedFloor = this.floors;
-  }
 }
