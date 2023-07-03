@@ -1,39 +1,39 @@
 <mat-card class="shadow">
-  <mat-card-title class="h1 text-center mt-3">Users</mat-card-title>
+  <mat-card-title class="text-center mt-3">Users</mat-card-title>
   <mat-card-actions>
     <button mat-raised-button color="primary" (click)="create()">Add User</button>
-    <button mat-raised-button color="primary" class="mx-3">Export Users</button>
-    <mat-form-field>
-      <mat-label>Filter</mat-label>
-      <input matInput (keyup)="applyFilter($event)" placeholder="Ex. ium" #input>
+    <a mat-raised-button color="primary" class="mx-3" (click)="exportUser()"
+            [href]="downloadJsonHref" download="users.json">Export Users</a>
+    <mat-form-field appearance="fill">
+      <mat-label>Search Reservation</mat-label>
+      <input matInput type="text" class="mr-3" [(ngModel)]="searchQuery" (ngModelChange)="searchUsers()"/>
     </mat-form-field>
   </mat-card-actions>
 
   <mat-card-content>
-    <mat-grid-list [cols]="myBreakPoint" gutterSize="15px" cols="4" rowHeight="250px" rowWidth="150px"
+    <mat-grid-list [cols]="myBreakPoint" gutterSize="15px" cols="4" rowHeight="290px" rowWidth="150px"
                    (window:resize)="handleSize($event)">
-      <ng-container *ngFor="let user of pagedUsers">
-        <mat-grid-tile>
-          <mat-card  class="card card-hover border border-primary shadow m-3">
-            <mat-card-title class="text-center">{{ user.firstName }} {{ user.lastName }}</mat-card-title>
-            <mat-card-content>
-              <p class="user-email">Email: {{ user.email }}</p>
-              <p class="user-address">Create at: {{ user.createdAt }}</p>
-              <p class="user-address">Update at: {{ user.updatedAt }}</p>
-            </mat-card-content>
-            <mat-card-actions class="d-flex justify-content-center">
-              <button mat-icon-button color="primary" (click)="edit(user)">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="primary" (click)="show(user)">
-                <mat-icon>visibility</mat-icon>
-              </button>
-            </mat-card-actions>
-          </mat-card>
-        </mat-grid-tile>
-      </ng-container>
+      <mat-grid-tile *ngFor="let user of pagedUsers">
+        <mat-card class="building-card border border-primary shadow">
+          <mat-card-title class="building-title mt-3">User {{ user.id }}</mat-card-title>
+          <mat-card-content>
+            <p class="building-info">Name: {{ user.firstName }} {{ user.lastName }}</p>
+            <p class="building-info">Email: {{ user.email }} </p>
+            <p class="building-info">Email: {{ user.gender }} </p>
+            <p class="building-info">Created At: {{ user.createdAt | date:'yyyy.MM.dd hh:mm:ss' }}</p>
+            <p class="building-info">Updated At: {{ user.updatedAt | date:'yyyy.MM.dd hh:mm:ss' }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-icon-button (click)="edit(user)" color="primary">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="show(user)" color="primary">
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </mat-grid-tile>
     </mat-grid-list>
     <mat-paginator [pageSizeOptions]="[8,12,16]" showFirstLastButtons></mat-paginator>
   </mat-card-content>
 </mat-card>
-

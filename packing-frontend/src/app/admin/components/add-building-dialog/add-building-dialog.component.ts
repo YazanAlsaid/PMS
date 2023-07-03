@@ -4,7 +4,6 @@ import {Park} from "../../../shared/model/park";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Building} from "../../../shared/model/building";
-import {ResponseMessage} from "../../../shared/model/response-message";
 
 @Component({
   selector: 'app-add-building-dialog',

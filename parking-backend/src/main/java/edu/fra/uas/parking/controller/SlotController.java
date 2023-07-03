@@ -74,7 +74,7 @@ public class SlotController implements BaseController<Slot> {
         Slot slotCreated = this.slotRepository.save(slot);
         this.addLinks(slotCreated);
 
-        return this.message("Creating slot", slotCreated, HttpStatus.CREATED);
+        return this.message("Created Slot", slotCreated, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority('UPDATE_SLOT')")

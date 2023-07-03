@@ -72,7 +72,7 @@ public class ParkController implements BaseController<Park> {
         }
         Park parkCreated = this.parkRepository.save(park);
         this.addLinks(parkCreated);
-        return this.message("Creating building", parkCreated, HttpStatus.CREATED);
+        return this.message("Created park", parkCreated, HttpStatus.CREATED);
 
     }
 

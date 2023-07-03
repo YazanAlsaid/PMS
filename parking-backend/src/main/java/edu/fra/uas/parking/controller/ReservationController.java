@@ -91,7 +91,7 @@ public class ReservationController {
         Reservation reservationCreated = reservationRepository.save(reservation);
         this.addLinks(reservationCreated);
 
-        return this.message("Creating reservation", reservationCreated, HttpStatus.CREATED);
+        return this.message("Reservation has been created", reservationCreated, HttpStatus.CREATED);
     }
 
 

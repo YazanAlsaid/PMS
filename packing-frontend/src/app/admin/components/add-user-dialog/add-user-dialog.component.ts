@@ -29,11 +29,11 @@ export class AddUserDialogComponent {
     private clientRole: ClientRoleService
   ) {
     this.dialogForm = this.formBuilder.group({
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
+      firstName: ['', Validators.required, Validators.minLength(3), Validators.maxLength(30)],
+      lastName: ['', Validators.required, Validators.minLength(3), Validators.maxLength(30)],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      confirmPassword: ['', Validators.required],
+      password: ['', Validators.required, Validators.minLength(8), Validators.maxLength(20), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)],
+      confirmPassword: ['', Validators.required, Validators.minLength(8), Validators.maxLength(20), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)],
       role: ['', Validators.required]
     });
   }
@@ -56,8 +56,8 @@ export class AddUserDialogComponent {
       this.data.user = new User(
         this.dialogForm.value.firstName,
         this.dialogForm.value.lastName,
-        this.dialogForm.value.email
-        , this.dialogForm.value.password,
+        this.dialogForm.value.email,
+        this.dialogForm.value.password,
         this.dialogForm.value.confirmPassword,
         roles);
       this.dialogRef.close(this.data);

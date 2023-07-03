@@ -71,7 +71,7 @@ public class FloorController implements BaseController<Floor> {
         Floor floorCreated = this.floorRepository.save(floor);
         this.addLinks(floorCreated);
 
-        return this.message("Creating floor", floorCreated, HttpStatus.CREATED);
+        return this.message("Floor has been created", floorCreated, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority('UPDATE_FLOOR')")
