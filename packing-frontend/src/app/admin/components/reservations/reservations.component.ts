@@ -5,6 +5,8 @@ import {ClientReservationService} from "../../../shared/services/client-reservat
 import {ActivatedRoute} from "@angular/router";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddReservationDialogComponent} from "../add-reservation-dialog/add-reservation-dialog.component";
+import {Reservation} from "../../../shared/model/reservation";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-reservations',
@@ -15,10 +17,13 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'user', 'reservationAt', 'reservationPeriod', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
+  public pagedReservation: Reservation[] = [];
+  public downloadJsonHref: any;
 
   constructor(private clientReservations: ClientReservationService,
               private activatedRoute: ActivatedRoute,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private sanitizer: DomSanitizer) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -50,6 +55,12 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
   }
 
   edit(element: any) {
+
+  }
+
+  exportReservation() {
+    const jsonData = JSON.stringify(this.dataSource.data , null , 2);
+    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
 
   }
 

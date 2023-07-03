@@ -2,7 +2,8 @@
   <mat-card-title class="h1 text-center mt-3">Reservations</mat-card-title>
   <mat-card-actions>
     <button mat-raised-button color="primary" (click)="create()">Add Reservation</button>
-    <button mat-raised-button color="primary" class="mx-3">Export Reservations</button>
+    <a mat-raised-button color="primary" class="mx-3" (click)="exportReservation()"
+            [href]="downloadJsonHref" download="reservations.json">Export Reservations</a>
   </mat-card-actions>
 
   <mat-card-content class="shadow-sm">
