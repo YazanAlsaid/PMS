@@ -1,24 +1,30 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {ClientParkService} from "../../../shared/services/client-park.service";
-import {MatPaginator} from "@angular/material/paginator";
-import {Park} from "../../../shared/model/park";
-import {MatSort} from "@angular/material/sort";
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
-import {ActivatedRoute} from "@angular/router";
-import {DomSanitizer} from "@angular/platform-browser";
-import {MatSnackBar, MatSnackBarConfig} from "@angular/material/snack-bar";
-import {SnackPopupService} from "../../../shared/services/snack-popup.service";
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { ClientParkService } from '../../../shared/services/client-park.service';
+import { MatPaginator } from '@angular/material/paginator';
+import { Park } from '../../../shared/model/park';
+import { MatSort } from '@angular/material/sort';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { AddParkDialogComponent } from '../add-park-dialog/add-park-dialog.component';
+import { ActivatedRoute } from '@angular/router';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { SnackPopupService } from '../../../shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-parks',
   templateUrl: './parks.component.html',
-  styleUrls: ['./parks.component.scss']
+  styleUrls: ['./parks.component.scss'],
 })
 export class ParksComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
-  @ViewChild(MatSort, {static: true}) sort!: MatSort;
-  public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
+  @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
+  @ViewChild(MatSort, { static: true }) sort!: MatSort;
+  public readonly displayedColumns: string[] = [
+    'id',
+    'name',
+    'createdAt',
+    'updatedAt',
+    'action',
+  ];
   public dataSource: Park[] = [];
   private parks: Park[] = [];
   public pagedParks: Park[] = [];
@@ -31,7 +37,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
     data: {
       park: null,
       isUpdate: false,
-    }
+    },
   };
   public downloadJsonHref: any;
 
@@ -40,8 +46,8 @@ export class ParksComponent implements AfterViewInit, OnInit {
     private parksService: ClientParkService,
     private activatedRoute: ActivatedRoute,
     private sanitizer: DomSanitizer,
-    private sanckPopup: SnackPopupService) {
-  }
+    private sanckPopup: SnackPopupService
+  ) {}
 
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['parks'];
@@ -72,52 +78,53 @@ export class ParksComponent implements AfterViewInit, OnInit {
   edit(element: any) {
     this.dialogConfig.data.park = element;
     this.dialogConfig.data.isUpdate = true;
-    const dialogRef = this.dialog.open(AddParkDialogComponent, this.dialogConfig);
-    dialogRef.afterClosed().subscribe(
-      (data: any) => {
-        this.dialogConfig.data.isUpdate = false;
-        if (data.park != null && data.isUpdate) {
-          this.parksService.updatePark(data.park.id, data.park).subscribe(
-            (res: any) =>  this.parks.push(res.data),
-            (err: any) => console.log(err.error.error)
-          )
-        }
-      }
+    const dialogRef = this.dialog.open(
+      AddParkDialogComponent,
+      this.dialogConfig
     );
+    dialogRef.afterClosed().subscribe((data: any) => {
+      this.dialogConfig.data.isUpdate = false;
+      if (data.park != null && data.isUpdate) {
+        this.parksService.updatePark(data.park.id, data.park).subscribe(
+          (res: any) => this.parks.push(res.data),
+          (err: any) => console.log(err.error.error)
+        );
+      }
+    });
   }
 
   create() {
-    const dialogRef = this.dialog.open(AddParkDialogComponent, this.dialogConfig);
-
-    dialogRef.afterClosed().subscribe(
-      (data: any) => {
-        if (data.park != null) {
-          this.parksService.createPark(data.park).subscribe(
-            (res: any) => {
-              this.parks.push(res.data);
-              this.paginateParks();
-              this.sanckPopup.open(res.message);
-            },
-            (err: any) => console.log(err.error.error)
-          )
-        }
-      }
+    const dialogRef = this.dialog.open(
+      AddParkDialogComponent,
+      this.dialogConfig
     );
 
+    dialogRef.afterClosed().subscribe((data: any) => {
+      if (data.park != null) {
+        this.parksService.createPark(data.park).subscribe(
+          (res: any) => {
+            this.parks.push(res.data);
+            this.paginateParks();
+            this.sanckPopup.open(res.message);
+          },
+          (err: any) => console.log(err.error.error)
+        );
+      }
+    });
   }
 
-  show(element: any) {
-  }
+  show(element: any) {}
 
   exportBuildings() {
     const jsonDate = JSON.stringify(this.pagedParks, null, 2);
-    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonDate));
-
+    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
+      'data:text/json;charset=UTF-8,' + encodeURIComponent(jsonDate)
+    );
   }
 
   searchParks() {
     if (this.searchQuery.trim() !== '') {
-      this.pagedParks = this.parks.filter(park =>
+      this.pagedParks = this.parks.filter((park) =>
         park.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
