@@ -15,7 +15,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {AddSlotDialogComponent} from "./components/add-slot-dialog/add-slot-dialog.component";
-import {MatOptionModule} from "@angular/material/core";
+import {MatNativeDateModule, MatOptionModule} from "@angular/material/core";
 import {MatSelectModule} from "@angular/material/select";
 import {MatGridListModule} from "@angular/material/grid-list";
 import {AddParkDialogComponent} from './components/add-park-dialog/add-park-dialog.component';
@@ -26,7 +26,8 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {AddFloorDialogComponent} from './components/add-floor-dialog/add-floor-dialog.component';
 import {AddReservationDialogComponent} from './components/add-reservation-dialog/add-reservation-dialog.component';
 import {MatRadioModule} from '@angular/material/radio';
-import { AddRoleDialoggComponent } from './components/add-role-dialog/add-role-dialogg.component';
+import { AddRoleDialoggComponent } from './components/add-role-dialogg/add-role-dialogg.component';
+import { AddNfcDialogComponent } from './components/add-nfc-dialog/add-nfc-dialog.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { AddRoleDialoggComponent } from './components/add-role-dialog/add-role-d
     AddReservationDialogComponent,
     AddReservationDialogComponent,
     AddRoleDialoggComponent,
+    AddNfcDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -64,6 +66,8 @@ import { AddRoleDialoggComponent } from './components/add-role-dialog/add-role-d
     MatCheckboxModule,
     MatDatepickerModule,
     MatRadioModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
 })
 export class AdminModule {
