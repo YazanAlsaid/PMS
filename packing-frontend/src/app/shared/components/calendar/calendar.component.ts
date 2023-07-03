@@ -211,8 +211,18 @@ export class CalendarComponent implements OnInit {
         buildingId: this.data.buildingId,
         floorId: this.data.floorId,
         date: event.date,
-        reservationPeriod: event.date.getHours() < 13 ? 'MORNING' : 'AFTERNOON',
+        reservationPeriod: getReservationPeriodFromDateStr(event.date),
       },
     });
   }
+}
+
+function getReservationPeriodFromDateStr(
+  dateStr: string
+): 'MORNING' | 'AFTERNOON' {
+  const date = new Date(dateStr);
+  if (date.getHours() < 13) {
+    return 'MORNING';
+  }
+  return 'AFTERNOON';
 }
