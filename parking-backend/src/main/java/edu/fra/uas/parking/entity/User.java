@@ -37,7 +37,6 @@ public class User extends BaseEntity {
     @Size(min = 5, max = 250)
     @Email(flags = Pattern.Flag.CASE_INSENSITIVE, message = "You should give a unique email")
     private String email;
-    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
     @JsonIgnore
