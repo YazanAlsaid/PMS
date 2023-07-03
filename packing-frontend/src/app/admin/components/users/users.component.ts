@@ -6,6 +6,7 @@ import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.compone
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientUserService} from "../../../shared/services/client-user.service";
 import {ActivatedRoute} from "@angular/router";
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-users',
@@ -29,7 +30,8 @@ export class UsersComponent implements AfterViewInit, OnInit {
   constructor(
     public dialog: MatDialog,
     private clientUser: ClientUserService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private sanckPopup: SnackPopupService) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -79,7 +81,10 @@ export class UsersComponent implements AfterViewInit, OnInit {
         console.log(data)
         if (data.user != null) {
           this.clientUser.createUser(data.user).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) => {
+              this.users.push(res.data),
+              this.sanckPopup.open(res.message);
+            },
             (err: any) => console.log(err.error.error)
           )
         }
