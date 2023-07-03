@@ -2,12 +2,10 @@ import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {User} from "../../../shared/model/user";
-import {Nfc} from "../../../shared/model/nfc";
 import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientUserService} from "../../../shared/services/client-user.service";
 import {ActivatedRoute} from "@angular/router";
-import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 
 @Component({
   selector: 'app-users',
@@ -17,6 +15,8 @@ import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.compone
 export class UsersComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator)
   public paginator!: MatPaginator;
+
+  public pagedUser: User[] = [];
   // public readonly displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'createdAt', 'updatedAt', 'action'];
   public readonly displayedColumns: string[] = ['id'];
   public dataSource = new MatTableDataSource();
@@ -43,7 +43,17 @@ export class UsersComponent implements AfterViewInit, OnInit {
   };
 
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    this.paginator.page.subscribe(() => {
+      this.pagenateUser();
+    })
+  }
+
+
+
+  public pagenateUser() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedUser = this.users.slice(startIndex, endIndex);
   }
 
   ngOnInit(): void {
@@ -66,6 +76,7 @@ export class UsersComponent implements AfterViewInit, OnInit {
 
     dialogRef.afterClosed().subscribe(
       (data: any) => {
+        console.log(data)
         if (data.user != null) {
           this.clientUser.createUser(data.user).subscribe(
             (res: any) => this.ngOnInit(),
