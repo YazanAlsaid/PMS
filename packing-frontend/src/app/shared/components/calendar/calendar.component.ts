@@ -147,6 +147,7 @@ export class CalendarComponent implements OnInit {
       (isSameDay(this.viewDate, start) && this.activeDayIsOpen) ||
       events.length === 0
     ) {
+      this.setView(CalendarView.Week);
       this.activeDayIsOpen = false;
       return;
     }
@@ -194,6 +195,11 @@ export class CalendarComponent implements OnInit {
     this.activeDayIsOpen = false;
   }
   hourSegmentClicked(event: any) {
+    const date = new Date(event.date);
+    const hour = date.getHours();
+    if (hour < 8 || hour > 18) {
+      return;
+    }
     this.modal.open(ReservationDialogComponent, {
       width: '400px',
       autoFocus: true,
@@ -203,16 +209,13 @@ export class CalendarComponent implements OnInit {
         buildingId: this.data.buildingId,
         floorId: this.data.floorId,
         date: event.date,
-        reservationPeriod: getReservationPeriodFromDateStr(event.date),
+        reservationPeriod: getReservationPeriodFromDate(date),
       },
     });
   }
 }
 
-function getReservationPeriodFromDateStr(
-  dateStr: string
-): 'MORNING' | 'AFTERNOON' {
-  const date = new Date(dateStr);
+function getReservationPeriodFromDate(date: Date): 'MORNING' | 'AFTERNOON' {
   if (date.getHours() < 13) {
     return 'MORNING';
   }
