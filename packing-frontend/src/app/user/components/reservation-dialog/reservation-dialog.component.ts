@@ -7,6 +7,15 @@ type SelectOption = {
   viewValue: string;
 };
 
+export type ReservationDialogComponentData = {
+  slotId: string;
+  parkingId: string;
+  buildingId: string;
+  floorId: string;
+  date: string;
+  reservationPeriod: 'MORNING' | 'AFTERNOON';
+};
+
 @Component({
   selector: 'app-reservation-dialog',
   templateUrl: './reservation-dialog.component.html',
@@ -30,7 +39,7 @@ export class ReservationDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ReservationDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
-    public data: any,
+    public data: ReservationDialogComponentData,
     private http: HttpClient
   ) {}
 
@@ -77,7 +86,7 @@ export class ReservationDialogComponent {
         });
       });
 
-    this.parkId = this.data.parkId;
+    this.parkId = this.data.parkingId;
     this.building = this.data.buildingId;
     this.floor = this.data.floorId;
     this.slotNumber = this.data.slotId;
