@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {MatDialog} from '@angular/material/dialog';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {CalendarComponent} from 'src/app/shared/components/calendar/calendar.component';
 import {Slot} from "../../../shared/model/slot";
 import {ActivatedRoute} from "@angular/router";
@@ -19,6 +19,17 @@ export class SlotComponent implements OnInit, AfterViewInit {
   private parkId!: number;
   private buildingId!: number;
   private floorId!: number;
+  private dialogConfig: MatDialogConfig = {
+    width: '850px',
+    height: '100%',
+    autoFocus: true,
+    data: {
+      parkId: null,
+      buildingId: null,
+      floorId: null,
+      slotId: null,
+    }
+  };
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -66,16 +77,12 @@ export class SlotComponent implements OnInit, AfterViewInit {
   }
 
   onSelect(slot: Slot) {
-    this.dialog.open(CalendarComponent, {
-      data: {
-        slot: slot,
-        buildingId: this.buildingId,
-        floorId: this.floorId,
-        parkId: this.parkId,
-      },
-      width: '850px',
-      height: '100%',
-    });
+    this.dialogConfig.data.parkId = this.parkId;
+    this.dialogConfig.data.buildingId = this.buildingId;
+    this.dialogConfig.data.floorId = this.floorId;
+    this.dialogConfig.data.slot = slot;
+    console.log(this.dialogConfig);
+    this.dialog.open(CalendarComponent, this.dialogConfig);
   }
 
   handleSize(event: any) {
