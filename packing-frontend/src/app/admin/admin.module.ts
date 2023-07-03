@@ -26,6 +26,7 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {AddFloorDialogComponent} from './components/add-floor-dialog/add-floor-dialog.component';
 import {AddReservationDialogComponent} from './components/add-reservation-dialog/add-reservation-dialog.component';
 import {MatRadioModule} from '@angular/material/radio';
+import { AddRoleDialoggComponent } from './components/add-role-dialog/add-role-dialogg.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {MatRadioModule} from '@angular/material/radio';
     AddFloorDialogComponent,
     AddReservationDialogComponent,
     AddReservationDialogComponent,
+    AddRoleDialoggComponent,
   ],
   imports: [
     CommonModule,
