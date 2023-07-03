@@ -49,6 +49,9 @@ export class CalendarComponent implements OnInit {
   activeDayIsOpen: boolean = false;
   reservations: { data: Reservation[] } = { data: [] };
   events: CalendarEvent[] = [];
+  dayStartHour: number = 7;
+  dayEndHour: number = 19;
+  excludeDays: number[] = [0, 6];
   modalData!: {
     action: string;
     event: CalendarEvent;
@@ -188,19 +191,25 @@ export class CalendarComponent implements OnInit {
     this.dialogConfig.data.date = event.start;
     this.dialogConfig.data.reservationPeriod = event.meta.reservationPeriod;
     console.log(this.dialogConfig.data);
-    this.modal.open(ReservationDialogComponent, {
-      width: '400px',
-      autoFocus: true,
-      data: {
-        parkingId: this.data.parkId,
-        buildingId: this.data.buildingId,
-        floorId: this.data.floorId,
-        slotId: this.data.slot.id,
-        date: event.start,
-        reservationPeriod: event.meta.reservationPeriod,
-        slotObj: this.data.slot,
-      },
-    });
+    this.modal
+      .open(ReservationDialogComponent, {
+        width: '400px',
+        autoFocus: true,
+        data: {
+          parkingId: this.data.parkId,
+          buildingId: this.data.buildingId,
+          floorId: this.data.floorId,
+          slotId: this.data.slot.id,
+          date: event.start,
+          reservationPeriod: event.meta.reservationPeriod,
+          slotObj: this.data.slot,
+        },
+      })
+      .afterClosed()
+      .subscribe((resAfterClosed: any) => {
+        console.log({ resAfterClosed });
+        this.refresh.next();
+      });
   }
 
   deleteEvent(eventToDelete: CalendarEvent) {
@@ -220,19 +229,25 @@ export class CalendarComponent implements OnInit {
     if (hour < 8 || hour > 18) {
       return;
     }
-    this.modal.open(ReservationDialogComponent, {
-      width: '400px',
-      autoFocus: true,
-      data: {
-        slotId: this.data.slot.id,
-        parkingId: this.data.parkId,
-        buildingId: this.data.buildingId,
-        floorId: this.data.floorId,
-        date: event.date,
-        reservationPeriod: getReservationPeriodFromDate(date),
-        slotObj: this.data.slot,
-      },
-    });
+    this.modal
+      .open(ReservationDialogComponent, {
+        width: '400px',
+        autoFocus: true,
+        data: {
+          slotId: this.data.slot.id,
+          parkingId: this.data.parkId,
+          buildingId: this.data.buildingId,
+          floorId: this.data.floorId,
+          date: event.date,
+          reservationPeriod: getReservationPeriodFromDate(date),
+          slotObj: this.data.slot,
+        },
+      })
+      .afterClosed()
+      .subscribe((resAfterClosed: any) => {
+        console.log({ resAfterClosed });
+        this.refresh.next();
+      });
   }
 }
 

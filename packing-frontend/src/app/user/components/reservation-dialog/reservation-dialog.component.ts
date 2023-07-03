@@ -114,7 +114,8 @@ export class ReservationDialogComponent {
       this.data.reservationPeriod
     );
 
-    // Logic for saving the reservation
+    console.log({ reservation });
+
     this.clientReservation
       .createReservation(
         reservation,
@@ -124,10 +125,8 @@ export class ReservationDialogComponent {
       )
       .subscribe((res) => {
         console.log(res);
+        this.dialogRef.close();
       });
-
-    // Close the dialog
-    this.dialogRef.close();
   }
 
   onDateInputKeydown(event: KeyboardEvent) {
