@@ -37,7 +37,6 @@ export class ReservationDialogComponent {
   ngOnInit(): void {
     this.http.get(`${this.baseUrl}/parks`).subscribe((res: any) => {
       this.parkingOptions = res.data.content.map((parking: any) => {
-        console.log({ parking });
         return {
           value: parking.id,
           viewValue: parking.name,
