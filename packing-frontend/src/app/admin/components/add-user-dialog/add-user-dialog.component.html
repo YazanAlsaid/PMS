@@ -2,13 +2,13 @@
 <mat-dialog-content>
   <form [formGroup]="dialogForm" (ngSubmit)="onSubmit()" #formDir="ngForm" novalidate>
     <mat-form-field>
-      <input matInput formControlName="firstname" placeholder="Firstname" required>
-      <mat-error *ngIf="dialogForm.controls['firstname'].invalid">Firstname is required</mat-error>
+      <input matInput formControlName="firstName" placeholder="firstName" required>
+      <mat-error *ngIf="dialogForm.controls['firstName'].invalid">Firstname is required</mat-error>
     </mat-form-field>
     <br>
     <mat-form-field>
-      <input matInput formControlName="lastname" placeholder="Lastname" required>
-      <mat-error *ngIf="dialogForm.controls['lastname'].invalid">Lastname is required</mat-error>
+      <input matInput formControlName="lastName" placeholder="lastName" required>
+      <mat-error *ngIf="dialogForm.controls['lastName'].invalid">Lastname is required</mat-error>
     </mat-form-field>
     <br>
     <mat-form-field>
@@ -25,9 +25,18 @@
       <input matInput type="password" formControlName="confirmPassword" placeholder="Confirm Password" required>
       <mat-error *ngIf="dialogForm.controls['confirmPassword'].invalid">Confirm Password is required</mat-error>
     </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Role</mat-label>
+      <mat-select formControlName="role" name="role">
+        <mat-option *ngFor="let role of roleOptions" [value]="role">{{ role['name'] }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="dialogForm.controls['role'].invalid">Role is required</mat-error>
+    </mat-form-field>
   </form>
+
 </mat-dialog-content>
 <mat-dialog-actions align="end">
   <button mat-button (click)="dialogRef.close()">Cancel</button>
-  <button mat-raised-button color="primary" [disabled]="dialogForm.invalid">Submit</button>
+  <button mat-raised-button color="primary" [disabled]="dialogForm.invalid" (click)="onSubmit()">Submit</button>
 </mat-dialog-actions>

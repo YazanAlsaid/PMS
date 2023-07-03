@@ -4,6 +4,7 @@ import edu.fra.uas.parking.common.ResponseMessage;
 import edu.fra.uas.parking.entity.Reservation;
 
 import edu.fra.uas.parking.repository.ReservationRepository;
+import edu.fra.uas.parking.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +31,12 @@ public class ReservationController {
     private final Logger logger = LoggerFactory.getLogger(ReservationController.class);
     private final ReservationRepository reservationRepository;
 
+    private final UserRepository userRepository;
+
     @Autowired
-    public ReservationController(ReservationRepository reservationRepository) {
+    public ReservationController(ReservationRepository reservationRepository, UserRepository userRepository) {
         this.reservationRepository = reservationRepository;
+        this.userRepository = userRepository;
     }
 
     @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
@@ -83,10 +87,11 @@ public class ReservationController {
                 return this.message("Slot is already booked in this time period", null, HttpStatus.CONFLICT);
             }
         }
+        reservation.setNfcCard(this.userRepository.getById(reservation.getUser().getId()).getNfcCard());
         Reservation reservationCreated = reservationRepository.save(reservation);
         this.addLinks(reservationCreated);
 
-        return this.message("Creating reservation", reservationCreated, HttpStatus.CREATED);
+        return this.message("Reservation has been created", reservationCreated, HttpStatus.CREATED);
     }
 
 

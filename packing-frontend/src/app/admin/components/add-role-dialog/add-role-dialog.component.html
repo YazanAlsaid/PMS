@@ -1,13 +1,10 @@
-<h2 mat-dialog-title>Add Park</h2>
+<h2 mat-dialog-title>Add Role</h2>
 <mat-dialog-content>
   <form [formGroup]="dialogForm" (ngSubmit)="onSubmit()" #formDir="ngForm" novalidate>
     <mat-form-field>
-      <input matInput formControlName="name" placeholder="Name of Park" required>
+      <input matInput formControlName="name" placeholder="Name of Role" required>
       <mat-error *ngIf="dialogForm.controls['name'].invalid">Name is required</mat-error>
     </mat-form-field>
-
-
-
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

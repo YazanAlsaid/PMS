@@ -89,4 +89,12 @@ export class HttpService {
   public getSubList(entity: string, id: number, subEntity: string): Observable<ResponseMessage> {
     return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/${entity}/${id}/${subEntity}`);
   }
+
+  public customRequest(uri: string, data: any): Observable<ResponseMessage> {
+    return this.http.post<ResponseMessage>(`${this.url}${uri}`, data);
+  }
+
+public customRequestGet(uri: string): Observable<ResponseMessage>{
+  return this.http.get<ResponseMessage>(`${this.url}${uri}`);
+  }
 }

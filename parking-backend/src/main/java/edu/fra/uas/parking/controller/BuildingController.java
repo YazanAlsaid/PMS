@@ -1,7 +1,9 @@
 package edu.fra.uas.parking.controller;
 
 import edu.fra.uas.parking.common.ResponseMessage;
+import edu.fra.uas.parking.entity.Address;
 import edu.fra.uas.parking.entity.Building;
+import edu.fra.uas.parking.repository.AddressRepository;
 import edu.fra.uas.parking.repository.BuildingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +27,12 @@ public class BuildingController {
     private final Logger logger = LoggerFactory.getLogger(BuildingController.class);
     private final BuildingRepository buildingRepository;
     private @Valid Building r;
+    private final AddressRepository addressRepository;
 
     @Autowired
-    public BuildingController(BuildingRepository buildingRepository) {
+    public BuildingController(BuildingRepository buildingRepository, AddressRepository addressRepository) {
         this.buildingRepository = buildingRepository;
+        this.addressRepository = addressRepository;
     }
 
     @PreAuthorize("hasAuthority('VIEW_BUILDINGS')")
@@ -66,7 +70,7 @@ public class BuildingController {
         Building buildingCreated = this.buildingRepository.save(building);
         this.addLinks(buildingCreated);
 
-        return this.message("Creating building", buildingCreated, HttpStatus.CREATED);
+        return this.message("Building has been created", buildingCreated, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority('UPDATE_BUILDING')")

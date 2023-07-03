@@ -3,28 +3,26 @@ import {Reservation} from "./reservation";
 import {Nfc} from "./nfc";
 
 export class User {
-  public id: number;
+  public id!: number;
   public firstName: string;
   public lastName: string;
   public email: string;
   public password: string;
+  public confirmPassword:string;
   public roles: Role[];
-  public reservations: Reservation[];
-  public nfc: Nfc;
-  public createdAt: Date;
-  public updatedAt: Date;
+  public reservations!: Reservation[];
+  public nfc!: Nfc;
+  public createdAt!: Date;
+  public updatedAt!: Date;
+  public gender: number = 0;
 
 
-  constructor(id: number, firstName: string, lastName: string, email: string, password: string, roles: Role[], reservations: Reservation[], nfc: Nfc, createdAt: Date, updatedAt: Date) {
-    this.id = id;
+  constructor( firstName: string, lastName: string, email: string, password: string,confirmPassword : string,roles: Role[] ) {
     this.firstName = firstName;
     this.lastName = lastName;
     this.email = email;
     this.password = password;
     this.roles = roles;
-    this.reservations = reservations;
-    this.nfc = nfc;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
+    this.confirmPassword = confirmPassword;
   }
 }

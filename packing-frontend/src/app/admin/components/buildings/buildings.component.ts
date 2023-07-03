@@ -1,12 +1,12 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
-import {MatTableDataSource} from "@angular/material/table";
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.component";
 import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-dialog.component";
 import {Building} from "../../../shared/model/building";
 import {ActivatedRoute} from "@angular/router";
+import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-buildings',
@@ -14,11 +14,11 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./buildings.component.scss']
 })
 export class BuildingsComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator)
+  @ViewChild(MatPaginator, {static: true})
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
-  public dataSource: Building[] = [];
-  buildings: Building[] = [];
+  private buildings: Building[] = [];
+  public pagedBuilding: Building[] = [];
   searchQuery: string = '';
 
   private dialogConfig: MatDialogConfig = {
@@ -30,24 +30,42 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
       isUpdate: false,
     }
   };
+  // @ts-ignore
+  public downloadJsonHref: SafeUrl;
+
   constructor(
     private dialog: MatDialog,
     private clientBuilding: ClientBuildingService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer,
+    private sanckPopup: SnackPopupService) {
   }
 
   ngAfterViewInit(): void {
-    // this.dataSource.paginator = this.paginator;
+    this.paginator.page.subscribe(() => {
+      this.pagenateBuilding();
+    })
   }
 
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['buildings'];
-    if (resolverData.data){
+    if (resolverData.data) {
       this.buildings = resolverData.data;
-      this.dataSource = this.buildings;
-    }else {
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.buildings.length;
+      this.pagenateBuilding();
+
+    } else {
       console.log(resolverData.message);
     }
+  }
+
+  public pagenateBuilding() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedBuilding = this.buildings.slice(startIndex, endIndex);
+    this.paginator.length = this.buildings.length;
   }
 
   edit(element: any) {
@@ -59,7 +77,7 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
         this.dialogConfig.data.isUpdate = false;
         if (data.building != null && data.isUpdate) {
           this.clientBuilding.updateBuilding(data.building.id, data.building).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) => this.buildings.push(res.data),
             (err: any) => console.log(err.error.error)
           );
         }
@@ -72,9 +90,13 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       // Handle any actions after the dialog is closed
-      if (result.building != null){
+      if (result && result.building != null) {
         this.clientBuilding.createBuilding(result.building).subscribe(
-          (res: any) => this.ngOnInit(),
+          (res: any) => {
+            this.buildings.push(res.data),
+            this.sanckPopup.open(res.message);
+            this.pagenateBuilding()
+          },
           (err: any) => console.log(err.error.error)
         );
       }
@@ -85,38 +107,18 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
     // Handle view functionality
   }
 
-  getRandomColor(): string {
-    // Generate a random color code
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
-
   exportBuildings() {
-    // Add logic to export buildings
-    // This function will be called when the "Export Buildings" button is clicked
-  }
-
-  addBuilding() {
-    // Add logic to add a new building
-    // This function will be called when the "Add Building" button is clicked
+   const jsonData = JSON.stringify(this.pagedBuilding , null , 2);
+   this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
   }
 
   searchBuildings() {
     if (this.searchQuery.trim() !== '') {
-      this.dataSource = this.buildings.filter(building =>
+      this.pagedBuilding = this.buildings.filter(building =>
         building.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
-      this.dataSource = this.buildings;
+      this.pagedBuilding = this.buildings;
     }
-  }
-
-  clearSearch() {
-    this.searchQuery = '';
-    this.dataSource = this.buildings;
   }
 }

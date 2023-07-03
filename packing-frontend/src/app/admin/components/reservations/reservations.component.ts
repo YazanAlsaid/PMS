@@ -3,11 +3,11 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {ClientReservationService} from "../../../shared/services/client-reservation.service";
 import {ActivatedRoute} from "@angular/router";
-import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {AddReservationComponent} from "../../../shared/components/add-reservation/add-reservation.component";
-import {ReservationDialogComponent} from "../../../user/components/reservation-dialog/reservation-dialog.component";
 import {AddReservationDialogComponent} from "../add-reservation-dialog/add-reservation-dialog.component";
+import {Reservation} from "../../../shared/model/reservation";
+import {DomSanitizer} from "@angular/platform-browser";
+import {SnackPopupService} from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-reservations',
@@ -15,14 +15,18 @@ import {AddReservationDialogComponent} from "../add-reservation-dialog/add-reser
   styleUrls: ['./reservations.component.scss']
 })
 export class ReservationsComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator)
-  public paginator!: MatPaginator;
-  public readonly displayedColumns: string[] = ['id', 'user', 'reservationAt', 'reservationPeriod', 'createdAt', 'updatedAt', 'action'];
-  public dataSource = new MatTableDataSource();
+  @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
+  public downloadJsonHref: any;
+  public searchQuery: any;
+  public pagedReservations: Reservation[] = [];
+  private filteredReservations: Reservation[] = [];
+  private reservations: Reservation[] = [];
 
   constructor(private clientReservations: ClientReservationService,
               private activatedRoute: ActivatedRoute,
-              public dialog: MatDialog) {
+              public dialog: MatDialog,
+              private sanitizer: DomSanitizer,
+              private sanckPopup: SnackPopupService) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -31,19 +35,29 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
     disableClose: true,
     data: {
       reservation: null,
+      buildingId: null,
+      floorId: null,
+      slotId: null,
       isUpdate: false,
     }
   };
 
+
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
+    this.paginator.page.subscribe(() => {
+      this.paginateReservations();
+    });
   }
 
   ngOnInit(): void {
     const resolveData = this.activatedRoute.snapshot.data['reservations'];
-    if (resolveData.data){
-      this.dataSource.data = resolveData.data;
-      this.dataSource.paginator = this.paginator;
+    if (resolveData.data) {
+      this.reservations = resolveData.data;
+      this.filteredReservations = resolveData.data;
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.reservations.length;
+      this.paginateReservations();
 
     } else {
       console.log(resolveData.message);
@@ -54,14 +68,24 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
 
   }
 
+  exportReservations() {
+    const jsonData = JSON.stringify(this.pagedReservations, null, 2);
+    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonData));
+
+  }
+
   create() {
     const dialogRef = this.dialog.open(AddReservationDialogComponent, this.dialogConfig);
 
     dialogRef.afterClosed().subscribe(
       (data: any) => {
-        if (data.reservation != null) {
-          this.clientReservations.createReservation(data.reservation).subscribe(
-            (res: any) => this.ngOnInit(),
+        if (data && data.reservation != null) {
+          this.clientReservations.createReservation(data.reservation, data.buildingId, data.floorId, data.slotId).subscribe(
+            (res: any) => {
+              this.reservations.push(res.data);
+              this.sanckPopup.open(res.message);
+              this.paginateReservations();
+            },
             (err: any) => console.log(err.error.error)
           )
         }
@@ -72,5 +96,28 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
 
   show(element: any) {
 
+  }
+
+
+  searchReservations() {
+    if (this.searchQuery.trim() !== '') {
+      this.filteredReservations = this.reservations.filter(reservation =>
+        reservation.slot.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        reservation.reservationAt.toString().toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        reservation.reservationPeriod.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        reservation.user.firstName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        reservation.user.lastName.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    } else {
+      this.filteredReservations = this.reservations;
+    }
+    this.paginateReservations();
+  }
+
+  private paginateReservations() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
+    this.pagedReservations = this.filteredReservations.slice(startIndex, endIndex);
+    this.paginator.length = this.filteredReservations.length;
   }
 }

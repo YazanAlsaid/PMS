@@ -11,7 +11,6 @@ import {Building} from "../../../shared/model/building";
   styleUrls: ['./add-building-dialog.component.scss']
 })
 export class AddBuildingDialogComponent implements OnInit {
-  public parkingName!: Park;
   public parkingOptions!: Park[]
   public dialogForm: FormGroup;
   private isUpdate: boolean = false;
@@ -53,8 +52,7 @@ export class AddBuildingDialogComponent implements OnInit {
       this.data.building.name = this.dialogForm.value.name;
       this.dialogRef.close(this.data);
     } else if (this.dialogForm.valid && !this.isUpdate) {
-      this.data.building = new Building(this.dialogForm.value.name);
-      this.data.building.park = this.dialogForm.value.park;
+      this.data.building = new Building(this.dialogForm.value.name, this.dialogForm.value.park);
       this.dialogRef.close(this.data);
     }
   }

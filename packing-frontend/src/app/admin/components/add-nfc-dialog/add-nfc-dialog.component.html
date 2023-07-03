@@ -1,0 +1,33 @@
+<h2 mat-dialog-title>Add Nfc</h2>
+<mat-dialog-content>
+  <form [formGroup]="dialogForm" (ngSubmit)="onSubmit()" #formDir="ngForm" novalidate>
+    <mat-form-field>
+      <input matInput formControlName="serialNumber" placeholder="serialNumber of Nfc" required>
+      <mat-error *ngIf="dialogForm.controls['serialNumber'].invalid">serialNumber is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>User</mat-label>
+      <mat-select formControlName="user" name="user">
+        <mat-option *ngFor="let user of userOptions" [value]="user">{{ user['firstName'] +' '+ user['lastName']
+          }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="dialogForm.controls['user'].invalid">User is required</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-date-range-input [formGroup]="dialogForm" [rangePicker]="picker">
+        <input matStartDate formControlName="nfcFrom" placeholder="Nfc valid Range" required>
+        <input matEndDate formControlName="nfcTo" placeholder="Nfc valid Range" required>
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+      <mat-error *ngIf="dialogForm.controls['nfcFrom'].invalid||dialogForm.controls['nfcTo'].invalid">Nfc valid Range is required</mat-error>
+    </mat-form-field>
+
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="dialogForm.invalid" (click)="onSubmit()">Submit</button>
+</mat-dialog-actions>
