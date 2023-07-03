@@ -6,6 +6,7 @@ import {ActivatedRoute} from "@angular/router";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import { AddRoleDialoggComponent } from '../add-role-dialog/add-role-dialogg.component';
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-roles',
@@ -17,10 +18,12 @@ export class RolesComponent implements AfterViewInit, OnInit {
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
+  public downloadJsonHref: any;
 
   constructor(private clientRoles: ClientRoleService,
               private activatedRoute: ActivatedRoute,
-              public dialog: MatDialog,) {
+              public dialog: MatDialog,
+              private sanitizer: DomSanitizer) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -32,6 +35,13 @@ export class RolesComponent implements AfterViewInit, OnInit {
       isUpdate: false,
     }
   };
+
+
+  exportRole() {
+    const jsonData = JSON.stringify(this.dataSource.data , null , 2);
+    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
+
+  }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;

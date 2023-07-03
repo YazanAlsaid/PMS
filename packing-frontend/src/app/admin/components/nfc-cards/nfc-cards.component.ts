@@ -5,6 +5,7 @@ import {ClientNfcService} from "../../../shared/services/client-nfc.service";
 import {ActivatedRoute} from "@angular/router";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 import {MatDialogConfig} from "@angular/material/dialog";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-nfc-cards',
@@ -17,9 +18,11 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   public readonly displayedColumns: string[] = ['id', 'serialNumber', 'nfcFrom', 'nfcTo', 'user', 'createdAt', 'updatedAt', 'action'];
   public dataSource = new MatTableDataSource();
   private dialog: any;
+  public downloadJsonHref: any;
 
   constructor(private clientNfc: ClientNfcService,
-              private activatedRoute: ActivatedRoute) {
+              private activatedRoute: ActivatedRoute,
+              private sanitizer: DomSanitizer) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -31,6 +34,12 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
       isUpdate: false,
     }
   };
+
+  exportNfcCard() {
+    const jsonData = JSON.stringify(this.dataSource.data , null , 2);
+    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
+
+  }
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
