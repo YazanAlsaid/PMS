@@ -3,10 +3,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {MatTableDataSource} from "@angular/material/table";
 import {ClientReservationService} from "../../../shared/services/client-reservation.service";
 import {ActivatedRoute} from "@angular/router";
-import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {AddReservationComponent} from "../../../shared/components/add-reservation/add-reservation.component";
-import {ReservationDialogComponent} from "../../../user/components/reservation-dialog/reservation-dialog.component";
 import {AddReservationDialogComponent} from "../add-reservation-dialog/add-reservation-dialog.component";
 
 @Component({
