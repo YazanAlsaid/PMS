@@ -7,6 +7,7 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientUserService} from "../../../shared/services/client-user.service";
 import {ActivatedRoute} from "@angular/router";
 import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-users',
@@ -24,7 +25,8 @@ export class UsersComponent implements AfterViewInit, OnInit {
     public dialog: MatDialog,
     private clientUser: ClientUserService,
     private activatedRoute: ActivatedRoute,
-    private sanckPopup: SnackPopupService) {
+    private sanckPopup: SnackPopupService,
+    private sanitizer: DomSanitizer) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -56,6 +58,7 @@ export class UsersComponent implements AfterViewInit, OnInit {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedUsers = this.users.slice(startIndex, endIndex);
+    this.paginator.length = this.users.length;
   }
 
   ngOnInit(): void {
@@ -74,10 +77,7 @@ export class UsersComponent implements AfterViewInit, OnInit {
   edit(element: any) {}
 
   create(): void {
-    const dialogRef = this.dialog.open(
-      AddUserDialogComponent,
-      this.dialogConfig
-    );
+    const dialogRef = this.dialog.open(AddUserDialogComponent, this.dialogConfig);
 
     dialogRef.afterClosed().subscribe(
       (data: any) => {
@@ -85,17 +85,14 @@ export class UsersComponent implements AfterViewInit, OnInit {
         if (data.user != null) {
           this.clientUser.createUser(data.user).subscribe(
             (res: any) => {
-              this.users.push(res.data),
+              this.users.push(res.data);
               this.sanckPopup.open(res.message);
+              this.pagenateUser();
             },
             (err: any) => console.log(err.error.error)
-          )
+          );
         }
-      }
-    });
-    dialogRef.afterClosed().subscribe((result) => {
-      // Handle any actions after the dialog is closed
-    });
+      });
   }
 
   show(element: any) {}

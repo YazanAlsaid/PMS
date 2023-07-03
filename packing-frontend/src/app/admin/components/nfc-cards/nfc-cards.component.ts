@@ -3,8 +3,10 @@ import {MatPaginator} from "@angular/material/paginator";
 import {ClientNfcService} from "../../../shared/services/client-nfc.service";
 import {ActivatedRoute} from "@angular/router";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import { AddNfcDialogComponent } from '../add-nfc-dialog/add-nfc-dialog.component';
-import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
+import {AddNfcDialogComponent} from '../add-nfc-dialog/add-nfc-dialog.component';
+import {SnackPopupService} from 'src/app/shared/services/snack-popup.service';
+import {DomSanitizer} from "@angular/platform-browser";
+import {Nfc} from "../../../shared/model/nfc";
 
 @Component({
   selector: 'app-nfc-cards',
@@ -23,6 +25,7 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   constructor(private clientNfc: ClientNfcService,
               private activatedRoute: ActivatedRoute,
               private dialog: MatDialog,
+              private sanitizer: DomSanitizer,
               private sanckPopup: SnackPopupService) {
   }
 
@@ -40,7 +43,6 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   exportNfcCard() {
     const jsonData = JSON.stringify(this.pagedNfcCards, null, 2);
     this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonData));
-
   }
 
   ngAfterViewInit()
@@ -73,12 +75,10 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedNfcCards = this.nfcCards.slice(startIndex, endIndex);
+    this.paginator.length = this.nfcCards.length;
   }
 
-  edit(element
-         :
-         any
-  ) {
+  edit(element: any) {
 
   }
 
@@ -99,6 +99,7 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
               // Reset the paginator to the first page
               this.paginator.firstPage();
               this.sanckPopup.open(res.message);
+              this.paginateNfcCards();
             },
             (err: any) => console.log(err.error.error)
           )
@@ -114,8 +115,8 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   searchNfcCard() {
     if (this.searchQuery.trim() !== '') {
       this.pagedNfcCards = this.nfcCards.filter(nfc =>
-        nfc.serialNumber.toLowerCase().includes(this.searchQuery.toLowerCase())||
-        nfc.user.firstName.toLowerCase().includes(this.searchQuery.toLowerCase())||
+        nfc.serialNumber.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+        nfc.user.firstName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         nfc.user.lastName.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
