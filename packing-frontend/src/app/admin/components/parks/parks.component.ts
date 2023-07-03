@@ -7,7 +7,6 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 import {ActivatedRoute} from "@angular/router";
 import {DomSanitizer} from "@angular/platform-browser";
-import {MatSnackBar, MatSnackBarConfig} from "@angular/material/snack-bar";
 import {SnackPopupService} from "../../../shared/services/snack-popup.service";
 
 @Component({
