@@ -1,20 +1,37 @@
 // import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import {HttpClient} from '@angular/common/http';
-import {Component, Inject, OnInit, Optional, TemplateRef, ViewChild,} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialog, MatDialogConfig, MatDialogRef,} from '@angular/material/dialog';
-import {CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView,} from 'angular-calendar';
-import {EventColor} from 'calendar-utils';
-import {isSameDay, isSameMonth} from 'date-fns';
-import {Subject} from 'rxjs';
-import {Reservation} from '../../model/reservation';
-import {ReservationDialogComponent} from 'src/app/user/components/reservation-dialog/reservation-dialog.component';
-import {ClientSlotService} from "../../services/client-slot.service";
-import {ResponseMessage} from "../../model/response-message";
+import { HttpClient } from '@angular/common/http';
+import {
+  Component,
+  Inject,
+  OnInit,
+  Optional,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogConfig,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import {
+  CalendarEvent,
+  CalendarEventAction,
+  CalendarEventTimesChangedEvent,
+  CalendarView,
+} from 'angular-calendar';
+import { EventColor } from 'calendar-utils';
+import { isSameDay, isSameMonth } from 'date-fns';
+import { Subject } from 'rxjs';
+import { Reservation } from '../../model/reservation';
+import { ReservationDialogComponent } from 'src/app/user/components/reservation-dialog/reservation-dialog.component';
+import { ClientSlotService } from '../../services/client-slot.service';
+import { ResponseMessage } from '../../model/response-message';
 
 const colors: Record<string, EventColor> = {
-  red: {primary: '#ad2121', secondary: '#FAE3E3'},
-  blue: {primary: '#1e90ff', secondary: '#D1E8FF'},
-  yellow: {primary: '#e3bc08', secondary: '#FDF1BA'},
+  red: { primary: '#ad2121', secondary: '#FAE3E3' },
+  blue: { primary: '#1e90ff', secondary: '#D1E8FF' },
+  yellow: { primary: '#e3bc08', secondary: '#FDF1BA' },
 };
 
 @Component({
@@ -23,15 +40,18 @@ const colors: Record<string, EventColor> = {
   styleUrls: ['./calendar.component.scss'],
 })
 export class CalendarComponent implements OnInit {
-  @ViewChild('modalContent', {static: true}) modalContent!: TemplateRef<any>;
+  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
   refresh = new Subject<void>();
   activeDayIsOpen: boolean = false;
-  reservations: { data: Reservation[] } = {data: []};
+  reservations: { data: Reservation[] } = { data: [] };
   events: CalendarEvent[] = [];
+  dayStartHour: number = 7;
+  dayEndHour: number = 19;
+  excludeDays: number[] = [0, 6];
   modalData!: {
     action: string;
     event: CalendarEvent;
@@ -40,14 +60,14 @@ export class CalendarComponent implements OnInit {
     {
       label: '<i class="fas fa-fw fa-pencil-alt"></i>',
       a11yLabel: 'Edit',
-      onClick: ({event}: { event: CalendarEvent }): void => {
+      onClick: ({ event }: { event: CalendarEvent }): void => {
         this.handleEvent('Edited', event);
       },
     },
     {
       label: '<i class="fas fa-fw fa-trash-alt"></i>',
       a11yLabel: 'Delete',
-      onClick: ({event}: { event: CalendarEvent }): void => {
+      onClick: ({ event }: { event: CalendarEvent }): void => {
         this.events = this.events.filter((iEvent) => iEvent !== event);
         this.handleEvent('Deleted', event);
       },
@@ -73,7 +93,7 @@ export class CalendarComponent implements OnInit {
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<CalendarComponent>, // private modal: NgbModal
+    private dialogRef: MatDialogRef<CalendarComponent>,
     private modal: MatDialog,
     private http: HttpClient,
     private clientSlot: ClientSlotService
@@ -85,20 +105,25 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.clientSlot.getReservations(this.slotID, this.buildingId, this.floorId).subscribe(
-      (res: ResponseMessage) => {
-        this.reservations.data = res.data;
-        this.events = this.reservations.data.map((reservation: Reservation) => ({
-          ...this.getEventPeriod(reservation),
-          title: reservation.reservationPeriod,
-          color: colors['blue'],
-          actions: this.actions,
-          resizable: {beforeStart: true, afterEnd: true},
-          draggable: true,
-          meta: {reservationPeriod: reservation.reservationPeriod}
-        }));
-      },
-      (err: any) => console.log(err));
+    this.clientSlot
+      .getReservations(this.slotID, this.buildingId, this.floorId)
+      .subscribe(
+        (res: ResponseMessage) => {
+          this.reservations.data = res.data;
+          this.events = this.reservations.data.map(
+            (reservation: Reservation) => ({
+              ...this.getEventPeriod(reservation),
+              title: reservation.reservationPeriod,
+              color: colors['blue'],
+              actions: this.actions,
+              resizable: { beforeStart: true, afterEnd: true },
+              draggable: true,
+              meta: { reservationPeriod: reservation.reservationPeriod },
+            })
+          );
+        },
+        (err: any) => console.log(err)
+      );
   }
 
   dateSelected(date: any) {
@@ -120,24 +145,40 @@ export class CalendarComponent implements OnInit {
       start.setHours(13);
       end.setHours(18);
     }
-    return {start, end};
+    return { start, end };
   }
 
-  dayClicked({date: start, events}: { date: Date; events: CalendarEvent[]; }): void {
+  dayClicked({
+    date: start,
+    events,
+  }: {
+    date: Date;
+    events: CalendarEvent[];
+  }): void {
     if (!isSameMonth(start, this.viewDate)) {
       return;
     }
     this.viewDate = start;
-    if ((isSameDay(this.viewDate, start) && this.activeDayIsOpen) || events.length === 0) {
+    if (
+      (isSameDay(this.viewDate, start) && this.activeDayIsOpen) ||
+      events.length === 0
+    ) {
+      this.setView(CalendarView.Week);
       this.activeDayIsOpen = false;
       return;
     }
     this.activeDayIsOpen = true;
   }
 
-  eventTimesChanged({event, newStart, newEnd}: CalendarEventTimesChangedEvent): void {
+  eventTimesChanged({
+    event,
+    newStart,
+    newEnd,
+  }: CalendarEventTimesChangedEvent): void {
     this.events = this.events.map((iEvent) => {
-      return (iEvent !== event) ? iEvent : {...event, start: newStart, end: newEnd};
+      return iEvent !== event
+        ? iEvent
+        : { ...event, start: newStart, end: newEnd };
     });
     this.handleEvent('Dropped or resized', event);
   }
@@ -150,18 +191,25 @@ export class CalendarComponent implements OnInit {
     this.dialogConfig.data.date = event.start;
     this.dialogConfig.data.reservationPeriod = event.meta.reservationPeriod;
     console.log(this.dialogConfig.data);
-    this.modal.open(ReservationDialogComponent, {
-      width: '400px',
-      autoFocus: true,
-      data: {
-        parkingId: this.data.parkId,
-        buildingId: this.data.buildingId,
-        floorId: this.data.floorId,
-        slotId: this.data.slot.id,
-        date: event.start,
-        reservationPeriod: event.meta.reservationPeriod,
-      },
-    });
+    this.modal
+      .open(ReservationDialogComponent, {
+        width: '400px',
+        autoFocus: true,
+        data: {
+          parkingId: this.data.parkId,
+          buildingId: this.data.buildingId,
+          floorId: this.data.floorId,
+          slotId: this.data.slot.id,
+          date: event.start,
+          reservationPeriod: event.meta.reservationPeriod,
+          slotObj: this.data.slot,
+        },
+      })
+      .afterClosed()
+      .subscribe((resAfterClosed: any) => {
+        console.log({ resAfterClosed });
+        this.refresh.next();
+      });
   }
 
   deleteEvent(eventToDelete: CalendarEvent) {
@@ -181,18 +229,25 @@ export class CalendarComponent implements OnInit {
     if (hour < 8 || hour > 18) {
       return;
     }
-    this.modal.open(ReservationDialogComponent, {
-      width: '400px',
-      autoFocus: true,
-      data: {
-        slotId: this.data.slot.id,
-        parkingId: this.data.parkId,
-        buildingId: this.data.buildingId,
-        floorId: this.data.floorId,
-        date: event.date,
-        reservationPeriod: getReservationPeriodFromDate(date),
-      },
-    });
+    this.modal
+      .open(ReservationDialogComponent, {
+        width: '400px',
+        autoFocus: true,
+        data: {
+          slotId: this.data.slot.id,
+          parkingId: this.data.parkId,
+          buildingId: this.data.buildingId,
+          floorId: this.data.floorId,
+          date: event.date,
+          reservationPeriod: getReservationPeriodFromDate(date),
+          slotObj: this.data.slot,
+        },
+      })
+      .afterClosed()
+      .subscribe((resAfterClosed: any) => {
+        console.log({ resAfterClosed });
+        this.refresh.next();
+      });
   }
 }
 
