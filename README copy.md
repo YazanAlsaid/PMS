@@ -63,7 +63,10 @@ Before running the Parking Management System, ensure that the following software
 
 For any inquiries or further information, please contact the project maintainer:
 
-- Your Name
-- Email: [your.email@example.com](mailto:your.email@example.com)
+- **Kaddour Alnaasan** (Group leader) - Email: [your.email@example.com](mailto:your.email@example.com)
+- Mohammed Dawoud - Email: [your.email@example.com](mailto:your.email@example.com)
+- Ebrahim Al Numayri - Email: [your.email@example.com](mailto:your.email@example.com)
+- Solomon Obinna Ozoemenam - Email: [your.email@example.com](mailto:your.email@example.com)
+- Yazan Jad Mohammad Saad Alsaid - Email: [your.email@example.com](mailto:your.email@example.com)
 
 Thank you for using the Parking Management System!
