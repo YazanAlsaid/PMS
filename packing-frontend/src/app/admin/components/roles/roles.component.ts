@@ -6,6 +6,7 @@ import {ActivatedRoute} from "@angular/router";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import { AddRoleDialoggComponent } from '../add-role-dialogg/add-role-dialogg.component';
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-roles',
@@ -20,7 +21,8 @@ export class RolesComponent implements AfterViewInit, OnInit {
 
   constructor(private clientRoles: ClientRoleService,
               private activatedRoute: ActivatedRoute,
-              public dialog: MatDialog,) {
+              public dialog: MatDialog,
+              private sanckPopup: SnackPopupService) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -59,7 +61,8 @@ export class RolesComponent implements AfterViewInit, OnInit {
       (data: any) => {
         if (data.role != null) {
           this.clientRoles.createRole(data.role).subscribe(
-            (res: any) => this.dataSource.data.push(res.data),
+            (res: any) =>{ this.dataSource.data.push(res.data),
+            this.sanckPopup.open(res.message);},
             (err: any) => console.log(err.error.error)
           )
         }
