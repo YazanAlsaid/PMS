@@ -27,7 +27,7 @@ export class ClientFloorService {
     return this.httpService.delete("floors", id);
   }
 
-  getSlots(id: number): Observable<any> {
+  getSlots(id: any): Observable<any> {
     return this.httpService.getSubList("floors", id, 'slots');
   }
 }

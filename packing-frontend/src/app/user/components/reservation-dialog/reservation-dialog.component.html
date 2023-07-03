@@ -2,38 +2,27 @@
 <mat-dialog-content>
   <mat-form-field>
     <mat-label>Parking Name</mat-label>
-    <mat-select [(value)]="parkId">
-      <mat-option
-        *ngFor="let parking of parkingOptions"
-        [value]="parking['value']"
-        >{{ parking.viewValue }}</mat-option
-      >
+    <mat-select [(value)]="parkingId">
+      <mat-option *ngFor="let parking of parkingOptions" [value]="parking['value']">{{parking.viewValue}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Building</mat-label>
     <mat-select [(value)]="building">
-      <mat-option
-        *ngFor="let building of buildingOptions"
-        [value]="building['value']"
-        >{{ building.viewValue }}</mat-option
-      >
+      <mat-option *ngFor="let building of buildingOptions"
+                  [value]="building['value']">{{ building.viewValue }}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Floor</mat-label>
     <mat-select [(value)]="floor">
-      <mat-option *ngFor="let floor of floorOptions" [value]="floor['value']">{{
-        floor.viewValue
-      }}</mat-option>
+      <mat-option *ngFor="let floor of floorOptions" [value]="floor['value']">{{floor.viewValue}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Slot Number</mat-label>
     <mat-select [(value)]="slotNumber">
-      <mat-option *ngFor="let slot of slotOptions" [value]="slot['value']">{{
-        slot.viewValue
-      }}</mat-option>
+      <mat-option *ngFor="let slot of slotOptions" [value]="slot['value']">{{slot.viewValue}}</mat-option>
     </mat-select>
   </mat-form-field>
 
@@ -53,9 +42,9 @@
     <mat-datepicker #datepicker></mat-datepicker>
   </mat-form-field>
 
-  <section class="example-section">
-    <mat-checkbox>Morning</mat-checkbox>
-    <mat-checkbox>Afternoon</mat-checkbox>
+  <section class="example-section" matInput [(ngModel)]="period">
+    <mat-checkbox value="0">Morning</mat-checkbox>
+    <mat-checkbox value="1">Afternoon</mat-checkbox>
   </section>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
