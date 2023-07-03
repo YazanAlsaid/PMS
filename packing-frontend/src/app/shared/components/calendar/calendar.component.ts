@@ -175,4 +175,30 @@ export class CalendarComponent implements OnInit {
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
   }
+  hourSegmentClicked(event: any) {
+    const date = new Date(event.date);
+    const hour = date.getHours();
+    if (hour < 8 || hour > 18) {
+      return;
+    }
+    this.modal.open(ReservationDialogComponent, {
+      width: '400px',
+      autoFocus: true,
+      data: {
+        slotId: this.data.slot.id,
+        parkingId: this.data.parkId,
+        buildingId: this.data.buildingId,
+        floorId: this.data.floorId,
+        date: event.date,
+        reservationPeriod: getReservationPeriodFromDate(date),
+      },
+    });
+  }
+}
+
+function getReservationPeriodFromDate(date: Date): 'MORNING' | 'AFTERNOON' {
+  if (date.getHours() < 13) {
+    return 'MORNING';
+  }
+  return 'AFTERNOON';
 }

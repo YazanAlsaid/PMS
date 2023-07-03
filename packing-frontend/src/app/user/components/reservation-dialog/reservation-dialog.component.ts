@@ -11,6 +11,15 @@ type SelectOption = {
   viewValue: string;
 };
 
+export type ReservationDialogComponentData = {
+  slotId: string;
+  parkingId: string;
+  buildingId: string;
+  floorId: string;
+  date: string;
+  reservationPeriod: 'MORNING' | 'AFTERNOON';
+};
+
 @Component({
   selector: 'app-reservation-dialog',
   templateUrl: './reservation-dialog.component.html',
@@ -34,7 +43,7 @@ export class ReservationDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<ReservationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: ReservationDialogComponentData,
     private http: HttpClient,
     private clientPark: ClientParkService,
     private clientBuilding: ClientBuildingService,
