@@ -33,10 +33,7 @@
         </mat-grid-tile>
       </ng-container>
     </mat-grid-list>
-    <mat-paginator [length]="users.length"
-                   [pageSize]="pageSize"
-                   [pageSizeOptions]="[6, 12, 24]"
-                   (page)="onPageChange($event)"></mat-paginator>
+    <mat-paginator [pageSizeOptions]="[8,12,16]" showFirstLastButtons></mat-paginator>
   </mat-card-content>
 </mat-card>
 

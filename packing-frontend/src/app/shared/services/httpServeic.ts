@@ -93,4 +93,8 @@ export class HttpService {
   public customRequest(uri: string, data: any): Observable<ResponseMessage> {
     return this.http.post<ResponseMessage>(`${this.url}${uri}`, data);
   }
+
+public customRequestGet(uri: string): Observable<ResponseMessage>{
+  return this.http.get<ResponseMessage>(`${this.url}${uri}`);
+  }
 }

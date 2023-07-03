@@ -11,6 +11,7 @@ import {
 import {
   MAT_DIALOG_DATA,
   MatDialog,
+  MatDialogConfig,
   MatDialogRef,
 } from '@angular/material/dialog';
 import {
@@ -22,8 +23,10 @@ import {
 import { EventColor } from 'calendar-utils';
 import { isSameDay, isSameMonth } from 'date-fns';
 import { Subject } from 'rxjs';
-import { ReservationDialogComponent } from 'src/app/user/components/reservation-dialog/reservation-dialog.component';
 import { Reservation } from '../../model/reservation';
+import { ReservationDialogComponent } from 'src/app/user/components/reservation-dialog/reservation-dialog.component';
+import { ClientSlotService } from '../../services/client-slot.service';
+import { ResponseMessage } from '../../model/response-message';
 
 const colors: Record<string, EventColor> = {
   red: { primary: '#ad2121', secondary: '#FAE3E3' },
@@ -40,13 +43,10 @@ export class CalendarComponent implements OnInit {
   @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
-
   CalendarView = CalendarView;
-
   viewDate: Date = new Date();
   refresh = new Subject<void>();
   activeDayIsOpen: boolean = false;
-  baseUrl = 'https://pms.alnaasan.de/api/v1/web';
   reservations: { data: Reservation[] } = { data: [] };
   events: CalendarEvent[] = [];
   modalData!: {
@@ -70,44 +70,57 @@ export class CalendarComponent implements OnInit {
       },
     },
   ];
-  private floorId?: string;
-  private buildingId?: string;
-  private slotID?: string;
+
+  private floorId: any;
+  private buildingId: any;
+  private slotID: number = 0;
+  private parkId: string;
+  private dialogConfig: MatDialogConfig = {
+    width: '400px',
+    autoFocus: true,
+    data: {
+      parkingId: null,
+      buildingId: null,
+      floorId: null,
+      slotId: null,
+      date: null,
+      reservationPeriod: null,
+    },
+  };
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<CalendarComponent>,
     private modal: MatDialog,
-    private http: HttpClient
+    private http: HttpClient,
+    private clientSlot: ClientSlotService
   ) {
-    console.log({ datafromcal: data });
+    this.parkId = this.data.parkId;
     this.buildingId = this.data.buildingId;
     this.floorId = this.data.floorId;
     this.slotID = this.data.slot.id;
   }
 
   ngOnInit() {
-    this.http
-      .get<{ data: Reservation[] }>(
-        `${this.baseUrl}/slots/${this.slotID}/reservations?buildingId=${this.buildingId}&floorId=${this.floorId}`
-      )
-      .subscribe((reservations) => {
-        this.reservations = reservations;
-        this.events = reservations.data.map((reservation) => ({
-          ...this.getEventPeriod(reservation),
-          title: reservation.reservationPeriod,
-          color: colors['blue'],
-          actions: this.actions,
-          resizable: {
-            beforeStart: true,
-            afterEnd: true,
-          },
-          draggable: true,
-          meta: {
-            reservationPeriod: reservation.reservationPeriod,
-          },
-        }));
-      });
+    this.clientSlot
+      .getReservations(this.slotID, this.buildingId, this.floorId)
+      .subscribe(
+        (res: ResponseMessage) => {
+          this.reservations.data = res.data;
+          this.events = this.reservations.data.map(
+            (reservation: Reservation) => ({
+              ...this.getEventPeriod(reservation),
+              title: reservation.reservationPeriod,
+              color: colors['blue'],
+              actions: this.actions,
+              resizable: { beforeStart: true, afterEnd: true },
+              draggable: true,
+              meta: { reservationPeriod: reservation.reservationPeriod },
+            })
+          );
+        },
+        (err: any) => console.log(err)
+      );
   }
 
   dateSelected(date: any) {
@@ -160,23 +173,29 @@ export class CalendarComponent implements OnInit {
     newEnd,
   }: CalendarEventTimesChangedEvent): void {
     this.events = this.events.map((iEvent) => {
-      if (iEvent !== event) {
-        return iEvent;
-      }
-      return { ...event, start: newStart, end: newEnd };
+      return iEvent !== event
+        ? iEvent
+        : { ...event, start: newStart, end: newEnd };
     });
     this.handleEvent('Dropped or resized', event);
   }
 
   handleEvent(action: string, event: CalendarEvent): void {
+    this.dialogConfig.data.parkingId = this.data.parkId;
+    this.dialogConfig.data.buildingId = this.data.buildingId;
+    this.dialogConfig.data.floorId = this.data.floorId;
+    this.dialogConfig.data.slotId = this.data.slot.id;
+    this.dialogConfig.data.date = event.start;
+    this.dialogConfig.data.reservationPeriod = event.meta.reservationPeriod;
+    console.log(this.dialogConfig.data);
     this.modal.open(ReservationDialogComponent, {
       width: '400px',
       autoFocus: true,
       data: {
-        slotId: this.data.slot.id,
         parkingId: this.data.parkId,
         buildingId: this.data.buildingId,
         floorId: this.data.floorId,
+        slotId: this.data.slot.id,
         date: event.start,
         reservationPeriod: event.meta.reservationPeriod,
       },
