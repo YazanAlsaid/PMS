@@ -1,7 +1,8 @@
 <mat-card class="shadow">
   <mat-card-title class="text-center mt-3">Slots</mat-card-title>
   <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="exportBuildings()" class="mx-3">Export Slots</button>
+    <a mat-raised-button color="primary" (click)="exportSlots()" class="mx-3"
+            [href]="downloadJsonHref" download="slots.json">Export Slots</a>
     <button mat-raised-button color="primary" (click)="create()" class="mx-3">Add Slot</button>
     <mat-form-field appearance="fill">
       <mat-label>Search Building</mat-label>

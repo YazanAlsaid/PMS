@@ -8,6 +8,7 @@ import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-di
 import {Building} from "../../../shared/model/building";
 import {ActivatedRoute} from "@angular/router";
 import {Park} from "../../../shared/model/park";
+import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-buildings',
@@ -31,11 +32,14 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
       isUpdate: false,
     }
   };
+  // @ts-ignore
+  public downloadJsonHref: SafeUrl;
 
   constructor(
     private dialog: MatDialog,
     private clientBuilding: ClientBuildingService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer) {
   }
 
   ngAfterViewInit(): void {
@@ -110,8 +114,8 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   }
 
   exportBuildings() {
-    // Add logic to export buildings
-    // This function will be called when the "Export Buildings" button is clicked
+   const jsonData = JSON.stringify(this.pagedBuilding , null , 2);
+   this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
   }
 
   addBuilding() {
