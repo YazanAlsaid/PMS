@@ -66,7 +66,7 @@ public class BuildingController {
         Building buildingCreated = this.buildingRepository.save(building);
         this.addLinks(buildingCreated);
 
-        return this.message("Creating building", buildingCreated, HttpStatus.CREATED);
+        return this.message("Building has been created", buildingCreated, HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAuthority('UPDATE_BUILDING')")
