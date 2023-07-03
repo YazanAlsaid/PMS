@@ -65,6 +65,7 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedBuilding = this.buildings.slice(startIndex, endIndex);
+    this.paginator.length = this.buildings.length;
   }
 
   edit(element: any) {
@@ -94,6 +95,7 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
           (res: any) => {
             this.buildings.push(res.data),
             this.sanckPopup.open(res.message);
+            this.pagenateBuilding()
           },
           (err: any) => console.log(err.error.error)
         );

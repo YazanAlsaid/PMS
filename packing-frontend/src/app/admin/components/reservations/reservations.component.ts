@@ -7,7 +7,7 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddReservationDialogComponent} from "../add-reservation-dialog/add-reservation-dialog.component";
 import {Reservation} from "../../../shared/model/reservation";
 import {DomSanitizer} from "@angular/platform-browser";
-import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
+import {SnackPopupService} from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-reservations',
@@ -82,8 +82,10 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
         if (data && data.reservation != null) {
           this.clientReservations.createReservation(data.reservation, data.buildingId, data.floorId, data.slotId).subscribe(
             (res: any) => {
-              this.dataSource.data.push(res.data),
-              this.sanckPopup.open(res.message);},
+              this.reservations.push(res.data);
+              this.sanckPopup.open(res.message);
+              this.paginateReservations();
+            },
             (err: any) => console.log(err.error.error)
           )
         }
@@ -105,7 +107,7 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
         reservation.reservationPeriod.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         reservation.user.firstName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         reservation.user.lastName.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
+      );
     } else {
       this.filteredReservations = this.reservations;
     }

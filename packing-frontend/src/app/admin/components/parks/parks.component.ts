@@ -66,6 +66,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedParks = this.parks.slice(startIndex, endIndex);
+    this.paginator.length = this.parks.length;
   }
 
   ngAfterViewInit() {

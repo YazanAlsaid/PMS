@@ -52,6 +52,7 @@ export class FloorsComponent implements OnInit {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedFloor = this.floors.slice(startIndex, endIndex);
+    this.paginator.length = this.floors.length;
   }
 
   ngOnInit(): void {
@@ -96,6 +97,7 @@ export class FloorsComponent implements OnInit {
           (res: any) => {
             this.floors.push(res.data),
             this.sanckPopup.open(res.message);
+            this.pagenateFloor()
           },
           (err: any) => console.log(err.error.error)
         );
