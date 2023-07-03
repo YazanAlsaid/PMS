@@ -53,10 +53,10 @@ export class UserDashboardComponent implements OnInit, AfterViewInit {
 
   createReservation() {
     const dialogRef = this.dialog.open(ReservationDialogComponent, {
-      width: '400px'
+      width: '400px',
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       // Handle any actions after the dialog is closed
     });
   }
@@ -73,13 +73,3 @@ export class UserDashboardComponent implements OnInit, AfterViewInit {
 
   }
 }
-
-
-
-
-
-
-
-
-
-

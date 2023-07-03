@@ -70,10 +70,11 @@ export class SlotComponent implements OnInit, AfterViewInit {
       data: {
         slot: slot,
         buildingId: this.buildingId,
-        floorId: this.floorId
+        floorId: this.floorId,
+        parkId: this.parkId,
       },
       width: '850px',
-      height: '100%'
+      height: '100%',
     });
   }
 
