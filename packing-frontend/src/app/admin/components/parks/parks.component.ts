@@ -1,13 +1,12 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {ClientParkService} from "../../../shared/services/client-park.service";
-import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
-import {ResponseMessage} from "../../../shared/model/response-message";
 import {Park} from "../../../shared/model/park";
 import {MatSort} from "@angular/material/sort";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 import {ActivatedRoute} from "@angular/router";
+import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-parks',
@@ -32,11 +31,13 @@ export class ParksComponent implements AfterViewInit, OnInit {
       isUpdate: false,
     }
   };
+  public downloadJsonHref: any;
 
   constructor(
     public dialog: MatDialog,
     private parksService: ClientParkService,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private sanitizer: DomSanitizer) {
   }
 
   ngOnInit(): void {
@@ -53,7 +54,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
     }
   }
 
-  public paginateParks(){
+  public paginateParks() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedParks = this.parks.slice(startIndex, endIndex);
@@ -74,7 +75,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
         this.dialogConfig.data.isUpdate = false;
         if (data.park != null && data.isUpdate) {
           this.parksService.updatePark(data.park.id, data.park).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) =>  this.parks.push(res.data),
             (err: any) => console.log(err.error.error)
           )
         }
@@ -99,18 +100,11 @@ export class ParksComponent implements AfterViewInit, OnInit {
   }
 
   show(element: any) {
-
-  }
-
-  applyFilter(event: KeyboardEvent) {
-    const filterValue = (event.target as HTMLInputElement).value;
   }
 
   exportBuildings() {
-
-  }
-
-  addBuilding() {
+    const jsonDate = JSON.stringify(this.pagedParks, null, 2);
+    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonDate));
 
   }
 
@@ -122,10 +116,5 @@ export class ParksComponent implements AfterViewInit, OnInit {
     } else {
       this.pagedParks = this.parks;
     }
-  }
-
-  clearSearch() {
-    this.searchQuery = '';
-    this.pagedParks = this.parks;
   }
 }
