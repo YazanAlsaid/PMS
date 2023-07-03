@@ -194,6 +194,14 @@ export class CalendarComponent implements OnInit {
     this.activeDayIsOpen = false;
   }
   hourSegmentClicked(event: any) {
+    console.log({ hourSegmentClickedEvent: event });
+    // if the event.date is not between 8 and 18, return
+    if (
+      new Date(event.date).getHours() < 8 ||
+      new Date(event.date).getHours() >= 18
+    ) {
+      return;
+    }
     this.modal.open(ReservationDialogComponent, {
       width: '400px',
       autoFocus: true,
@@ -202,8 +210,8 @@ export class CalendarComponent implements OnInit {
         parkingId: this.data.parkId,
         buildingId: this.data.buildingId,
         floorId: this.data.floorId,
-        date: event.start,
-        reservationPeriod: event.meta.reservationPeriod,
+        date: event.date,
+        reservationPeriod: event.date.getHours() < 13 ? 'MORNING' : 'AFTERNOON',
       },
     });
   }

@@ -28,9 +28,9 @@ export class AuthService {
       this.url = `${this.protocol}//${this.hostname}:${this.port}`;
     }
 
-    this.AUTH_API = `${this.url}/api/v1/web/authenticate`;
-    this.RESET_API = `${this.url}/api/v1/web/reset/reset-password`;
-    this.SET_API = `${this.url}/api/v1/web/reset/change-password`;
+    this.AUTH_API = `https://pms.alnaasan.de/api/v1/web/authenticate`;
+    this.RESET_API = `https://pms.alnaasan.de/api/v1/web/reset/reset-password`;
+    this.SET_API = `https://pms.alnaasan.de/api/v1/web/reset/change-password`;
   }
 
   isLoggedIn(): boolean {

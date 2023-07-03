@@ -7,7 +7,6 @@ import {Observable} from "rxjs";
   providedIn: 'root'
 })
 export class ClientStatisticService {
-
   private readonly hostname: string = window.location.hostname;
   private readonly port: string = window.location.port;
   private readonly protocol: string = window.location.protocol;
@@ -24,13 +23,19 @@ export class ClientStatisticService {
   }
 
   public getCounts(): Observable<ResponseMessage> {
-    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/statistics/counts`);
+    return this.http.get<ResponseMessage>(
+      `https://pms.alnaasan.de/api/v1/web/statistics/counts`
+    );
   }
 
   public getNumberOfReservationInEachWeek(): Observable<ResponseMessage> {
-    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/statistics/reservationCountByWeek`);
+    return this.http.get<ResponseMessage>(
+      `https://pms.alnaasan.de/api/v1/web/statistics/reservationCountByWeek`
+    );
   }
   public getNumberOfReservationInEachMonth(): Observable<ResponseMessage> {
-    return this.http.get<ResponseMessage>(`${this.url}/api/v1/web/statistics/reservationCountByMonth`);
+    return this.http.get<ResponseMessage>(
+      `https://pms.alnaasan.de/api/v1/web/statistics/reservationCountByMonth`
+    );
   }
 }
