@@ -1,8 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
-import {MatTableDataSource} from "@angular/material/table";
 import {Slot} from "../../../shared/model/slot";
-import {Type} from "../../../shared/model/type";
 import {AddSlotDialogComponent} from "../add-slot-dialog/add-slot-dialog.component";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientSlotService} from "../../../shared/services/client-slot.service";
@@ -62,7 +60,7 @@ export class SlotsComponent implements OnInit {
         this.dialogConfig.data.isUpdate = false;
         if (data.slot != null && data.isUpdate) {
           this.clientSlots.updateSlot(data.slot.id, data.slot).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) =>  this.slots.push(res.data),
             (err: any) => console.log(err.error.error)
           );
         }
@@ -106,16 +104,9 @@ export class SlotsComponent implements OnInit {
     }
   }
 
-  clearSearch() {
-    this.searchQuery = '';
-    this.pagedSlots = this.slots;
-  }
-
   paginateSlots() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedSlots = this.slots.slice(startIndex, endIndex);
   }
-
-
 }
