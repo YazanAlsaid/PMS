@@ -7,6 +7,8 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {AddParkDialogComponent} from "../add-park-dialog/add-park-dialog.component";
 import {ActivatedRoute} from "@angular/router";
 import {DomSanitizer} from "@angular/platform-browser";
+import {MatSnackBar, MatSnackBarConfig} from "@angular/material/snack-bar";
+import {SnackPopupService} from "../../../shared/services/snack-popup.service";
 
 @Component({
   selector: 'app-parks',
@@ -37,7 +39,8 @@ export class ParksComponent implements AfterViewInit, OnInit {
     public dialog: MatDialog,
     private parksService: ClientParkService,
     private activatedRoute: ActivatedRoute,
-    private sanitizer: DomSanitizer) {
+    private sanitizer: DomSanitizer,
+    private sanckPopup: SnackPopupService) {
   }
 
   ngOnInit(): void {
@@ -90,7 +93,11 @@ export class ParksComponent implements AfterViewInit, OnInit {
       (data: any) => {
         if (data.park != null) {
           this.parksService.createPark(data.park).subscribe(
-            (res: any) => this.parks.push(res.data),
+            (res: any) => {
+              this.parks.push(res.data);
+              this.paginateParks();
+              this.sanckPopup.open(res.message);
+            },
             (err: any) => console.log(err.error.error)
           )
         }
