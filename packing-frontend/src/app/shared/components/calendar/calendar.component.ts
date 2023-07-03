@@ -20,10 +20,10 @@ import {
   CalendarView,
 } from 'angular-calendar';
 import { EventColor } from 'calendar-utils';
-import { endOfDay, isSameDay, isSameMonth, startOfDay } from 'date-fns';
+import { isSameDay, isSameMonth } from 'date-fns';
 import { Subject } from 'rxjs';
-import { Reservation } from '../../model/reservation';
 import { ReservationDialogComponent } from 'src/app/user/components/reservation-dialog/reservation-dialog.component';
+import { Reservation } from '../../model/reservation';
 
 const colors: Record<string, EventColor> = {
   red: { primary: '#ad2121', secondary: '#FAE3E3' },
@@ -70,13 +70,13 @@ export class CalendarComponent implements OnInit {
       },
     },
   ];
-  private floorId: any;
-  private buildingId: any;
-  private slotID: string = '';
+  private floorId?: string;
+  private buildingId?: string;
+  private slotID?: string;
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<CalendarComponent>, // private modal: NgbModal
+    private dialogRef: MatDialogRef<CalendarComponent>,
     private modal: MatDialog,
     private http: HttpClient
   ) {
@@ -192,5 +192,19 @@ export class CalendarComponent implements OnInit {
 
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
+  }
+  hourSegmentClicked(event: any) {
+    this.modal.open(ReservationDialogComponent, {
+      width: '400px',
+      autoFocus: true,
+      data: {
+        slotId: this.data.slot.id,
+        parkingId: this.data.parkId,
+        buildingId: this.data.buildingId,
+        floorId: this.data.floorId,
+        date: event.start,
+        reservationPeriod: event.meta.reservationPeriod,
+      },
+    });
   }
 }
