@@ -2,40 +2,49 @@
 <mat-dialog-content>
   <mat-form-field>
     <mat-label>Parking Name</mat-label>
-    <mat-select [(ngModel)]="parkingName">
-      <mat-option *ngFor="let parking of parkingOptions" [value]="parking">{{ parking }}</mat-option>
+    <mat-select [(value)]="parkingId">
+      <mat-option *ngFor="let parking of parkingOptions" [value]="parking['value']">{{parking.viewValue}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Building</mat-label>
-    <mat-select [(ngModel)]="selectedBuilding">
-      <mat-option *ngFor="let building of buildingOptions" [value]="building">{{ building }}</mat-option>
+    <mat-select [(value)]="building">
+      <mat-option *ngFor="let building of buildingOptions"
+                  [value]="building['value']">{{ building.viewValue }}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Floor</mat-label>
-    <mat-select [(ngModel)]="selectedFloor">
-      <mat-option *ngFor="let floor of floorOptions" [value]="floor">{{ floor }}</mat-option>
+    <mat-select [(value)]="floor">
+      <mat-option *ngFor="let floor of floorOptions" [value]="floor['value']">{{floor.viewValue}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Slot Number</mat-label>
-    <mat-select [(ngModel)]="selectedSlot">
-      <mat-option *ngFor="let slot of slotOptions" [value]="slot">{{ slot }}</mat-option>
+    <mat-select [(value)]="slotNumber">
+      <mat-option *ngFor="let slot of slotOptions" [value]="slot['value']">{{slot.viewValue}}</mat-option>
     </mat-select>
   </mat-form-field>
 
   <mat-form-field class="example-form-field">
     <mat-label>Choose a date</mat-label>
-    <input matInput [matDatepicker]="datepicker" [(ngModel)]="date" required pattern="^(0[1-9]|1\d|2\d|3[01])/(0[1-9]|1[0-2])/((19|20)\d\d)$" (keydown)="onDateInputKeydown($event)" (blur)="validateDate()">
+    <input
+      matInput
+      [matDatepicker]="datepicker"
+      [(ngModel)]="date"
+      required
+      pattern="^(0[1-9]|1\d|2\d|3[01])/(0[1-9]|1[0-2])/((19|20)\d\d)$"
+      (keydown)="onDateInputKeydown($event)"
+      (blur)="validateDate()"
+    />
     <mat-hint>MM/DD/YYYY</mat-hint>
     <mat-datepicker-toggle matSuffix [for]="datepicker"></mat-datepicker-toggle>
     <mat-datepicker #datepicker></mat-datepicker>
   </mat-form-field>
 
-  <section class="example-section">
-    <mat-checkbox [(ngModel)]="morningSelected">Morning</mat-checkbox>
-    <mat-checkbox [(ngModel)]="afternoonSelected">Afternoon</mat-checkbox>
+  <section class="example-section" matInput [(ngModel)]="period">
+    <mat-checkbox value="0">Morning</mat-checkbox>
+    <mat-checkbox value="1">Afternoon</mat-checkbox>
   </section>
 </mat-dialog-content>
 <mat-dialog-actions align="end">

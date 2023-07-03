@@ -64,6 +64,7 @@ public class UserController implements BaseController<User> {
             return this.message("user or email is already exists", null, HttpStatus.CONFLICT);
 
         }
+        user.setHashedPassword(user.getPassword());
         User userCreated = this.userRepository.save(user);
         this.addLinks(userCreated);
 
@@ -72,7 +73,7 @@ public class UserController implements BaseController<User> {
     @PreAuthorize("hasAuthority('UPDATE_USER')")
     @PutMapping("/{id}")
     @Override
-    public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, User user) {
+    public ResponseEntity<ResponseMessage> updateById(@PathVariable("id") Long id, @RequestBody User user) {
         logger.debug("Updating user by id: {}", id);
         Optional<User> optionalUser = this.userRepository.findById(id);
         if (optionalUser.isPresent() && optionalUser.get().getId().equals(user.getId())) {
