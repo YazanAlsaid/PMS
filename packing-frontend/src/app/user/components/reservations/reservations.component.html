@@ -2,11 +2,12 @@
   <div class="row text-center">
     <div class="col-md-4">
       <div class="btn-group">
-        <div class="btn btn-primary"
-             mwlCalendarPreviousView
-             [view]="view"
-             [(viewDate)]="viewDate"
-             (viewDateChange)="closeOpenMonthViewDay()"
+        <div
+          class="btn btn-primary"
+          mwlCalendarPreviousView
+          [view]="view"
+          [(viewDate)]="viewDate"
+          (viewDateChange)="closeOpenMonthViewDay()"
         >
           Previous
         </div>
@@ -29,7 +30,7 @@
       </div>
     </div>
     <div class="col-md-4">
-      <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+      <h3>{{ viewDate | calendarDate : view + "ViewTitle" : "en" }}</h3>
     </div>
     <div class="col-md-4">
       <div class="btn-group">
@@ -50,7 +51,7 @@
       </div>
     </div>
   </div>
-  <br/>
+  <br />
   <div [ngSwitch]="view">
     <mwl-calendar-month-view
       *ngSwitchCase="CalendarView.Month"
@@ -61,6 +62,7 @@
       (dayClicked)="dayClicked($event.day)"
       (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
+      [excludeDays]="excludeDays"
     >
     </mwl-calendar-month-view>
     <mwl-calendar-week-view
@@ -70,22 +72,17 @@
       [refresh]="refresh"
       (eventClicked)="handleEvent('Clicked', $event.event)"
       (eventTimesChanged)="eventTimesChanged($event)"
+      (hourSegmentClicked)="hourSegmentClicked($event)"
+      [dayStartHour]="dayStartHour"
+      [dayEndHour]="dayEndHour"
+      [excludeDays]="excludeDays"
     >
     </mwl-calendar-week-view>
-    <mwl-calendar-day-view
-      *ngSwitchCase="CalendarView.Day"
-      [viewDate]="viewDate"
-      [events]="events"
-      [refresh]="refresh"
-      (eventClicked)="handleEvent('Clicked', $event.event)"
-      (eventTimesChanged)="eventTimesChanged($event)"
-    >
-    </mwl-calendar-day-view>
   </div>
 
   <!-- Everything you see below is just for the demo, you don't need to include it in your app -->
 
-  <br/><br/><br/>
+  <br /><br /><br />
 
   <ng-template #modalContent let-close="close">
     <div class="modal-header">
@@ -110,5 +107,4 @@
       </button>
     </div>
   </ng-template>
-
 </div>

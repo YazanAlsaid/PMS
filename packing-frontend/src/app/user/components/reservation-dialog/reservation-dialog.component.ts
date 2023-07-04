@@ -10,6 +10,7 @@ import { Reservation } from 'src/app/shared/model/reservation';
 import { StorageService } from 'src/app/auth/Services/storage.service';
 import { Slot } from 'src/app/shared/model/slot';
 import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
+import { Router } from '@angular/router';
 
 type SelectOption = {
   value: string;
@@ -33,8 +34,8 @@ export type ReservationDialogComponentData = {
 })
 export class ReservationDialogComponent {
   parkingId!: string;
-  building!: string;
-  floor!: string;
+  buildingId!: string;
+  floorId!: string;
   slotNumber!: string;
   date!: string;
   time!: string;
@@ -43,8 +44,6 @@ export class ReservationDialogComponent {
   buildingOptions: SelectOption[] = [];
   floorOptions: SelectOption[] = [];
   slotOptions: SelectOption[] = [];
-
-  baseUrl = 'https://pms.alnaasan.de/api/v1/web';
   period: any;
   isEnabled: any = false;
 
@@ -57,7 +56,8 @@ export class ReservationDialogComponent {
     private clientFloor: ClientFloorService,
     private clientReservation: ClientReservationService,
     private storageService: StorageService,
-    private sanckPopup: SnackPopupService
+    private sanckPopup: SnackPopupService,
+    private router: Router
   ) {
     this.clientPark.getParks().subscribe((res: ResponseMessage) => {
       this.parkingOptions = res.data.content.map((parking: any) => {
@@ -68,40 +68,44 @@ export class ReservationDialogComponent {
       });
     });
 
-    this.clientPark.getBuilding(data.parkingId).subscribe((res: any) => {
-      this.buildingOptions = res.data.map((building: any) => {
-        return {
-          value: building.id,
-          viewValue: building.name,
-        };
+    if (data.parkingId){
+      this.clientPark.getBuilding(data.parkingId).subscribe((res: any) => {
+        this.buildingOptions = res.data.map((building: any) => {
+          return {
+            value: building.id,
+            viewValue: building.name,
+          };
+        });
       });
-    });
-
-    this.clientBuilding.getFloors(data.buildingId).subscribe((res: any) => {
-      this.floorOptions = res.data.map((floor: any) => {
-        return {
-          value: floor.id,
-          viewValue: floor.name,
-        };
+    }
+    if (data.buildingId){
+      this.clientBuilding.getFloors(data.buildingId).subscribe((res: any) => {
+        this.floorOptions = res.data.map((floor: any) => {
+          return {
+            value: floor.id,
+            viewValue: floor.name,
+          };
+        });
       });
-    });
-
-    this.clientFloor.getSlots(data.floorId).subscribe((res: any) => {
-      this.slotOptions = res.data.map((slot: any) => {
-        return {
-          value: slot.id,
-          viewValue: slot.name,
-        };
+    }
+    if (data.floorId){
+      this.clientFloor.getSlots(data.floorId).subscribe((res: any) => {
+        this.slotOptions = res.data.map((slot: any) => {
+          return {
+            value: slot.id,
+            viewValue: slot.name,
+          };
+        });
       });
-    });
+    }
 
     this.parkingId = this.data.parkingId;
-    this.building = this.data.buildingId;
-    this.floor = this.data.floorId;
+    this.buildingId = this.data.buildingId;
+    this.floorId = this.data.floorId;
     this.slotNumber = this.data.slotId;
     this.date = this.data.date;
     this.time = this.data.reservationPeriod;
-    if (this.data.date ){
+    if (this.data.date) {
       this.isEnabled = true;
     }
   }
@@ -117,7 +121,7 @@ export class ReservationDialogComponent {
       this.data.reservationPeriod
     );
 
-    console.log({ reservation });
+    console.log({reservation});
 
     this.clientReservation
       .createReservation(
@@ -130,6 +134,7 @@ export class ReservationDialogComponent {
         console.log(res);
         this.sanckPopup.open(res.message);
         this.dialogRef.close();
+        this.router.navigate(['/user/dashboard']);
       });
   }
 
@@ -163,4 +168,32 @@ export class ReservationDialogComponent {
     // Handle the validation error
     return dateRegex.test(this.date.toString());
   }
+
+  onSelectPark() {
+    if (this.parkingId !== null && this.parkingId !== undefined) {
+      this.clientPark.getBuilding(this.parkingId).subscribe(
+        (res: any) => this.buildingOptions = res.data,
+        (err: any) => console.log(err)
+      )
+    }
+  }
+
+  onSelectBuilding() {
+    if (this.buildingId !== null && this.parkingId) {
+      this.clientBuilding.getFloors(this.buildingId).subscribe(
+        (res: any) => this.floorOptions = res.data,
+        (err: any) => console.log(err)
+      )
+    }
+  }
+
+  onSelectFloor() {
+    if (this.floorId !== null && this.floorId !== undefined) {
+      this.clientFloor.getSlots(this.floorId).subscribe(
+        (res: any) => this.slotOptions = res.data,
+        (err: any) => console.log(err)
+      )
+    }
+  }
+
 }

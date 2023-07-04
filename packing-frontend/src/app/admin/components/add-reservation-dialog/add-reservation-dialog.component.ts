@@ -9,9 +9,8 @@ import {ClientParkService} from "../../../shared/services/client-park.service";
 import {ClientBuildingService} from "../../../shared/services/client-building.service";
 import {ClientFloorService} from "../../../shared/services/client-floor.service";
 import {Reservation} from "../../../shared/model/reservation";
-import {ClientSlotService} from "../../../shared/services/client-slot.service";
 import {ClientUserService} from "../../../shared/services/client-user.service";
-import { User } from 'src/app/shared/model/user';
+import {User} from 'src/app/shared/model/user';
 
 @Component({
   selector: 'app-add-reservation-dialog',
@@ -19,13 +18,13 @@ import { User } from 'src/app/shared/model/user';
   styleUrls: ['./add-reservation-dialog.component.scss']
 })
 export class AddReservationDialogComponent {
-  public parkingOptions : Park[] = [];
-  public floorOptions : Floor[] = [];
-  public buildingOptions : Building[] = [];
-  public slotOptions : Slot[] = [];
+  public parkingOptions: Park[] = [];
+  public floorOptions: Floor[] = [];
+  public buildingOptions: Building[] = [];
+  public slotOptions: Slot[] = [];
   public dialogForm !: FormGroup;
   private isUpdate: boolean = false;
-  public userOptions : User[] = [];
+  public userOptions: User[] = [];
   minDate: any;
 
   constructor(
@@ -35,19 +34,18 @@ export class AddReservationDialogComponent {
     private clientPark: ClientParkService,
     private clientUser: ClientUserService,
     private clientBuilding: ClientBuildingService,
-    private clientFloor: ClientFloorService,
-    public clientSlot: ClientSlotService) {
+    private clientFloor: ClientFloorService) {
     this.dialogForm = this.formBuilder.group({
       park: ['', Validators.required],
       building: ['', Validators.required],
       floor: ['', Validators.required],
       slot: ['', Validators.required],
-      date: [['0','1'], Validators.required],
+      date: [['0', '1'], Validators.required],
       period: ['', Validators.required],
       user: ['', Validators.required]
     });
     this.isUpdate = this.data.isUpdate;
-    if(this.isUpdate){
+    if (this.isUpdate) {
 
     }
   }
@@ -66,7 +64,7 @@ export class AddReservationDialogComponent {
 
   onSubmit(): void {
     console.log(this.dialogForm.valid);
-    const period = (this.dialogForm.value.period === 0)? 'MORNING' : 'AFTERNOON';
+    const period = (this.dialogForm.value.period === 0) ? 'MORNING' : 'AFTERNOON';
     console.log(period);
     if (this.dialogForm.valid && this.isUpdate) {
       this.data.reservation.date = this.dialogForm.value.date;
@@ -79,14 +77,14 @@ export class AddReservationDialogComponent {
         this.dialogForm.value.user,
         this.dialogForm.value.slot,
         period,
-        );
+      );
       this.data.reservation.slot = this.dialogForm.value.slot;
       this.data.buildingId = this.dialogForm.value.building.id;
       this.data.floorId = this.dialogForm.value.floor.id;
       this.data.slotId = this.dialogForm.value.slot.id;
       this.dialogRef.close(this.data);
-      }
     }
+  }
 
   onSelectPark() {
     if (this.dialogForm.get('park')?.valid) {
@@ -94,15 +92,13 @@ export class AddReservationDialogComponent {
       this.clientPark.getBuilding(id).subscribe(
         (res: any) => {
           this.buildingOptions = res.data;
-          if (this.isUpdate){
+          if (this.isUpdate) {
           }
         },
         (err: any) => console.log(err)
       )
     }
   }
-
-
 
   onSelectBuilding() {
     console.log(this.dialogForm.get('building')?.value);
@@ -111,7 +107,7 @@ export class AddReservationDialogComponent {
       this.clientBuilding.getFloors(id).subscribe(
         (res: any) => {
           this.floorOptions = res.data;
-          if (this.isUpdate){
+          if (this.isUpdate) {
 
           }
         },
@@ -127,7 +123,7 @@ export class AddReservationDialogComponent {
       this.clientFloor.getSlots(id).subscribe(
         (res: any) => {
           this.slotOptions = res.data;
-          if (this.isUpdate){
+          if (this.isUpdate) {
 
           }
         },
@@ -138,14 +134,6 @@ export class AddReservationDialogComponent {
 
   onNoClick() {
     this.dialogRef.close();
-  }
-
-  onDateInputKeydown($event: KeyboardEvent) {
-
-  }
-
-  validateDate() {
-
   }
 }
 
