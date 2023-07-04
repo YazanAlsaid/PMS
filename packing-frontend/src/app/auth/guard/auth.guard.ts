@@ -22,11 +22,12 @@ export class AuthGuard implements CanActivate {
     if (!this.authService.isLoggedIn() && state.url === '/auth/login' || state.url.includes('/reset-password') || state.url.includes('/change-password')) {
       return true;
     } else if (this.authService.isLoggedIn() && state.url === '/auth/login') {
-      this.router.navigate(['/user/dashboard']).then(() => {
+      this.router.navigateByUrl('/user/dashboard').then(() => {
       });
     } else if (this.authService.isLoggedIn() && allowedRoles && allowedRoles.length > 0) {
       if (!this.authService.hasRoles(allowedRoles)) {
-        this.router.createUrlTree(['/dashboard/forbidden']);
+        this.router.navigateByUrl('/dashboard/forbidden').then(() => {
+        });
       }
       return true;
     } else if (!this.authService.isLoggedIn() && state.url.includes('returnUrl')) {
