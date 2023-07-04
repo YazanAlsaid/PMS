@@ -19,6 +19,7 @@ export class FloorsComponent implements OnInit {
 
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public floors: Floor[] = [];
+  private fliteredFloors: Floor[] = [];
   public pagedFloor: Floor[] = [];
 
 
@@ -51,15 +52,15 @@ export class FloorsComponent implements OnInit {
   public pagenateFloor() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
-    this.pagedFloor = this.floors.slice(startIndex, endIndex);
-    this.paginator.length = this.floors.length;
+    this.pagedFloor = this.fliteredFloors.slice(startIndex, endIndex);
+    this.paginator.length = this.fliteredFloors.length;
   }
 
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['floors'];
     if (resolverData.data){
-      this.pagedFloor = resolverData.data;
       this.floors = resolverData.data
+      this.fliteredFloors = resolverData.data;
       this.paginator.pageSize = 8;
       this.paginator.pageIndex = 0;
       this.paginator.length = this.floors.length;
@@ -119,12 +120,13 @@ export class FloorsComponent implements OnInit {
 
   searchFloors() {
     if (this.searchQuery.trim() !== '') {
-      this.pagedFloor = this.floors.filter(floor =>
+      this.fliteredFloors = this.floors.filter(floor =>
         floor.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
-      this.pagedFloor = this.floors;
+      this.fliteredFloors = this.floors;
     }
+    this.pagenateFloor();
   }
 
 }

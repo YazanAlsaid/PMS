@@ -1,6 +1,5 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
-import {MatTableDataSource} from "@angular/material/table";
 import {ClientReservationService} from "../../../shared/services/client-reservation.service";
 import {ActivatedRoute} from "@angular/router";
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
@@ -91,7 +90,6 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
         }
       }
     );
-
   }
 
   show(element: any) {
