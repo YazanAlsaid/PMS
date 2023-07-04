@@ -33,6 +33,8 @@ public class Reservation extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "slot_id", nullable = false)
     private Slot slot;
+    @Column(name = "is_active", nullable = false)
+    private boolean active = true;
 
     public Reservation() {
     }
@@ -104,6 +106,14 @@ public class Reservation extends BaseEntity {
     @SuppressWarnings("unused")
     public void setSlot(Slot slot) {
         this.slot = slot;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     @Override
