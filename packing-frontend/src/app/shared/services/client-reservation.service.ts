@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class ClientReservationService {
-  constructor(private httpService: HttpService) {}
+  constructor(private httpService: HttpService) { }
 
   public getReservations(): Observable<ResponseMessage> {
     return this.httpService.getAll('reservations');
@@ -26,11 +26,11 @@ export class ClientReservationService {
   ): Observable<ResponseMessage> {
     return this.httpService.customRequest(
       '/api/v1/web/reservations?buildingId=' +
-        buildingId +
-        '&floorId=' +
-        floorId +
-        '&slotId=' +
-        slotId,
+      buildingId +
+      '&floorId=' +
+      floorId +
+      '&slotId=' +
+      slotId,
       reservation
     );
   }
@@ -42,5 +42,9 @@ export class ClientReservationService {
   }
   public deleteReservation(id: number): Observable<ResponseMessage> {
     return this.httpService.delete('reservations', id);
+  }
+
+  public cancelReservation(id: number): Observable<ResponseMessage> {
+    return this.httpService.customRequest('/api/v1/web/reservations/' + id + '/cancel', null);
   }
 }
