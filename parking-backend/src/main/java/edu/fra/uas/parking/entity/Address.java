@@ -21,7 +21,7 @@ public class Address extends BaseEntity {
     @Column(name = "city", nullable = false)
     private String city;
     @JsonBackReference("address-building")
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "building_id", referencedColumnName = "id")
     private Building building;
 

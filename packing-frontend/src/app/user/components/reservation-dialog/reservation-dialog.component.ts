@@ -9,6 +9,7 @@ import { ClientReservationService } from 'src/app/shared/services/client-reserva
 import { Reservation } from 'src/app/shared/model/reservation';
 import { StorageService } from 'src/app/auth/Services/storage.service';
 import { Slot } from 'src/app/shared/model/slot';
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 
 type SelectOption = {
   value: string;
@@ -45,6 +46,7 @@ export class ReservationDialogComponent {
 
   baseUrl = 'https://pms.alnaasan.de/api/v1/web';
   period: any;
+  isEnabled: any = false;
 
   constructor(
     public dialogRef: MatDialogRef<ReservationDialogComponent>,
@@ -54,7 +56,8 @@ export class ReservationDialogComponent {
     private clientBuilding: ClientBuildingService,
     private clientFloor: ClientFloorService,
     private clientReservation: ClientReservationService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private sanckPopup: SnackPopupService
   ) {
     this.clientPark.getParks().subscribe((res: ResponseMessage) => {
       this.parkingOptions = res.data.content.map((parking: any) => {
@@ -98,31 +101,12 @@ export class ReservationDialogComponent {
     this.slotNumber = this.data.slotId;
     this.date = this.data.date;
     this.time = this.data.reservationPeriod;
-
-    this.slotNumber = this.data.slotId;
-    this.parkingId = this.data.parkingId;
-    this.building = this.data.buildingId;
-    this.floor = this.data.floorId;
-    this.date = this.data.date;
+    if (this.data.date ){
+      this.isEnabled = true;
+    }
   }
 
   ngOnInit(): void {
-    const readData = setInterval(() => {
-      this.parkingId = this.data.parkingId;
-      this.building = this.data.buildingId;
-      this.floor = this.data.floorId;
-      this.slotNumber = this.data.slotId;
-      this.date = this.data.date;
-
-      if (
-        this.parkingOptions.length > 0 &&
-        this.buildingOptions.length > 0 &&
-        this.floorOptions.length > 0 &&
-        this.slotOptions.length > 0
-      ) {
-        clearInterval(readData);
-      }
-    }, 1000);
   }
 
   saveReservation() {
@@ -144,6 +128,7 @@ export class ReservationDialogComponent {
       )
       .subscribe((res) => {
         console.log(res);
+        this.sanckPopup.open(res.message);
         this.dialogRef.close();
       });
   }

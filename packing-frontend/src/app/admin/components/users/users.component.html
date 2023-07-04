@@ -5,7 +5,7 @@
     <a mat-raised-button color="primary" class="mx-3" (click)="exportUser()"
             [href]="downloadJsonHref" download="users.json">Export Users</a>
     <mat-form-field appearance="fill">
-      <mat-label>Search Reservation</mat-label>
+      <mat-label>Search Users</mat-label>
       <input matInput type="text" class="mr-3" [(ngModel)]="searchQuery" (ngModelChange)="searchUsers()"/>
     </mat-form-field>
   </mat-card-actions>
