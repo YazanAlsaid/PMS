@@ -40,6 +40,13 @@ export class AddSlotDialogComponent implements OnInit{
       name: ['', Validators.compose([Validators.required, Validators.minLength(3)])]
     });
     this.isUpdate = this.data.isUpdate;
+    if (this.isUpdate) {
+      this.dialogForm.get('name')?.setValue(this.data.slot.name);
+      this.dialogForm.get('park')?.disable();
+      this.dialogForm.get('building')?.disable();
+      this.dialogForm.get('floor')?.disable();
+      this.dialogForm.get('type')?.disable();
+    }
   }
 
   onNoClick(): void {

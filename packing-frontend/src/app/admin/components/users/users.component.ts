@@ -27,7 +27,8 @@ export class UsersComponent implements AfterViewInit, OnInit {
     private clientUser: ClientUserService,
     private activatedRoute: ActivatedRoute,
     private sanckPopup: SnackPopupService,
-    private sanitizer: DomSanitizer) {
+    private sanitizer: DomSanitizer,
+    private userService: ClientUserService) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -76,7 +77,23 @@ export class UsersComponent implements AfterViewInit, OnInit {
     }
   }
 
-  edit(element: any) {}
+  edit(element: any) {
+    this.dialogConfig.data.user = element;
+    this.dialogConfig.data.isUpdate = true;
+    const dialogRef = this.dialog.open(
+      AddUserDialogComponent,
+      this.dialogConfig
+    );
+    dialogRef.afterClosed().subscribe((data: any) => {
+      this.dialogConfig.data.isUpdate = false;
+      if (data.user != null && data.isUpdate) {
+        this.userService.updateUser(data.user.id, data.user).subscribe(
+          (res: any) => this.users.push(res.data),
+          (err: any) => console.log(err.error.error)
+        );
+      }
+    });
+  }
 
   create(): void {
     const dialogRef = this.dialog.open(AddUserDialogComponent, this.dialogConfig);
