@@ -247,6 +247,7 @@ export class CalendarComponent implements OnInit {
       .subscribe((resAfterClosed: any) => {
         console.log({ resAfterClosed });
         this.refresh.next();
+        this.dialogRef.close();
       });
   }
 }
