@@ -24,7 +24,6 @@ export class ParksComponent implements AfterViewInit, OnInit {
     'updatedAt',
     'action',
   ];
-  public dataSource: Park[] = [];
   private parks: Park[] = [];
   private fliteredParks: Park[] = [];
   public pagedParks: Park[] = [];
@@ -52,8 +51,8 @@ export class ParksComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['parks'];
     if (resolverData.data) {
-      this.parks = this.dataSource;
-      this.fliteredParks = resolverData.data;
+      this.parks = resolverData.data.content;
+      this.fliteredParks = resolverData.data.content;
       this.paginator.pageSize = 8;
       this.paginator.pageIndex = 0;
       this.paginator.length = this.parks.length;
