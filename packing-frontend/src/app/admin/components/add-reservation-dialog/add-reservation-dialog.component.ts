@@ -26,6 +26,7 @@ export class AddReservationDialogComponent {
   public dialogForm !: FormGroup;
   private isUpdate: boolean = false;
   public userOptions : User[] = [];
+  minDate: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any, //erste
@@ -52,6 +53,7 @@ export class AddReservationDialogComponent {
   }
 
   ngOnInit(): void {
+    this.minDate = new Date();
     this.clientPark.getParks().subscribe(
       (res: any) => this.parkingOptions = res.data.content,
       (err: any) => console.log(err)
