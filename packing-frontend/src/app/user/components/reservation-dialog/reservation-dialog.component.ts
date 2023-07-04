@@ -10,6 +10,7 @@ import { Reservation } from 'src/app/shared/model/reservation';
 import { StorageService } from 'src/app/auth/Services/storage.service';
 import { Slot } from 'src/app/shared/model/slot';
 import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
+import { Router } from '@angular/router';
 
 type SelectOption = {
   value: string;
@@ -57,7 +58,8 @@ export class ReservationDialogComponent {
     private clientFloor: ClientFloorService,
     private clientReservation: ClientReservationService,
     private storageService: StorageService,
-    private sanckPopup: SnackPopupService
+    private sanckPopup: SnackPopupService,
+    private router: Router
   ) {
     this.clientPark.getParks().subscribe((res: ResponseMessage) => {
       this.parkingOptions = res.data.content.map((parking: any) => {
@@ -130,6 +132,7 @@ export class ReservationDialogComponent {
         console.log(res);
         this.sanckPopup.open(res.message);
         this.dialogRef.close();
+        this.router.navigate(['/user/dashboard']);
       });
   }
 

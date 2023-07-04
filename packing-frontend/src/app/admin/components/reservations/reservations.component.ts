@@ -7,6 +7,8 @@ import {AddReservationDialogComponent} from "../add-reservation-dialog/add-reser
 import {Reservation} from "../../../shared/model/reservation";
 import {DomSanitizer} from "@angular/platform-browser";
 import {SnackPopupService} from 'src/app/shared/services/snack-popup.service';
+import { ResponseMessage } from 'src/app/shared/model/response-message';
+import { ConfirmationDialogComponent } from 'src/app/user/components/confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-reservations',
@@ -20,12 +22,14 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
   public pagedReservations: Reservation[] = [];
   private filteredReservations: Reservation[] = [];
   private reservations: Reservation[] = [];
+  dataSource: any;
 
   constructor(private clientReservations: ClientReservationService,
               private activatedRoute: ActivatedRoute,
               public dialog: MatDialog,
               private sanitizer: DomSanitizer,
-              private sanckPopup: SnackPopupService) {
+              private sanckPopup: SnackPopupService,
+              private clientReservation: ClientReservationService,) {
   }
 
   private dialogConfig: MatDialogConfig = {
@@ -51,8 +55,12 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     const resolveData = this.activatedRoute.snapshot.data['reservations'];
     if (resolveData.data) {
-      this.reservations = resolveData.data;
-      this.filteredReservations = resolveData.data;
+      this.reservations = resolveData.data.content.sort((a: any, b:any) => {
+        const idA = a.id;
+        const idB = b.id;
+        return (idA < idB) ? 1 : -1;
+      });
+      this.filteredReservations = this.reservations;
       this.paginator.pageSize = 8;
       this.paginator.pageIndex = 0;
       this.paginator.length = this.reservations.length;
@@ -71,6 +79,33 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
     const jsonData = JSON.stringify(this.pagedReservations, null, 2);
     this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonData));
 
+  }
+
+  cancelReservation(reservation: Reservation) {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '400px',
+      data: 'Are you sure you want to cancel this reservation?'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        // Call the API to cancel the reservation
+        this.clientReservation.cancelReservation(reservation.id).subscribe(
+          (res: ResponseMessage) => {
+            // Update the dataSource after successful cancellation
+            const index = this.reservations.findIndex((element: any) => element.id === res.data.id);
+            console.log(index);
+
+            if (index !== -1) {
+              this.reservations = this.reservations.filter((item: any) => item.id !== res.data.id);
+              this.filteredReservations = this.reservations;
+            }
+            this.paginateReservations();
+          },
+          (err: any) => console.log(err.error)
+        );
+      }
+    });
   }
 
   create() {
