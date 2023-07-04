@@ -19,6 +19,7 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   public readonly displayedColumns: string[] = ['id', 'serialNumber', 'nfcFrom', 'nfcTo', 'user', 'createdAt', 'updatedAt', 'action'];
   public downloadJsonHref: any;
   private nfcCards: Nfc[] = [];
+  private fliteredNfcCards: Nfc[] = [];
   public pagedNfcCards: Nfc[] = [];
 
 
@@ -61,6 +62,7 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
     if (resolverData.data
     ) {
       this.nfcCards = resolverData.data;
+      this.fliteredNfcCards = resolverData.data;
       this.paginator.pageSize = 8;
       this.paginator.pageIndex = 0;
       this.paginator.length = this.nfcCards.length;
@@ -74,8 +76,8 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
   paginateNfcCards() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
-    this.pagedNfcCards = this.nfcCards.slice(startIndex, endIndex);
-    this.paginator.length = this.nfcCards.length;
+    this.pagedNfcCards = this.fliteredNfcCards.slice(startIndex, endIndex);
+    this.paginator.length = this.fliteredNfcCards.length;
   }
 
   edit(element: any) {
@@ -114,13 +116,14 @@ export class NfcCardsComponent implements AfterViewInit, OnInit {
 
   searchNfcCard() {
     if (this.searchQuery.trim() !== '') {
-      this.pagedNfcCards = this.nfcCards.filter(nfc =>
+      this.fliteredNfcCards = this.nfcCards.filter(nfc =>
         nfc.serialNumber.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         nfc.user.firstName.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         nfc.user.lastName.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
-      this.pagedNfcCards = this.nfcCards;
+      this.fliteredNfcCards = this.nfcCards;
     }
+    this.paginateNfcCards();
   }
 }
