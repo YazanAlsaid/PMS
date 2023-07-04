@@ -8,6 +8,9 @@ import {ClientUserService} from "../../../shared/services/client-user.service";
 import {StorageService} from "../../../auth/Services/storage.service";
 import {Reservation} from "../../../shared/model/reservation";
 import {ResponseMessage} from "../../../shared/model/response-message";
+import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
+import { ClientReservationService } from 'src/app/shared/services/client-reservation.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-dashboard',
@@ -25,7 +28,9 @@ export class UserDashboardComponent implements OnInit, AfterViewInit {
   constructor(
     public dialog: MatDialog,
     private storageService: StorageService,
-    private clientUser: ClientUserService) {
+    private clientReservation: ClientReservationService,
+    private clientUser: ClientUserService,
+    ) {
   }
 
   ngOnInit() {
@@ -35,7 +40,7 @@ export class UserDashboardComponent implements OnInit, AfterViewInit {
         res.data.sort((a: any, b:any) => {
           const idA = a.id;
           const idB = b.id;
-          return (idA < idB) ? -1 : 1;
+          return (idA < idB) ? 1 : -1;
         });
         this.dataSource.data = res.data;
       },
@@ -61,9 +66,37 @@ export class UserDashboardComponent implements OnInit, AfterViewInit {
     });
   }
 
-  cancelReservation() {
+  cancelReservation(reservation: Reservation) {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      width: '400px',
+      data: 'Are you sure you want to cancel this reservation?'
+    });
 
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        // Call the API to cancel the reservation
+        this.clientReservation.cancelReservation(reservation.id).subscribe(
+          (res: ResponseMessage) => {
+            // Update the dataSource after successful cancellation
+            const index = this.dataSource.data.findIndex((element) => element.id === res.data.id);
+            console.log(index);
+
+            if (index !== -1) {
+              this.dataSource.data = this.dataSource.data.filter((item: any) => item.id !== res.data.id);
+              this.dataSource.data = this.dataSource.data.sort((a: any, b:any) => {
+                const idA = a.id;
+                const idB = b.id;
+                return (idA < idB) ? 1 : -1;
+              });
+              this.dataSource._updateChangeSubscription();
+            }
+          },
+          (err: any) => console.log(err.error)
+        );
+      }
+    });
   }
+
 
   edit(element: any) {
 

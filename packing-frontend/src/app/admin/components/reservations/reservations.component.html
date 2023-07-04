@@ -26,8 +26,8 @@
             <p class="building-info">Updated At: {{ reservation['updatedAt'] | date:'yyyy.MM.dd hh:mm:ss' }}</p>
           </mat-card-content>
           <mat-card-actions>
-            <button mat-icon-button (click)="edit(reservation)" color="primary">
-              <mat-icon>edit</mat-icon>
+            <button mat-icon-button (click)="cancelReservation(reservation)" color="primary">
+              <mat-icon>cancel</mat-icon>
             </button>
             <button mat-icon-button (click)="show(reservation)" color="primary">
               <mat-icon>visibility</mat-icon>

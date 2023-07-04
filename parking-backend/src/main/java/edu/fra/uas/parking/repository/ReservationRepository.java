@@ -37,4 +37,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             "GROUP BY MONTH(r.reservationAt) " +
             "ORDER BY MONTH(2) ASC")
     List<Object[]> getReservationCountByMonth();
+
+    List<Reservation> findAllByUser_IdAndActive(Long userId, boolean active);
+    List<Reservation> findAllByActive(boolean active);
+
 }
