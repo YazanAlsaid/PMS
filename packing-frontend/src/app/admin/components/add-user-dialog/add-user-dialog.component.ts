@@ -20,7 +20,7 @@ export class AddUserDialogComponent {
   public roleOptions: Role[] = [];
 
   dialogForm: FormGroup;
-  private isUpdate: Boolean = false;
+  public isUpdate: Boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -36,6 +36,14 @@ export class AddUserDialogComponent {
       confirmPassword: ['', Validators.required, Validators.minLength(8), Validators.maxLength(20), Validators.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])/)],
       role: ['', Validators.required]
     });
+    if (this.isUpdate) {
+      this.dialogForm.get('firstName')?.setValue(this.data.user.firstname);
+      this.dialogForm.get('lastName')?.setValue(this.data.user.lastname);
+      this.dialogForm.get('email')?.setValue(this.data.user.email);
+      this.dialogForm.get('password')?.setValue(this.data.user.password);
+      this.dialogForm.get('confirmPassword')?.setValue(this.data.user.confirmPassword);
+      this.dialogForm.get('role')?.setValue(this.data.user.role);
+    }
   }
 
   ngOnInit(): void {
@@ -49,7 +57,12 @@ export class AddUserDialogComponent {
   onSubmit(): void {
     let roles: Role[] = [];
     if (this.dialogForm.valid && this.isUpdate) {
-      this.data.user.name = this.dialogForm.value.name;
+      this.data.user.firstname = this.dialogForm.value.firstname;
+      this.data.user.lastname = this.dialogForm.value.lastname;
+      this.data.user.email = this.dialogForm.value.email;
+      this.data.user.password = this.dialogForm.value.password;
+      this.data.user.confirmPassword = this.dialogForm.value.confirmPassword;
+      this.data.user.role = this.dialogForm.value.role;
       this.dialogRef.close(this.data);
     } else if (this.dialogForm.valid && !this.isUpdate) {
       roles.push(this.dialogForm.value.role);
