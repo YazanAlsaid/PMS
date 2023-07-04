@@ -120,7 +120,9 @@ export class ReservationsComponent implements AfterViewInit, OnInit {
               this.sanckPopup.open(res.message);
               this.paginateReservations();
             },
-            (err: any) => console.log(err.error.error)
+            (err: any) => {
+              this.sanckPopup.open(err.error.message);
+            }
           )
         }
       }
