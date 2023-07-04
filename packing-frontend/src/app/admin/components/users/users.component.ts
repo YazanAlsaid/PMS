@@ -6,34 +6,26 @@ import {AddUserDialogComponent} from "../add-user-dialog/add-user-dialog.compone
 import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {ClientUserService} from "../../../shared/services/client-user.service";
 import {ActivatedRoute} from "@angular/router";
-import {Reservation} from "../../../shared/model/reservation";
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 import {DomSanitizer} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.scss']
+  styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent implements AfterViewInit, OnInit {
-  @ViewChild(MatPaginator)
-  public paginator!: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) public paginator!: MatPaginator;
 
-  public pagedUser: User[] = [];
-
-  // public readonly displayedColumns: string[] = ['id', 'firstName', 'lastName', 'email', 'createdAt', 'updatedAt', 'action'];
-  public readonly displayedColumns: string[] = ['id'];
-  public dataSource = new MatTableDataSource();
-  users: User[] = [];
-  pagedUsers: User[] = []; // Array to store the users for the current page
-  currentPage = 1; // Current page number
-  pageSize = 8; // Number of users per page
-  myBreakPoint: any = 4;
-  public downloadJsonHref: any;
+  private users: User[] = [];
+  public pagedUsers: User[] = []; // Array to store the users for the current page
+  public myBreakPoint: any = 4;
 
   constructor(
     public dialog: MatDialog,
     private clientUser: ClientUserService,
     private activatedRoute: ActivatedRoute,
+    private sanckPopup: SnackPopupService,
     private sanitizer: DomSanitizer) {
   }
 
@@ -44,41 +36,45 @@ export class UsersComponent implements AfterViewInit, OnInit {
     data: {
       user: null,
       isUpdate: false,
-    }
+    },
   };
+  searchQuery: any;
+  downloadJsonHref: any;
 
   ngAfterViewInit(): void {
     this.paginator.page.subscribe(() => {
       this.pagenateUser();
-    })
+    });
   }
+
   exportUser() {
-    const jsonData = JSON.stringify(this.users , null , 2);
-    this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
-
+    const jsonData = JSON.stringify(this.users, null, 2);
+    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl(
+      'data:text/json;charset=UTF-8,' + encodeURIComponent(jsonData)
+    );
   }
-
 
   public pagenateUser() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
-    this.pagedUser = this.users.slice(startIndex, endIndex);
+    this.pagedUsers = this.users.slice(startIndex, endIndex);
+    this.paginator.length = this.users.length;
   }
 
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['users'];
-    if (resolverData.data){
+    if (resolverData.data) {
       this.users = resolverData.data;
-      this.updatePagedUsers();
-
-    }else {
+      this.paginator.pageSize = 8;
+      this.paginator.pageIndex = 0;
+      this.paginator.length = this.users.length;
+      this.paginateParks();
+    } else {
       console.log(resolverData.message);
     }
   }
 
-  edit(element: any) {
-
-  }
+  edit(element: any) {}
 
   create(): void {
     const dialogRef = this.dialog.open(AddUserDialogComponent, this.dialogConfig);
@@ -88,38 +84,41 @@ export class UsersComponent implements AfterViewInit, OnInit {
         console.log(data)
         if (data.user != null) {
           this.clientUser.createUser(data.user).subscribe(
-            (res: any) => this.ngOnInit(),
+            (res: any) => {
+              this.users.push(res.data);
+              this.sanckPopup.open(res.message);
+              this.pagenateUser();
+            },
             (err: any) => console.log(err.error.error)
-          )
+          );
         }
-      }
-    );
-    dialogRef.afterClosed().subscribe(result => {
-      // Handle any actions after the dialog is closed
-    });
+      });
   }
 
-  show(element: any) {
+  show(element: any) {}
 
-  }
-
-  applyFilter(event: KeyboardEvent) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
-  }
-  updatePagedUsers() {
-    const startIndex = (this.currentPage - 1) * this.pageSize;
-    const endIndex = startIndex + this.pageSize;
-
+  private paginateParks() {
+    const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+    const endIndex = startIndex + this.paginator.pageSize;
     this.pagedUsers = this.users.slice(startIndex, endIndex);
   }
 
-  onPageChange(event: any) {
-    this.currentPage = event.pageIndex + 1;
-    this.updatePagedUsers();
-  }
+  handleSize($event: any) {}
 
-  handleSize($event: any) {
-
+  searchUsers() {
+    if (this.searchQuery.trim() !== '') {
+      this.pagedUsers = this.users.filter(
+        (user) =>
+          user.firstName
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          user.lastName
+            .toLowerCase()
+            .includes(this.searchQuery.toLowerCase()) ||
+          user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
+      );
+    } else {
+      this.pagedUsers = this.users;
+    }
   }
 }

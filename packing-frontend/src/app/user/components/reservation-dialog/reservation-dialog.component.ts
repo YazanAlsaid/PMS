@@ -1,10 +1,14 @@
-import {HttpClient} from '@angular/common/http';
-import {Component, Inject} from '@angular/core';
-import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import {ClientParkService} from "../../../shared/services/client-park.service";
-import {ResponseMessage} from "../../../shared/model/response-message";
-import {ClientBuildingService} from "../../../shared/services/client-building.service";
-import {ClientFloorService} from "../../../shared/services/client-floor.service";
+import { HttpClient } from '@angular/common/http';
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { ClientParkService } from '../../../shared/services/client-park.service';
+import { ResponseMessage } from '../../../shared/model/response-message';
+import { ClientBuildingService } from '../../../shared/services/client-building.service';
+import { ClientFloorService } from '../../../shared/services/client-floor.service';
+import { ClientReservationService } from 'src/app/shared/services/client-reservation.service';
+import { Reservation } from 'src/app/shared/model/reservation';
+import { StorageService } from 'src/app/auth/Services/storage.service';
+import { Slot } from 'src/app/shared/model/slot';
 
 type SelectOption = {
   value: string;
@@ -17,7 +21,8 @@ export type ReservationDialogComponentData = {
   buildingId: string;
   floorId: string;
   date: string;
-  reservationPeriod: 'MORNING' | 'AFTERNOON';
+  reservationPeriod: Reservation['reservationPeriod'];
+  slotObj: Slot;
 };
 
 @Component({
@@ -40,6 +45,7 @@ export class ReservationDialogComponent {
 
   baseUrl = 'https://pms.alnaasan.de/api/v1/web';
   period: any;
+  isEnabled: any = false;
 
   constructor(
     public dialogRef: MatDialogRef<ReservationDialogComponent>,
@@ -47,7 +53,9 @@ export class ReservationDialogComponent {
     private http: HttpClient,
     private clientPark: ClientParkService,
     private clientBuilding: ClientBuildingService,
-    private clientFloor: ClientFloorService
+    private clientFloor: ClientFloorService,
+    private clientReservation: ClientReservationService,
+    private storageService: StorageService
   ) {
     this.clientPark.getParks().subscribe((res: ResponseMessage) => {
       this.parkingOptions = res.data.content.map((parking: any) => {
@@ -85,43 +93,41 @@ export class ReservationDialogComponent {
       });
     });
 
-    this.parkingId = data.parkingId;
-    this.building = data.buildingId;
-    this.floor = data.floorId;
-    this.slotNumber = data.slotId;
-    this.date = data.date;
-    this.time = data.reservationPeriod;
+    this.parkingId = this.data.parkingId;
+    this.building = this.data.buildingId;
+    this.floor = this.data.floorId;
+    this.slotNumber = this.data.slotId;
+    this.date = this.data.date;
+    this.time = this.data.reservationPeriod;
+    if (this.data.date ){
+      this.isEnabled = true;
+    }
   }
 
   ngOnInit(): void {
-    const readData = setInterval(() =>{
-      this.parkingId = this.data.parkingId;
-      this.building = this.data.buildingId;
-      this.floor = this.data.floorId;
-      this.slotNumber = this.data.slotId;
-      this.date = this.data.date;
-
-      if (this.parkingOptions.length > 0 && this.buildingOptions.length > 0 && this.floorOptions.length > 0 && this.slotOptions.length > 0) {
-        clearInterval(readData);
-      }
-    }, 1000);
-
   }
 
   saveReservation() {
-    const reservation = {
-      parkingName: this.parkingId,
-      building: this.building,
-      floor: this.floor,
-      slotNumber: this.slotNumber,
-      date: this.date,
-      time: this.data.reservationPeriod,
-    };
+    const reservation: Reservation = new Reservation(
+      new Date(this.date),
+      this.storageService.getUser(),
+      this.data.slotObj,
+      this.data.reservationPeriod
+    );
 
-    // Logic for saving the reservation
+    console.log({ reservation });
 
-    // Close the dialog
-    this.dialogRef.close();
+    this.clientReservation
+      .createReservation(
+        reservation,
+        this.data.buildingId,
+        this.data.floorId,
+        this.data.slotId
+      )
+      .subscribe((res) => {
+        console.log(res);
+        this.dialogRef.close();
+      });
   }
 
   onDateInputKeydown(event: KeyboardEvent) {

@@ -68,7 +68,7 @@ public class UserController implements BaseController<User> {
         User userCreated = this.userRepository.save(user);
         this.addLinks(userCreated);
 
-        return this.message("Creating User", userCreated, HttpStatus.CREATED);
+        return this.message("User has been created", userCreated, HttpStatus.CREATED);
     }
     @PreAuthorize("hasAuthority('UPDATE_USER')")
     @PutMapping("/{id}")

@@ -6,6 +6,7 @@ import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-di
 import {Building} from "../../../shared/model/building";
 import {ActivatedRoute} from "@angular/router";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-buildings',
@@ -36,7 +37,8 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
     private dialog: MatDialog,
     private clientBuilding: ClientBuildingService,
     private activatedRoute: ActivatedRoute,
-    private sanitizer: DomSanitizer) {
+    private sanitizer: DomSanitizer,
+    private sanckPopup: SnackPopupService) {
   }
 
   ngAfterViewInit(): void {
@@ -63,6 +65,7 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedBuilding = this.buildings.slice(startIndex, endIndex);
+    this.paginator.length = this.buildings.length;
   }
 
   edit(element: any) {
@@ -89,7 +92,11 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
       // Handle any actions after the dialog is closed
       if (result && result.building != null) {
         this.clientBuilding.createBuilding(result.building).subscribe(
-          (res: any) => this.buildings.push(res.data),
+          (res: any) => {
+            this.buildings.push(res.data),
+            this.sanckPopup.open(res.message);
+            this.pagenateBuilding()
+          },
           (err: any) => console.log(err.error.error)
         );
       }

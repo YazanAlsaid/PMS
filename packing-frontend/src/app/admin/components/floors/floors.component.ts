@@ -6,6 +6,7 @@ import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
 import {Floor} from "../../../shared/model/floor";
 import {ActivatedRoute} from "@angular/router";
 import {DomSanitizer} from "@angular/platform-browser";
+import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-floors',
@@ -37,7 +38,8 @@ export class FloorsComponent implements OnInit {
     private dialog: MatDialog,
     private clientFloors: ClientFloorService,
     private activatedRoute: ActivatedRoute,
-    private sanitizer: DomSanitizer) {
+    private sanitizer: DomSanitizer,
+    private sanckPopup: SnackPopupService) {
   }
 
   ngAfterViewInit(): void {
@@ -50,6 +52,7 @@ export class FloorsComponent implements OnInit {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
     this.pagedFloor = this.floors.slice(startIndex, endIndex);
+    this.paginator.length = this.floors.length;
   }
 
   ngOnInit(): void {
@@ -91,7 +94,11 @@ export class FloorsComponent implements OnInit {
       // Handle any actions after the dialog is closed
       if (result && result.floor != null){
         this.clientFloors.createFloor(result.floor).subscribe(
-          (res: any) => this.floors.push(res.data),
+          (res: any) => {
+            this.floors.push(res.data),
+            this.sanckPopup.open(res.message);
+            this.pagenateFloor()
+          },
           (err: any) => console.log(err.error.error)
         );
       }
