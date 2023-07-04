@@ -17,6 +17,7 @@ export class SlotsComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   public pagedSlots: Slot[] = [];
+  private fliteredSlots: Slot[] = [];
   public slots: Slot[] = [];
   searchQuery: any;
 
@@ -43,6 +44,7 @@ export class SlotsComponent implements OnInit {
     const resolveData = this.activatedRoute.snapshot.data['slots'];
     if (resolveData.data){
       this.slots = resolveData.data;
+      this.fliteredSlots = resolveData.data;
       this.paginator.pageSize = 8;
       this.paginator.pageIndex = 0;
       this.paginator.length = this.slots.length;
@@ -99,18 +101,19 @@ export class SlotsComponent implements OnInit {
 
   searchSlots() {
     if (this.searchQuery.trim() !== '') {
-      this.pagedSlots = this.slots.filter(slot =>
+      this.fliteredSlots = this.slots.filter(slot =>
         slot.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
-      this.pagedSlots = this.slots;
+      this.fliteredSlots = this.slots;
     }
+    this.paginateSlots();
   }
 
   paginateSlots() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
-    this.pagedSlots = this.slots.slice(startIndex, endIndex);
-    this.paginator.length = this.slots.length
+    this.pagedSlots = this.fliteredSlots.slice(startIndex, endIndex);
+    this.paginator.length = this.fliteredSlots.length
   }
 }

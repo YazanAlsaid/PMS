@@ -17,6 +17,7 @@ export class RolesComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator, {static: true})
   public paginator!: MatPaginator;
   private roles: Role[] = [];
+  private fliteredRoles: Role[] = [];
   public pagedRoles: Role[] = [];
   public downloadJsonHref: any;
 
@@ -55,6 +56,7 @@ export class RolesComponent implements AfterViewInit, OnInit {
     const resolverData = this.activatedRoute.snapshot.data['roles'];
     if (resolverData.data) {
       this.roles = resolverData.data;
+      this.fliteredRoles = resolverData.data;
       this.paginator.pageSize = 8;
       this.paginator.pageIndex = 0;
       this.paginator.length = this.roles.length;
@@ -103,18 +105,19 @@ export class RolesComponent implements AfterViewInit, OnInit {
 
   searchRole() {
     if (this.searchQuery.trim() !== '') {
-      this.pagedRoles = this.roles.filter((role) =>
+      this.fliteredRoles = this.roles.filter((role) =>
         role.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
-      this.pagedRoles = this.roles;
+      this.fliteredRoles = this.roles;
     }
+    this.paginateRoles()
   }
 
   private paginateRoles() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
-    this.pagedRoles = this.roles.slice(startIndex, endIndex);
-    this.paginator.length = this.roles.length
+    this.pagedRoles = this.fliteredRoles.slice(startIndex, endIndex);
+    this.paginator.length = this.fliteredRoles.length
   }
 }
