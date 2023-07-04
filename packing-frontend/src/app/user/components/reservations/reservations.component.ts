@@ -147,10 +147,12 @@ export class ReservationsComponent implements OnInit {
     this.dialogConfig.data.date = event.start;
     this.dialogConfig.data.reservationPeriod = event.meta.reservationPeriod;
     let slot;
-    this.clientSlot.getSlot(this.slotID).subscribe(
-      (res: any) => slot = res.data,
-      (err: any) => console.log(err)
-    );
+    if (this.slotID) {
+      this.clientSlot.getSlot(this.slotID).subscribe(
+        (res: any) => slot = res.data,
+        (err: any) => console.log(err)
+      );
+    }
     this.modal
       .open(ReservationDialogComponent, {
         width: '400px',
@@ -187,10 +189,12 @@ export class ReservationsComponent implements OnInit {
       return;
     }
     let slot;
-    this.clientSlot.getSlot(this.slotID).subscribe(
-      (res: any) => slot = res.data,
-      (err: any) => console.log(err)
-    );
+    if (this.slotID) {
+      this.clientSlot.getSlot(this.slotID).subscribe(
+        (res: any) => slot = res.data,
+        (err: any) => console.log(err)
+      );
+    }
     this.modal
       .open(ReservationDialogComponent, {
         width: '400px',

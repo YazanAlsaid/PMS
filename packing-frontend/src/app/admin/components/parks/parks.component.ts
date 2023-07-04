@@ -17,13 +17,6 @@ import {SnackPopupService} from "../../../shared/services/snack-popup.service";
 export class ParksComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator, { static: true }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort!: MatSort;
-  public readonly displayedColumns: string[] = [
-    'id',
-    'name',
-    'createdAt',
-    'updatedAt',
-    'action',
-  ];
   private parks: Park[] = [];
   private fliteredParks: Park[] = [];
   public pagedParks: Park[] = [];
