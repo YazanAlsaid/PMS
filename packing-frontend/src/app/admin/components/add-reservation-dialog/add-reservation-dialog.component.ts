@@ -64,14 +64,20 @@ export class AddReservationDialogComponent {
 
   onSubmit(): void {
     console.log(this.dialogForm.valid);
-
+    const period = (this.dialogForm.value.period === 0)? 'MORNING' : 'AFTERNOON';
+    console.log(period);
     if (this.dialogForm.valid && this.isUpdate) {
       this.data.reservation.date = this.dialogForm.value.date;
-      this.data.reservation.period = this.dialogForm.value.period;
+      this.data.reservation.period = period;
       this.data.reservation.user = this.dialogForm.value.user;
       this.data.reservation.slot = this.dialogForm.value.slot;
     } else if (this.dialogForm.valid && !this.isUpdate) {
-      this.data.reservation = new Reservation(this.dialogForm.value.date, this.dialogForm.value.period,this.dialogForm.value.user,this.dialogForm.value.slot);
+      this.data.reservation = new Reservation(
+        this.dialogForm.value.date,
+        this.dialogForm.value.user,
+        this.dialogForm.value.slot,
+        period,
+        );
       this.data.reservation.slot = this.dialogForm.value.slot;
       this.data.buildingId = this.dialogForm.value.building.id;
       this.data.floorId = this.dialogForm.value.floor.id;
