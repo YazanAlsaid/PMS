@@ -2,20 +2,20 @@
 <mat-dialog-content>
   <mat-form-field>
     <mat-label>Parking Name</mat-label>
-    <mat-select [(value)]="parkingId">
+    <mat-select [(value)]="parkingId" (selectionchange)="onSelectPark()">
       <mat-option *ngFor="let parking of parkingOptions" [value]="parking['value']">{{parking.viewValue}}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Building</mat-label>
-    <mat-select [(value)]="building">
+    <mat-select [(value)]="buildingId" (selectionchange)="onSelectBuilding()">
       <mat-option *ngFor="let building of buildingOptions"
                   [value]="building['value']">{{ building.viewValue }}</mat-option>
     </mat-select>
   </mat-form-field>
   <mat-form-field>
     <mat-label>Floor</mat-label>
-    <mat-select [(value)]="floor">
+    <mat-select [(value)]="floorId" (selectionchange)="onSelectFloor()">
       <mat-option *ngFor="let floor of floorOptions" [value]="floor['value']">{{floor.viewValue}}</mat-option>
     </mat-select>
   </mat-form-field>
