@@ -2,6 +2,7 @@ package edu.fra.uas.parking.controller;
 
 import edu.fra.uas.parking.common.ResponseMessage;
 import edu.fra.uas.parking.entity.User;
+import edu.fra.uas.parking.repository.ReservationRepository;
 import edu.fra.uas.parking.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,12 @@ public class UserController implements BaseController<User> {
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserRepository userRepository;
+    private final ReservationRepository reservationRepository;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
+    public UserController(UserRepository userRepository, ReservationRepository reservationRepository) {
         this.userRepository = userRepository;
+        this.reservationRepository = reservationRepository;
     }
     @PreAuthorize("hasAuthority('VIEW_USERS')")
     @GetMapping()
@@ -111,7 +114,7 @@ public class UserController implements BaseController<User> {
         logger.debug("Getting reservations by user id: {}", id);
         Optional<User> user = this.userRepository.findById(id);
         return user.map(value ->
-                this.message("Getting reservations by user id", value.getReservations(), HttpStatus.OK))
+                this.message("Getting reservations by user id", this.reservationRepository.findAllByUser_IdAndActive(value.getId(), true), HttpStatus.OK))
                 .orElseGet(() -> this.message("User not found", null, HttpStatus.NOT_FOUND));
     }
     @PreAuthorize("#id == principal.id and hasAuthority('VIEW_NFC_CARD')")

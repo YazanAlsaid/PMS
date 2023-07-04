@@ -39,14 +39,33 @@ public class ReservationController {
         this.userRepository = userRepository;
     }
 
+    @PreAuthorize("hasAuthority('UPDATE_RESERVATION')")
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<ResponseMessage> cancelReservation(@PathVariable("id") Long id) {
+        logger.debug("Canceling reservation by id: {}", id);
+        Optional<Reservation> optionalReservation = this.reservationRepository.findById(id);
+        if (optionalReservation.isPresent()) {
+            Reservation reservation = optionalReservation.get();
+
+            reservation.setActive(false);
+
+            Reservation canceledReservation = this.reservationRepository.save(reservation);
+            this.addLinks(canceledReservation);
+
+            return this.message("Reservation has been canceled", canceledReservation, HttpStatus.OK);
+        }
+        return this.message("Reservation not found", null, HttpStatus.NOT_FOUND);
+    }
+
+
     @PreAuthorize("hasAuthority('VIEW_RESERVATIONS')")
     @GetMapping()
     public ResponseEntity<ResponseMessage> index() {
         logger.debug("Indexing reservation: {}", this.reservationRepository.count());
-        CollectionModel<Reservation> reservations = CollectionModel.of(this.reservationRepository.findAll());
+        CollectionModel<Reservation> reservations = CollectionModel.of(this.reservationRepository.findAllByActive(true));
         reservations.add(linkTo(methodOn(ReservationController.class).index()).withSelfRel());
         reservations.forEach(this::addLinks);
-        return this.message("Indexing reservation", this.reservationRepository.findAll(), HttpStatus.OK);
+        return this.message("Indexing reservation", reservations, HttpStatus.OK);
     }
 
     @PreAuthorize("hasAuthority('VIEW_RESERVATION')")

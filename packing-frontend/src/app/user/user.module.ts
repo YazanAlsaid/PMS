@@ -17,9 +17,10 @@ import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CalendarModule } from 'angular-calendar';
+import { ConfirmationDialogComponent } from './components/confirmation-dialog/confirmation-dialog.component';
 
 @NgModule({
-  declarations: [RoutedComponent, ReservationDialogComponent],
+  declarations: [RoutedComponent, ReservationDialogComponent, ConfirmationDialogComponent],
   imports: [
     CommonModule,
     UserRoutingModule,
