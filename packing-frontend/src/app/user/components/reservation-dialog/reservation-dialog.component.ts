@@ -45,6 +45,7 @@ export class ReservationDialogComponent {
 
   baseUrl = 'https://pms.alnaasan.de/api/v1/web';
   period: any;
+  isEnabled: any = false;
 
   constructor(
     public dialogRef: MatDialogRef<ReservationDialogComponent>,
@@ -98,31 +99,12 @@ export class ReservationDialogComponent {
     this.slotNumber = this.data.slotId;
     this.date = this.data.date;
     this.time = this.data.reservationPeriod;
-
-    this.slotNumber = this.data.slotId;
-    this.parkingId = this.data.parkingId;
-    this.building = this.data.buildingId;
-    this.floor = this.data.floorId;
-    this.date = this.data.date;
+    if (this.data.date ){
+      this.isEnabled = true;
+    }
   }
 
   ngOnInit(): void {
-    const readData = setInterval(() => {
-      this.parkingId = this.data.parkingId;
-      this.building = this.data.buildingId;
-      this.floor = this.data.floorId;
-      this.slotNumber = this.data.slotId;
-      this.date = this.data.date;
-
-      if (
-        this.parkingOptions.length > 0 &&
-        this.buildingOptions.length > 0 &&
-        this.floorOptions.length > 0 &&
-        this.slotOptions.length > 0
-      ) {
-        clearInterval(readData);
-      }
-    }, 1000);
   }
 
   saveReservation() {
