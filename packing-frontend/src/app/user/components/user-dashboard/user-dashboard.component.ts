@@ -35,7 +35,7 @@ export class UserDashboardComponent implements OnInit, AfterViewInit {
         res.data.sort((a: any, b:any) => {
           const idA = a.id;
           const idB = b.id;
-          return (idA < idB) ? -1 : 1;
+          return (idA < idB) ?  1: -1;
         });
         this.dataSource.data = res.data;
       },
