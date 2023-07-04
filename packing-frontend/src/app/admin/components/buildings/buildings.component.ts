@@ -6,7 +6,7 @@ import {AddBuildingDialogComponent} from "../add-building-dialog/add-building-di
 import {Building} from "../../../shared/model/building";
 import {ActivatedRoute} from "@angular/router";
 import {DomSanitizer, SafeUrl} from "@angular/platform-browser";
-import { SnackPopupService } from 'src/app/shared/services/snack-popup.service';
+import {SnackPopupService} from 'src/app/shared/services/snack-popup.service';
 
 @Component({
   selector: 'app-buildings',
@@ -18,6 +18,7 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   public paginator!: MatPaginator;
   public readonly displayedColumns: string[] = ['id', 'name', 'createdAt', 'updatedAt', 'action'];
   private buildings: Building[] = [];
+  private fliteredBuildings: Building[] = [];
   public pagedBuilding: Building[] = [];
   searchQuery: string = '';
 
@@ -51,6 +52,7 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
     const resolverData = this.activatedRoute.snapshot.data['buildings'];
     if (resolverData.data) {
       this.buildings = resolverData.data;
+      this.fliteredBuildings = resolverData.data;
       this.paginator.pageSize = 8;
       this.paginator.pageIndex = 0;
       this.paginator.length = this.buildings.length;
@@ -64,8 +66,8 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   public pagenateBuilding() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
-    this.pagedBuilding = this.buildings.slice(startIndex, endIndex);
-    this.paginator.length = this.buildings.length;
+    this.pagedBuilding = this.fliteredBuildings.slice(startIndex, endIndex);
+    this.paginator.length = this.fliteredBuildings.length;
   }
 
   edit(element: any) {
@@ -94,7 +96,7 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
         this.clientBuilding.createBuilding(result.building).subscribe(
           (res: any) => {
             this.buildings.push(res.data),
-            this.sanckPopup.open(res.message);
+              this.sanckPopup.open(res.message);
             this.pagenateBuilding()
           },
           (err: any) => console.log(err.error.error)
@@ -108,17 +110,18 @@ export class BuildingsComponent implements AfterViewInit, OnInit {
   }
 
   exportBuildings() {
-   const jsonData = JSON.stringify(this.pagedBuilding , null , 2);
-   this.downloadJsonHref= this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,'+ encodeURIComponent(jsonData));
+    const jsonData = JSON.stringify(this.pagedBuilding, null, 2);
+    this.downloadJsonHref = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(jsonData));
   }
 
   searchBuildings() {
     if (this.searchQuery.trim() !== '') {
-      this.pagedBuilding = this.buildings.filter(building =>
+      this.fliteredBuildings = this.buildings.filter(building =>
         building.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
-      this.pagedBuilding = this.buildings;
+      this.fliteredBuildings = this.buildings;
     }
+    this.pagenateBuilding();
   }
 }

@@ -18,6 +18,7 @@ export class UsersComponent implements AfterViewInit, OnInit {
   @ViewChild(MatPaginator, { static: true }) public paginator!: MatPaginator;
 
   private users: User[] = [];
+  private fliteredUsers: User[] = [];
   public pagedUsers: User[] = []; // Array to store the users for the current page
   public myBreakPoint: any = 4;
 
@@ -65,10 +66,11 @@ export class UsersComponent implements AfterViewInit, OnInit {
     const resolverData = this.activatedRoute.snapshot.data['users'];
     if (resolverData.data) {
       this.users = resolverData.data;
+      this.fliteredUsers = resolverData.data;
       this.paginator.pageSize = 8;
       this.paginator.pageIndex = 0;
       this.paginator.length = this.users.length;
-      this.paginateParks();
+      this.paginateUsers();
     } else {
       console.log(resolverData.message);
     }
@@ -97,17 +99,17 @@ export class UsersComponent implements AfterViewInit, OnInit {
 
   show(element: any) {}
 
-  private paginateParks() {
+  private paginateUsers() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
-    this.pagedUsers = this.users.slice(startIndex, endIndex);
+    this.pagedUsers = this.fliteredUsers.slice(startIndex, endIndex);
   }
 
   handleSize($event: any) {}
 
   searchUsers() {
     if (this.searchQuery.trim() !== '') {
-      this.pagedUsers = this.users.filter(
+      this.fliteredUsers = this.users.filter(
         (user) =>
           user.firstName
             .toLowerCase()
@@ -118,7 +120,8 @@ export class UsersComponent implements AfterViewInit, OnInit {
           user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
-      this.pagedUsers = this.users;
+      this.fliteredUsers = this.users;
     }
+    this.paginateUsers();
   }
 }

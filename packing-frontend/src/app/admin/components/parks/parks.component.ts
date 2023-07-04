@@ -26,6 +26,7 @@ export class ParksComponent implements AfterViewInit, OnInit {
   ];
   public dataSource: Park[] = [];
   private parks: Park[] = [];
+  private fliteredParks: Park[] = [];
   public pagedParks: Park[] = [];
 
   searchQuery: any;
@@ -51,8 +52,8 @@ export class ParksComponent implements AfterViewInit, OnInit {
   ngOnInit(): void {
     const resolverData = this.activatedRoute.snapshot.data['parks'];
     if (resolverData.data) {
-      this.dataSource = resolverData.data.content;
       this.parks = this.dataSource;
+      this.fliteredParks = resolverData.data;
       this.paginator.pageSize = 8;
       this.paginator.pageIndex = 0;
       this.paginator.length = this.parks.length;
@@ -65,8 +66,8 @@ export class ParksComponent implements AfterViewInit, OnInit {
   public paginateParks() {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     const endIndex = startIndex + this.paginator.pageSize;
-    this.pagedParks = this.parks.slice(startIndex, endIndex);
-    this.paginator.length = this.parks.length;
+    this.pagedParks = this.fliteredParks.slice(startIndex, endIndex);
+    this.paginator.length = this.fliteredParks.length;
   }
 
   ngAfterViewInit() {
@@ -124,11 +125,12 @@ export class ParksComponent implements AfterViewInit, OnInit {
 
   searchParks() {
     if (this.searchQuery.trim() !== '') {
-      this.pagedParks = this.parks.filter((park) =>
+      this.fliteredParks = this.parks.filter((park) =>
         park.name.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
     } else {
-      this.pagedParks = this.parks;
+      this.fliteredParks = this.parks;
     }
+    this.paginateParks();
   }
 }
